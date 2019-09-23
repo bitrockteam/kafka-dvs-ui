@@ -1,0 +1,170 @@
+@import '@/styles/styles.scss';
+
+// MAP 
+#map {
+  	width: 100%;
+	height:60%;
+
+  &.maximized {
+    height: 90%;
+  }
+  .mapboxgl-canvas {
+		outline: none;
+	}
+}
+
+// MAP - MARK EVENT
+ .map-event {
+	background: $primary-color;
+	border-radius: 50%;
+	height: 8px;
+	width: 8px;
+	animation: pulse 1s ease-out;	
+	border-radius: 50%;
+}
+
+.map-event:hover {
+	animation: none;
+	box-shadow: 0 0 3px 3px $primary-color;  
+	animation: pulse 1s ease-out;
+}
+
+.map-event:hover {
+	animation: none;
+	box-shadow: 0 0 3px 3px $primary-color;  
+}
+  .map-event:after {
+	content: "";
+	border-radius: 50%;
+	height: 40px;
+	width: 40px;
+	position: absolute;
+	margin: -16px 0 0 -16px;
+	animation: pulsate 1s ease-out;
+	opacity: 0;
+	box-shadow: 0 0 1px 2px $primary-color;
+
+  }
+  
+  @keyframes pulsate {
+	0% {
+	  transform: scale(0.1, 0.1);
+	  opacity: 0.4;
+	}
+  
+	50% {
+	  opacity: 1;
+	}
+  
+	100% {
+	  transform: scale(1.2, 1.2);
+	  opacity: 0;
+	}
+  }
+
+
+.map-event:after {
+	content: "";
+	border-radius: 50%;
+	height: 40px;
+	width: 40px;
+	position: absolute;
+	margin: -16px 0 0 -16px;
+	animation: pulsate 1s ease-out;
+	opacity: 0;
+	box-shadow: 0 0 1px 2px $primary-color;
+
+}
+  
+.group-name,
+.group-city {
+	span {
+		font-weight: bold;
+		color: $primary-text-color;
+	}
+}
+  
+// MAP - HIDE ELEMENT 
+.mapboxgl-ctrl-attrib {
+	display: none;
+}
+	
+.mapboxgl-ctrl-bottom-left {
+	display: none;
+}
+
+// MAP - POP-UP MARKER
+.mapboxgl-popup-content {
+	max-width: 300px;
+	padding: 8px 32px 8px 16px;
+
+	a {
+		color: $primary-color;
+	}
+
+	a:hover {
+		color: $primary-color-hover
+	}  
+}
+	
+.mapboxgl-popup-close-button {
+	padding: 6px 8px;
+	font-size: 18px;
+}
+
+// MAP - CUSTOM CONTROL ZOOM
+.custom-control {
+	display: flex;
+	flex-direction: column;
+	margin:10px;
+	pointer-events: auto;
+
+	div {
+		cursor: pointer;
+		margin: 2px 0;
+		border-radius:2px;	
+		
+		&.zoom-in {
+			background: $primary-color;
+			margin: 2px 4px;
+			border-radius: 4px;
+			width: 40px;
+			height: 40px;
+			
+			&:after {
+				content: "+";
+				display:flex;
+				justify-content: center;
+				align-items: center;
+				width:40px;
+				height:40px;
+				font-size: 26px;
+				color: $general-color;
+			}
+			&:hover {
+				background:	$primary-color-hover;
+			}
+		}
+		&.zoom-out {
+			background: $primary-color;
+			margin: 2px 4px;
+			border-radius: 4px;
+			width: 40px;
+			height: 40px;
+			
+			&:after {
+				content: "-";
+				display:flex;
+				justify-content: center;
+				align-items: center;
+				width:40px;
+				height:40px;
+				font-size: 26px;
+				color: $general-color;
+			}
+			&:hover {
+				background:	$primary-color-hover;
+			}
+		}
+	}
+}

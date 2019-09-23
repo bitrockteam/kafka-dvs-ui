@@ -1,0 +1,105 @@
+@import '../styles.scss';
+
+.top-five{
+    .query {
+        padding-bottom: $padding; 
+        padding-bottom: $padding;
+        @media #{$lm-range-devices} {
+            display: block;
+        }
+    }
+}
+
+.change-view { 
+    display: flex;
+    justify-content: space-between;
+
+    div {
+        display: flex;
+    }
+
+    span {
+        display: inline-block;
+        height: 27px;
+        
+        &:first-of-type {
+            border-right: 1px solid $primary-border-color;
+    
+        }
+    }
+   
+    h6 {
+        padding: 8px 0;
+        margin:0;
+        &:first-of-type {
+            padding: 0 0 8px 0 ;
+        }
+    }
+
+    span {
+        font-size: 12px;
+        display: flex;
+        line-height: 18px;
+        color: $primary-text-color;
+    }
+  }
+
+@supports (-moz-appearance:none) {
+
+    .ksql {
+         word-break: break-all; 
+     }   
+}
+
+.ksql {
+    font-size: 12px;
+    display: block;
+    padding: $padding;
+    height: 100%;
+    background: $grid-background-query;
+    line-height: 20px;
+    word-break: break-word; 
+    min-height: 250px;
+    margin-top: 4px;
+
+    @media #{$lm-range-devices} {
+        min-height: 150px;
+    }
+
+    @media #{$lm-range-devices} {
+        min-height: 150px;
+    }
+  
+    @media #{$medium-devices} {
+        min-height: 150px;
+    }
+    span {
+        display: block;
+    }   
+}
+
+.row {
+    animation: fade 0.2s linear;
+}
+
+
+.btn {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color:$orange-500;
+}
+
+.btn:active,
+.btn:focus {
+    outline: none; 
+}
+
+.selected {
+  color: $primary-text-color;
+}
+
+@keyframes fade {
+    0% { opacity: 0 }
+    100% { opacity: 1 }
+}

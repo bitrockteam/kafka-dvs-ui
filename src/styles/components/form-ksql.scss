@@ -1,0 +1,43 @@
+@import '../styles.scss';
+
+.ksql-form {
+  padding: 0 $padding;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 40%;
+  width: 60%;
+
+
+  @media #{$medium-devices} {
+    padding: 0px 0 30px 0;
+    width: 100%;
+  }
+
+  #textArea {
+    height: 100%;
+    background: #FFF;
+    padding: $padding; 
+    height: 200px;
+    font-size: 15px;
+    border: 1px solid rgba(0, 0, 0, 0.17);
+    
+    @media #{$medium-devices} {
+      height: 100px;
+      font-size: 14px;
+    }
+    @media #{$small-devices} {
+      height: 100px;
+      font-size: 12px;
+    }
+  }
+
+  .ksql-button {
+    display: flex;
+    justify-content: flex-end;
+
+    .btnText {
+      margin-left: 8px;
+    }
+  }
+}
+

@@ -1,0 +1,63 @@
+@import '../styles.scss';
+
+.placeholder-line {
+    width: 100%;
+    display: flex;
+    padding-bottom: 30px; 
+    justify-content: space-between;
+   
+
+    &-title {
+        width: 40%;
+        height: 20px;
+        animation: pulse 1s infinite ease-in-out;
+    }
+    &-action {
+        width: 20%;
+        height: 20px;
+        animation: pulse 1s infinite ease-in-out;
+    }
+}
+
+.placeholder-line-wrapper {
+    width: 100%;
+    display: flex;
+
+    &-context {
+        width: 100%;
+    }
+
+    &-subtitle {
+        height:12px;
+        width: 50%;
+        animation: pulse 1s infinite ease-in-out;
+    }
+
+    &-text {
+        height:12px;
+        margin: 5px 0;
+        width: 90%;
+        animation: pulse 1s infinite ease-in-out;
+    }
+    &-box {
+        height:150px;
+        animation: pulse 1s infinite ease-in-out;
+    }
+    hr{
+        margin: 10px 0;
+    }
+}
+
+
+
+@keyframes pulse {
+    0% {
+        background-color: rgba(165, 165, 165, 0.1)
+    }
+    50% {
+        background-color: rgba(165, 165, 165, 0.3)
+    }
+    100% {
+        background-color: rgba(165, 165, 165, 0.1)
+    }
+}

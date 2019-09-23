@@ -1,0 +1,40 @@
+// AMBER DESIGN SYSTEM
+@import '~@amber-ds/visual/src/amber.scss';
+
+// PADDING
+$padding: 16px;
+
+// COLOR
+$general-color: #FFFFFF;
+$neutral-color:$grey-500;
+$primary-text-color: $grey-900;
+$primary-border-color: $grey-200;
+$primary-color: $orange-500;
+$primary-color-hover: darken( $primary-color, 10% );
+
+// HEADER
+$header-background: $grey-800;
+$header-link-color: $orange-500;
+
+//PROGRESS-BAR
+$track-color: $grey-50;
+
+//GRID
+$grid-background-query: $grey-50;
+$grid-background-color: $grey-100;
+
+
+// Z-INDEX
+$index-pause-btn: 1;
+$index-loading-page: 3;
+$index-back-home: 3;
+
+//MEDIA QUERIES
+$small-devices: "only screen and (max-width : 576px)";
+$medium-devices: "only screen and (max-width : 768px)";
+$large-devices: "only screen and (max-width : 992px)";
+$extra-devices: "only screen and (max-width : 1200px)";
+
+// RANGE MEDIA QUERIES
+$sm-range-devices: "only screen and (min-device-width : 320px) and (max-device-width : 767px)";
+$lm-range-devices: "only screen and (min-device-width : 992px) and (max-device-width : 1200px)";

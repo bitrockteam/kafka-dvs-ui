@@ -1,0 +1,64 @@
+@import '../styles.scss';
+
+.placeholder-line {
+    width: 100%;
+    height: 10px;
+    display: flex;;
+    justify-content: space-between;
+   
+
+    &-title {
+        width: 40%;
+        animation: pulse 1s infinite ease-in-out;
+    }
+    &-action {
+        width: 20%;
+        animation: pulse 1s infinite ease-in-out;
+    }
+}
+
+.placeholder-line-wrapper {
+    width: 100%;
+
+    display: flex;
+    &-context {
+        width: 100%;
+        padding-top: $padding;
+        padding-left: $padding;
+        &:first-of-type{
+            padding-left:0; 
+        }
+
+    }
+
+    &-subtitle {
+        height:10px;
+        width: 50%;
+        animation: pulse 1s infinite ease-in-out;
+    }
+
+    &-text {
+        height:10px;
+        margin: 8px 0;
+        width: 90%;
+        animation: pulse 1s infinite ease-in-out;
+    }
+    &-box {
+        height:150px;
+        margin: 8px 0;
+        animation: pulse 1s infinite ease-in-out;
+    }
+}
+
+
+@keyframes pulse {
+    0% {
+        background-color: rgba(165, 165, 165, 0.1)
+    }
+    50% {
+        background-color: rgba(165, 165, 165, 0.3)
+    }
+    100% {
+        background-color: rgba(165, 165, 165, 0.1)
+    }
+}
