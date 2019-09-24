@@ -6,7 +6,7 @@ pipeline {
   environment {
       GITHUB_CREDENTIALS = 'BitrockCI token'
       GITHUB_ACCOUNT = 'bitrockteam'
-      GITHUB_REPO = 'kafka-geostream-ui'
+      GITHUB_REPO = 'kafka-flightstream-ui'
       GITHUB_SSH = "centos"
       RELEASE_BRANCH = "master"
   }
@@ -183,7 +183,7 @@ pipeline {
                 }
             }
             steps {
-		build job: 'kafka-geostream-cd/master', wait: false
+		build job: 'kafka-flightstream-cd/master', wait: false
 	    }
     }
   }
