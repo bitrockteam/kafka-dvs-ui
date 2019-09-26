@@ -8,7 +8,7 @@
           <span>
             <button class="btn"
               aria-label="Show widget"
-              v-on:click="toggleWidget()" 
+              v-on:click="toggleWidget()"
               v-bind:class="isSelected(displayWidget, true)"
             >
               <icon-list />
@@ -17,7 +17,7 @@
           <span>
             <button class="btn"
               aria-label="Show KSQL query"
-              v-on:click="toggleWidget()" 
+              v-on:click="toggleWidget()"
               v-bind:class="isSelected(displayWidget, false)"
             >
               <icon-subject />
@@ -27,7 +27,7 @@
       </div>
 
       <!-- showTrend -->
-      <div v-if="displayWidget">  
+      <div v-if="displayWidget">
         <div class="row trend">
           <div class="col-12 col-sm-12 col-md-4 col-lg-4">
             <list-rsvp-countries :data="countries" />
@@ -38,11 +38,11 @@
           <div class="col-12 col-sm-12 col-md-4 col-lg-4">
             <list-rsvp-topics :data="topics" />
           </div>
-        </div> 
+        </div>
       </div>
 
       <!-- showRsvp -->
-      <div v-else> 
+      <div v-else>
         <div class="row query">
           <div class="col-12 col-sm-12 col-md-12 col-lg-4">
             <ksql-query-text
@@ -62,8 +62,8 @@
               :text="TopicsQueryText"
             />
           </div>
-        </div>  
-      </div>   
+        </div>
+      </div>
     </div>
 
     <!-- showTrend-->
@@ -160,7 +160,7 @@ export default class extends DashboardWidget {
   }
 
   private mounted() {
-    this.listen(streamWS('topElementsChanged'));
+    // this.listen(streamWS('topElementsChanged'));
   }
 }
 </script>

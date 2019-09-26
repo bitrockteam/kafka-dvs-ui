@@ -6,21 +6,8 @@
 .graph-rsvp-info {
   font-size: 13px;
   color: $primary-text-color;
-  padding: 4px 0; 
+  padding: 4px 0;
   line-height: 18px;
-
-  .change-view {
-    display: flex;
-    justify-content: space-between;
-    span {
-      display: inline-block;
-      height: 27px;
-      
-      &:first-of-type {
-        border-right: 1px solid $primary-border-color;
-      }
-    }
-  }
 
   h5 {
     display: flex;
@@ -31,8 +18,8 @@
 
   .start-date,
   .total-rsvp {
-    padding-left: 4px; 
-    font-weight: bold; 
+    padding-left: 4px;
+    font-weight: bold;
   }
 }
 
@@ -44,7 +31,7 @@
 }
 .btn:active,
 .btn:focus {
-  outline: none; 
+  outline: none;
 }
 
 .selected {

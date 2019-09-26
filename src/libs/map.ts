@@ -1,9 +1,13 @@
 
 import mapboxgl, { Map, LngLatBounds } from 'mapbox-gl';
 
-const customMarker = (): HTMLElement => {
+const customMarker = (direction: number): HTMLElement => {
   const marker: HTMLElement = document.createElement('div');
-  marker.classList.add('map-event', 'map-event-enter');
+  marker.classList.add('map-event');
+  const markerIcon = document.createElement('div');
+  markerIcon.classList.add('marker-icon');
+  markerIcon.style.transform = `rotate(${direction - 90}deg)`;
+  marker.appendChild(markerIcon);
   return marker;
 };
 

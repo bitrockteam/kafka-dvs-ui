@@ -1,11 +1,8 @@
-@import '@/styles/styles.scss';
-.dash-rsvp,
-.develop-rsvp {
+@import '../styles.scss';
+.dash-rsvp {
     height: 10%;
     position: relative;
     border-top: 1px solid rgba(0, 0, 0, 0.17);
-    // display none - under costruction
-    display: none;
     .toggle-button {
         width: 40px;
         height: 30px;
