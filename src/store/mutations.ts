@@ -6,7 +6,7 @@ const mutations: MutationTree<State> = {
     currentState.paused = !currentState.paused;
   },
   toggleMaximize(currentState: State) {
-    currentState.map.maximized = !currentState.map.maximized;
+    currentState.maximized = !currentState.maximized;
   },
   setMaxSpeed(currentState: State, speed: number) {
     currentState.maxSpeed = speed;

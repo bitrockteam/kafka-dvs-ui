@@ -16,7 +16,7 @@ import { webSocket } from 'rxjs/webSocket';
 import { map } from 'rxjs/operators';
 import { streamWS } from '@/libs/endpoints';
 import { customMarker, setToken, customBounds } from '@/libs/map';
-import { RSVPEvent } from '@/interfaces/map';
+import { Flight } from '@/interfaces/flight';
 import WorldControl from '@/mapbox-controls/world-control';
 
 @Component({
@@ -26,10 +26,11 @@ export default class extends Vue {
   @State private paused!: boolean;
 
   private map: any|Map = undefined;
-  private flightsMarkers: { id: String, marker: Marker }[] = [];
+  private flightsMarkers: Array<{ id: string, marker: Marker }> = [];
   private socket: any = null;
   private socketURL: string = 'flights';
-  private mapToken: string = 'pk.eyJ1IjoiYml0cm9jayIsImEiOiJjanJrdWVvZWYwMXA2NGF0a2R6ajJjdXRpIn0.Ldc2OgW7lv_16VufwApmuA';
+  private mapToken: string =
+          'pk.eyJ1IjoiYml0cm9jayIsImEiOiJjanJrdWVvZWYwMXA2NGF0a2R6ajJjdXRpIn0.Ldc2OgW7lv_16VufwApmuA';
 
   @Watch('paused')
   private togglePause(val: boolean) {
@@ -70,7 +71,7 @@ export default class extends Vue {
     this.map.addControl(new WorldControl(), 'bottom-right');
   }
 
-  private createMarker(event: RSVPEvent, i: number): Marker {
+  private createMarker(event: Flight): Marker {
     const {
       geography: { latitude, longitude, direction, altitude },
       icaoNumber,
@@ -80,7 +81,7 @@ export default class extends Vue {
       airplane: { productionLine = '' } = {},
       airportArrival,
       airportDeparture,
-    } = (event as any);
+    } = event;
     const marker: Marker = new mapboxgl.Marker(customMarker(direction));
     const popup: Popup = new mapboxgl.Popup().setHTML(`
     <div class="custom-popup">
@@ -124,12 +125,12 @@ export default class extends Vue {
       .setLngLat([longitude, latitude])
       .setPopup(popup)
       .addTo(this.map);
-    this.flightsMarkers.push({id: icaoNumber, marker: marker });
+    this.flightsMarkers.push({id: icaoNumber, marker });
     return marker;
   }
 
-  private updateMarker(marker: Marker, event: RSVPEvent, i: number): Marker {
-    const { geography: { latitude, longitude, direction } } = (event as any);
+  private updateMarker(marker: any, event: Flight): Marker {
+    const { geography: { latitude, longitude, direction } } = event;
     marker
       .setLngLat([longitude, latitude])
       .addTo(this.map);
@@ -138,12 +139,12 @@ export default class extends Vue {
     return marker;
   }
 
-  private manageFlight(event: RSVPEvent, i: number) {
+  private manageFlight(event: Flight) {
     const flightUpdate = this.flightsMarkers.find((flight) => flight.id === event.icaoNumber);
     if (flightUpdate) {
-      this.updateMarker(flightUpdate.marker, event, i)
+      this.updateMarker(flightUpdate.marker, event);
     } else {
-      this.createMarker(event, i)
+      this.createMarker(event);
     }
   }
 

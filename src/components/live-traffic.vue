@@ -31,12 +31,12 @@ import LoadingPlaceholderStat from '@/components/loading-placeholder-stat.vue';
   name: 'live-traffic',
   components: {
     LoadingPlaceholderStat,
-  }
+  },
 })
 export default class extends DashboardWidget {
   @Getter private maxSpeed!: number;
-  private CountAirline: Number = 0;
-  private CountFlightStatus: Number = 0;
+  private CountAirline: number = 0;
+  private CountFlightStatus: number = 0;
   private loading: boolean = true;
 
   private listen(url: string) {

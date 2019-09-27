@@ -1,14 +1,14 @@
-# K·GeoStream UI
+# K·FlightStream UI
 [![Build Status](https://iproject-jenkins.reactive-labs.io/buildStatus/icon?job=kafka-geostream-ui%2Fmaster)](https://iproject-jenkins.reactive-labs.io/view/Kafka%20Geostream/job/kafka-geostream-ui/job/master/)
 ![https://david-dm.org/bitrockteam/kafka-geostream-ui.svg](https://david-dm.org/bitrockteam/kafka-geostream-ui.svg)
 
 
-[PWA](https://developers.google.com/web/progressive-web-apps/) built in [Vue.js](https://vuejs.org/) for the [K·GeoStream project](https://github.com/search?q=topic%3Akafka-geostream+org%3Abitrockteam&type=Repositories). It's a realtime dashboard that visualize activities on the Meetup platform, the data is processed through a backend developed in Scala with Kafka Streams & KSQL.
+[PWA](https://developers.google.com/web/progressive-web-apps/) built in [Vue.js](https://vuejs.org/) for the [K·FlightStream project](https://github.com/search?q=topic%3Akafka-geostream+org%3Abitrockteam&type=Repositories). It's a realtime dashboard that visualize activities on the Meetup platform, the data is processed through a backend developed in Scala with Kafka Streams & KSQL.
 
 [https://geostream.bitrock.it](https://geostream.bitrock.it)
 
 ## Screenshot
-![K·Geostream UI screenshot](public/img/kgs.png)
+![K·FlightStream UI screenshot](public/img/kgs.png)
 
 ## Demo mode
 You can append the query parameter `?demo=[NUMBER-OF-MINUTES]` to the url to enable the demo mode, once activated it will fully refresh the application every specified minutes.
@@ -35,7 +35,6 @@ To prevent an overhead of visible informations for the user, the map shows the l
 * [SASS](https://sass-lang.com/)
 * [Amber Design System](https://amber.bitrock.it/)
 * [Mapbox](https://www.mapbox.com/)
-* [vue-apexcharts](https://apexcharts.com/vue-chart-demos)
 
 ### Getting started
 Clone the repo
