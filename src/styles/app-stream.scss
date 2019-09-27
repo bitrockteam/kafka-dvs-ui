@@ -1,0 +1,117 @@
+@import './styles.scss';
+#app {
+    width: 100%;
+    // commit for landing page //height: calc(100vh - 65px);
+    position: absolute;
+    background: $general-color;
+    color: $neutral-color;
+    overflow: hidden;
+    .header {
+        height: 63px;
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.17);
+        padding: $padding;
+        background: $header-background;
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            width: 200px;
+            font-size: 18px;
+            color: $general-color;
+            padding-top: 8px;
+            .logo {
+                display: flex;
+                align-items: center;
+                width: 210px;
+                padding-top: 1px;
+            }
+            .icon-logo {
+                position: relative;
+                top: 10px;
+            }
+            .link-geo {
+                color: #FFFFFF;
+            }
+            .stream {
+                color: $general-color;
+            }
+            @media #{$small-devices} {
+                width: 195px;
+                font-size: 18px;
+            }
+            .geo-k {
+                display: inline-block;
+                position: relative;
+                padding: 0 8px;
+                &:before {
+                    content: '';
+                    background: $primary-color;
+                    width: 6px;
+                    height: 6px;
+                    display: inline-block;
+                    border-radius: 4px;
+                    position: absolute;
+                    left: 20px;
+                    top: 9px;
+                    @media #{$small-devices} {
+                        left: 19px;
+                    }
+                }
+                @media #{$small-devices} {
+                    font-size: 16px;
+                }
+            }
+            .geo-stream {
+                display: inline-block;
+                @media #{$small-devices} {
+                    font-size: 16px;
+                }
+            }
+            .powered {
+                height: 25px;
+                position: relative;
+                top: -15px;
+                left: -10px;
+            }
+        }
+        .navbar-admin {
+            width: 150px;
+            @media #{$medium-devices} {
+                display: none;
+            }
+        }
+        a:hover {
+            color: #fca85a;
+        }
+        nav {
+            .router-link-exact-active {
+                color: $general-color;
+                border-bottom: 2px solid $general-color;
+                cursor: default;
+                &:active,
+                &:focus {
+                    color: $general-color;
+                    border-bottom: 2px solid $general-color;
+                    cursor: default;
+                }
+                @media #{$small-devices} {
+                    font-size: 13px;
+                    display: inline;
+                    padding: 4px;
+                }
+            }
+            .link {
+                display: inline-block;
+                padding: 4px 0px;
+                text-decoration: none;
+                @media #{$small-devices} {
+                    font-size: 13px;
+                }
+            }
+        }
+    }
+}

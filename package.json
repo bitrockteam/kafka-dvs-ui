@@ -1,0 +1,81 @@
+{
+	"name": "kafka-geostream-ui",
+	"displayName": "Kafka Geostream",
+	"version": "1.1.3",
+	"private": true,
+	"contributors": [
+		"Salvatore Laisa <salvatore.laisa@bitrock.it>",
+		"Angela Gargallo <angela.gargallo@bitrock.it>",
+		"Anthony Penna <anthony.penna@bitrock.it",
+		"Wellington Pecchini <wellington.pecchini@bitrock.it>"
+	],
+	"scripts": {
+		"start": "npm run serve",
+		"serve": "NODE_ENV=development vue-cli-service serve",
+		"build": "NODE_ENV=production vue-cli-service build",
+		"lint": "vue-cli-service lint",
+		"test:e2e:ci": "vue-cli-service test:e2e --mode e2e --headless",
+		"test:e2e": "cypress run --spec ./cypress/integration/*",
+		"test:unit": "NODE_ENV=test jest --verbose",
+		"test": "npm run test:unit"
+	},
+	"dependencies": {
+		"@amber-ds/components": "1.2.4",
+		"@amber-ds/visual": "1.0.1",
+		"@types/mapbox-gl": "^0.54.4",
+		"apexcharts": "3.6.11",
+		"mapbox-gl": "^1.3.2",
+		"register-service-worker": "1.6.2",
+		"rxjs": "6.5.2",
+		"vue": "2.6.10",
+		"vue-apexcharts": "1.3.5",
+		"vue-class-component": "7.1.0",
+		"vue-property-decorator": "8.1.1",
+		"vue-router": "3.0.6"
+	},
+	"devDependencies": {
+		"@types/chai": "4.1.7",
+		"@types/chartjs": "0.0.31",
+		"@types/jest": "24.0.13",
+		"@types/mocha": "5.2.6",
+		"@types/node": "12.0.1",
+		"@types/socket.io-client": "1.4.32",
+		"@vue/cli-plugin-e2e-cypress": "3.7.0",
+		"@vue/cli-plugin-pwa": "3.7.0",
+		"@vue/cli-plugin-typescript": "3.7.0",
+		"@vue/cli-plugin-unit-mocha": "3.7.0",
+		"@vue/cli-service": "3.7.0",
+		"@vue/test-utils": "1.0.0-beta.29",
+		"chai": "4.2.0",
+		"cypress": "3.2.0",
+		"jest": "24.8.0",
+		"jest-junit": "6.4.0",
+		"lowercase-keys": "2.0.0",
+		"node-sass": "4.12.0",
+		"sass-loader": "7.1.0",
+		"stickybits": "3.6.5",
+		"ts-jest": "24.0.2",
+		"typescript": "3.4.5",
+		"vue-template-compiler": "2.6.10",
+		"vuex": "3.1.1",
+		"vuex-class": "0.3.2"
+	},
+	"postcss": {
+		"plugins": {
+			"autoprefixer": {}
+		}
+	},
+	"browserslist": [
+		"> 1%",
+		"last 2 versions",
+		"not ie <= 8"
+	],
+	"jest-junit": {
+		"outputDirectory": "__tests__/results",
+		"outputName": "junit.xml",
+		"classNameTemplate": "{classname}-{title}",
+		"titleTemplate": "{classname}-{title}",
+		"ancestorSeparator": " › ",
+		"usePathForSuiteName": "true"
+	}
+}

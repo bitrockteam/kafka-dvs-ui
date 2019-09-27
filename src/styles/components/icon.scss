@@ -1,0 +1,21 @@
+ @import '../styles.scss';
+
+.icon {
+    display: inline-flex;
+    align-items: center;
+    align-self: center;
+    fill: $primary-color;
+
+    &:hover {
+        fill: $primary-color-hover;
+    }
+}
+
+.icon-expand {
+    fill: $primary-color;
+}
+.icon-play,
+.icon-pause {
+    fill: $general-color;
+}
+

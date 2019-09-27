@@ -1,0 +1,39 @@
+@import '../styles.scss';
+
+.traffic-info-wrapper {
+    width: 250px;
+    padding: 10px;
+
+    .title-section {
+        color: $primary-text-color;
+        margin-bottom: 5px;
+    }
+    .traffic-info {
+        display: flex;
+        flex-direction: column;
+
+        .info {
+            font-size: 13px;
+            border-bottom: 1px solid $primary-border-color;
+            padding: 8px 0 12px;
+            line-height: 18px;
+            animation: fade 0.2s linear;
+
+            &:last-of-type {
+                border-bottom: none;
+            }
+
+            .label {
+                font-size: 12px;
+                margin-bottom: 5px;
+            }
+
+            .value {
+                color: $primary-text-color;
+                font-size: 24px;
+                font-weight: lighter;
+            }
+        }
+    }
+}
+

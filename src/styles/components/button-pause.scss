@@ -1,0 +1,18 @@
+@import '../styles.scss';
+
+.btn-container {
+    display: flex;
+	position: absolute;
+	top: 75px;
+	left: calc(100% - 56px);
+	z-index: $index-pause-btn;
+
+	.btn {
+		display: flex;
+		width: 40px;
+		height: 40px;
+		justify-content: center;
+		background: $primary-color;
+		border-radius: 4px;
+	}
+}

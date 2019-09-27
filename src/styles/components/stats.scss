@@ -1,0 +1,8 @@
+.stats-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  height: 105%;
+  overflow: auto;
+}
