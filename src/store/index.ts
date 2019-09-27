@@ -7,10 +7,7 @@ import { getters } from './getters';
 Vue.use(Vuex);
 
 const state: State = {
-  map: {
-    range: 100,
-    maximized: true,
-  },
+  maximized: true,
   paused: false,
   maxSpeed: 0,
 };

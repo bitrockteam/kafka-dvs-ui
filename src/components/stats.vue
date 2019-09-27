@@ -16,7 +16,7 @@ import TopFiveList from '@/components/top-five-list.vue';
 const LiveTraffic = () => import('@/components/live-traffic.vue');
 import DashboardWidget from '@/libs/classes/dashboardwidget';
 import { streamWS } from '@/libs/endpoints';
-import { Country, Topic, City, TopData } from '@/interfaces/dashboard';
+import { StatData, Airline, Airport, SpeedFlight } from '@/interfaces/stats';
 
 @Component({
   name: 'top-five',
@@ -26,10 +26,10 @@ import { Country, Topic, City, TopData } from '@/interfaces/dashboard';
   },
 })
 export default class extends DashboardWidget {
-  private originAirport: TopData[] = [];
-  private destinationAirport: TopData[] = [];
-  private airlines: TopData[] = [];
-  private fastestFlights: TopData[] = [];
+  private originAirport: StatData[] = [];
+  private destinationAirport: StatData[] = [];
+  private airlines: StatData[] = [];
+  private fastestFlights: StatData[] = [];
   @Mutation private setMaxSpeed!: (speed: number) => void;
 
   private listen(url: string) {
@@ -40,21 +40,21 @@ export default class extends DashboardWidget {
 
       switch (eventType) {
         case 'TopDepartureAirportList':
-          this.originAirport = event.eventPayload.elements.map((airport) => ({
+          this.originAirport = event.eventPayload.elements.forEach((airport: Airport): StatData => ({
             name: airport.airportCode,
             count: airport.eventCount,
             percent: (100 * airport.eventCount) / event.eventPayload.elements[0].eventCount,
           }));
           break;
         case 'TopArrivalAirportList':
-          this.destinationAirport = event.eventPayload.elements.map((airport) => ({
+          this.destinationAirport = event.eventPayload.elements.map((airport: Airport): StatData => ({
             name: airport.airportCode,
             count: airport.eventCount,
             percent: (100 * airport.eventCount) / event.eventPayload.elements[0].eventCount,
           }));
           break;
         case 'TopAirlineList':
-          this.airlines = event.eventPayload.elements.map((airline): TopData => ({
+          this.airlines = event.eventPayload.elements.map((airline: Airline): StatData => ({
             name: airline.airlineName,
             count: airline.eventCount,
             percent: (100 * airline.eventCount) / event.eventPayload.elements[0].eventCount,
@@ -63,11 +63,11 @@ export default class extends DashboardWidget {
         case 'TopSpeedList':
           const maxSpeed = event.eventPayload.elements[0].speed;
           this.setMaxSpeed(maxSpeed);
-          this.fastestFlights = event.eventPayload.elements.map((speed): TopData => ({
+          this.fastestFlights = event.eventPayload.elements.map((speed: SpeedFlight): StatData => ({
             name: speed.flightCode,
             count: speed.speed,
             percent: (100 * speed.speed) / maxSpeed,
-            format: " km/h"
+            format: ' km/h',
           }));
           break;
         default:
