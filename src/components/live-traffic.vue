@@ -1,55 +1,67 @@
 <template>
-  <div class="list-rsvp-user">
-    <h5>{{ titlesection }}</h5>
-    <div>
-      <div class="list-user">
-        <div class="user-info">
-          <span class="user-rsvp">{{ CountAirline }}</span>
-          <span>answered <span class="user-response">{{ CountFlightStatus }}</span> to</span>
-        </div>
+  <div class="traffic-info-wrapper">
+    <div class="title-section">Live traffic information</div>
+    <div class="traffic-info" v-if="!loading">
+      <div class="info">
+        <div class="label">Total Flights</div>
+        <div class="value">{{ CountAirline }}</div>
+      </div>
+      <div class="info">
+        <div class="label">Total Airlines</div>
+        <div class="value">{{ CountFlightStatus }}</div>
+      </div>
+      <div class="info">
+        <div class="label">Higher Flight Speed</div>
+        <div class="value">{{ maxSpeed }} km/h</div>
       </div>
     </div>
+    <loading-placeholder-stat v-else />
   </div>
 </template>
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator';
 import { webSocket } from 'rxjs/webSocket';
-import { map } from 'rxjs/operators';
+import { Getter } from 'vuex-class';
 import { streamWS } from '@/libs/endpoints';
-import { RSVPEvent } from '@/interfaces/map.ts';
 import DashboardWidget from '@/libs/classes/dashboardwidget';
-import LoadingPlaceholderList from '@/components/loading-placeholder-list.vue';
-import IconSubject from '@/components/icon-subject.vue';
-import IconList from '@/components/icon-list.vue';
+import LoadingPlaceholderStat from '@/components/loading-placeholder-stat.vue';
 
 @Component({
   name: 'live-traffic',
   components: {
-    IconSubject,
-    IconList,
-    LoadingPlaceholderList,
-  },
+    LoadingPlaceholderStat,
+  }
 })
 export default class extends DashboardWidget {
-  private titlesection = 'Live traffic information';
+  @Getter private maxSpeed!: number;
   private CountAirline: Number = 0;
   private CountFlightStatus: Number = 0;
+  private loading: boolean = true;
 
-  private manageLiveTrafficInfo(event: RSVPEvent, i: number) {
-    const { eventType, eventPayload: { eventCount } } = event;
-    this[eventType] = eventCount;
+  private listen(url: string) {
+    this.socket = webSocket(url);
+
+    this.socket.subscribe((event: any) => {
+      const { eventType, eventPayload: { eventCount } } = event;
+      this.loading = false;
+      switch (eventType) {
+        case 'CountAirline':
+          this.CountAirline = eventCount;
+          break;
+        case 'CountFlightStatus':
+          this.CountFlightStatus = eventCount;
+          break;
+        default:
+          return;
+      }
+    });
   }
 
   private mounted() {
-    const url = streamWS('totalElementsChanged');
-    this.socket = webSocket(url);
-    this.socket.pipe(
-      map(this.manageLiveTrafficInfo),
-    ).subscribe();
+    this.listen(streamWS('totalElementsChanged'));
   }
-
 }
 </script>
 
-<style lang="scss" scoped src="@/styles/components/list-user.scss" />
+<style lang="scss" scoped src="@/styles/components/live-traffic.scss" />

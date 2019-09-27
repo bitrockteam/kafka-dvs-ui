@@ -26,7 +26,6 @@
 import { Component, Vue } from 'vue-property-decorator';
 import IconLogo from '@/components/icon-logo.vue';
 import IconBitrock from '@/components/icon-bitrock.vue';
-import IconWorld from '@/components/icon-world.vue';
 import '@amber-ds/components/banner';
 
 @Component({
@@ -34,7 +33,6 @@ import '@amber-ds/components/banner';
   components: {
     IconLogo,
     IconBitrock,
-    IconWorld,
   },
 })
 export default class extends Vue {

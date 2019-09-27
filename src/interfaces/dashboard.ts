@@ -24,6 +24,7 @@ export interface TopData {
   name: string|undefined;
   count: number;
   percent: number;
+  format?: string;
 }
 
 export interface TrendEvent {

@@ -1,8 +1,7 @@
 
 export interface State {
   paused: boolean;
-  dev: Development;
-  sessionIDs: string[];
+  maxSpeed: number;
   map: Map;
 }
 

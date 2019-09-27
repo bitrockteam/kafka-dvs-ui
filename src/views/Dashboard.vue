@@ -3,7 +3,7 @@
     <button-pause />
     <div class="dashboard">
       <world-map />
-      <main-stats />
+      <footer-stats />
     </div>
   </div>
 </template>
@@ -12,13 +12,13 @@
 import { Component, Vue } from 'vue-property-decorator';
 import ButtonPause from '@/components/button-pause.vue';
 import WorldMap from '@/components/world-map.vue';
-import MainStats from '@/components/main-stats.vue';
+import FooterStats from '@/components/footer-stats.vue';
 
 @Component({
   components: {
     ButtonPause,
     WorldMap,
-    MainStats,
+    FooterStats,
   },
 })
 export default class Dashboard extends Vue {

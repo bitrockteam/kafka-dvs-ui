@@ -459,11 +459,6 @@
   resolved "https://registry.yarnpkg.com/@types/chartjs/-/chartjs-0.0.31.tgz#b16a687eaad3ea3e5cd3e961aee5a28e47b57949"
   integrity sha512-eF1AgrIO0qP9KJYwM2dTKL2pczTjiLa0hfmZdQfKiqFq5WIvFTKPn1gkgADitF5sT4byEyq4EFdMVvuPIk6zeQ==
 
-"@types/country-list@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@types/country-list/-/country-list-2.1.0.tgz#047b3a1d5c9fdd3aa728aca035c56b8c81900154"
-  integrity sha512-aCE6SP9WQJkq9kNFDRdxpUfWhazvreNSPtm1BQG1B4/xSpKbRwfweVAChYx6MMLyTguCKJExGZ1C52Z8DlFSGg==
-
 "@types/events@*":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@types/events/-/events-3.0.0.tgz#2862f3f58a9a7f7c3e78d79f130dd4d71c25c2a7"
@@ -2238,11 +2233,6 @@ cosmiconfig@^5.0.0:
     is-directory "^0.3.1"
     js-yaml "^3.13.0"
     parse-json "^4.0.0"
-
-country-list@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/country-list/-/country-list-2.1.0.tgz#0c0c26183e30743a620e5a01edd905a1777b0094"
-  integrity sha512-RHyEQyui0SHKFFtK342rN1YE9vNRH6ZYgm8aG3rUUHQW6BmcFCkQln0YUILPyBtdBxocxYAfElm4nXk3KOG8vg==
 
 create-ecdh@^4.0.0:
   version "4.0.3"

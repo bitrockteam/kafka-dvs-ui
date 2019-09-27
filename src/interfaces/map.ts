@@ -23,7 +23,3 @@ export interface RSVPEvent {
   timestamp: number;
   user: User;
 }
-
-export interface KGSMessage {
-  data: RSVPEvent;
-}

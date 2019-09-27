@@ -13,7 +13,7 @@
         </g>
       </svg>
     </i>
-  </router-link>  
+  </router-link>
 </template>
 
 <script lang="ts">
@@ -25,4 +25,4 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss" scoped src="@/styles/components/icon.scss">
+<style lang="scss" scoped src="@/styles/components/icon.scss" />

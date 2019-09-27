@@ -2,7 +2,7 @@
   <div
     id="map"
     ref="map"
-    v-bind:class="{ maximized: maximized, 'mapboxgl-map': true }"
+    class="mapboxgl-map"
   >
     <slot></slot>
   </div>
@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
-import { State, Getter } from 'vuex-class';
+import { State } from 'vuex-class';
 import mapboxgl, { Marker, Popup, Map } from 'mapbox-gl';
 import { webSocket } from 'rxjs/webSocket';
 import { map } from 'rxjs/operators';
@@ -24,7 +24,6 @@ import WorldControl from '@/mapbox-controls/world-control';
 })
 export default class extends Vue {
   @State private paused!: boolean;
-  @Getter private maximized!: number;
 
   private map: any|Map = undefined;
   private flightsMarkers: { id: String, marker: Marker }[] = [];
@@ -37,11 +36,6 @@ export default class extends Vue {
     val ?
       this.unsubscribe() :
       this.listen(streamWS(this.socketURL));
-  }
-
-  @Watch('maximized')
-  private toggleMaximizedMap(val: boolean) {
-    setTimeout(() => this.map.resize(), 50);
   }
 
   private mounted() {
@@ -66,7 +60,7 @@ export default class extends Vue {
     this.map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/bitrock/cjv7xe7yc0lh51fqkpe2nm44b',
-      center: [6, 49],
+      center: [10, 45],
       zoom: 3.3,
       minZoom: 0.4,
       maxZoom: 12,

@@ -3,11 +3,8 @@
 // MAP
 #map {
   	width: 100%;
-	height:60%;
+	height:100%;
 
-  &.maximized {
-    height: 90%;
-  }
   .mapboxgl-canvas {
 		outline: none;
 	}

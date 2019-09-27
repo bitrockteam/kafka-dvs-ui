@@ -1,39 +1,41 @@
 @import '../styles.scss';
-.dash-rsvp {
-    height: 10%;
-    position: relative;
+.footer-stats {
+    position: absolute;
+    width: 100%;
+    height: 250px;
+    bottom: -250px;
     border-top: 1px solid rgba(0, 0, 0, 0.17);
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 10;
+    transition: all 1s;
+
     .toggle-button {
         width: 40px;
         height: 30px;
         position: absolute;
         top: -30px;
         left: calc(50% - 20px);
-        background: $general-color;
+        background-color: rgba(255, 255, 255, 0.8);
         outline: none;
         padding: 0;
         transform: rotate(180deg);
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-        border-bottom-left-radius: 4px;
-        border-bottom-right-radius: 4px;
+        border-radius: 0 0 4px 4px;
         border-bottom: 1px solid rgba(0, 0, 0, 0.17);
         border-top: none;
         border-left: 1px solid rgba(0, 0, 0, 0.17);
         border-right: 1px solid rgba(0, 0, 0, 0.17);
         cursor: pointer;
     }
+
     .copyright {
         position: absolute;
         left: 15px;
         top: -35px;
         font-size: 10px;
         color: $primary-text-color;
-        opacity: 1;
-        animation: cssAnimation 0s 3s forwards;
         opacity: 0;
         a {
-            font-weight: 550;
+            font-weight: 500;
             color: #fb8f2d;
         }
         @media #{$small-devices} {
@@ -41,21 +43,14 @@
             font-size: 9px;
         }
     }
-    @keyframes cssAnimation {
-        to {
-            opacity: 1;
-        }
-    }
-    &.maximized {
-        height: 40%;
-        position: absolute;
-        width: 100%;
+
+    &.slide-in {
+        bottom: 0;
+        transition: all 1s;
+
         .toggle-button {
             transform: rotate(0deg);
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
+            border-radius: 4px 4px 0 0;
             border-top: 1px solid rgba(0, 0, 0, 0.17);
             border-bottom: none;
             border-left: 1px solid rgba(0, 0, 0, 0.17);
@@ -66,35 +61,4 @@
             }
         }
     }
-}
-
-.grid-system {
-    padding: 30px 16px 0 16px;
-    display: flex;
-    height: 100%;
-    @media #{$large-devices} {
-        padding: 30px 16px 30px 16px;
-    }
-}
-
-.develop-ksql {
-    display: flex;
-    padding: 30px 0px;
-    @media #{$large-devices} {
-        padding: 30px 16px 30px 16px;
-    }
-    @media #{$medium-devices} {
-        padding: 30px 16px 30px 16px;
-        display: block;
-    }
-}
-
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity .5s;
-}
-
-.fade-enter,
-.fade-leave-to {
-    opacity: 0;
 }

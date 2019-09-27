@@ -1,11 +1,11 @@
  @import '../styles.scss';
 
-.icon { 
+.icon {
     display: inline-flex;
     align-items: center;
     align-self: center;
-    fill: $primary-color;  
- 
+    fill: $primary-color;
+
     &:hover {
         fill: $primary-color-hover;
     }
@@ -17,14 +17,5 @@
 .icon-play,
 .icon-pause {
     fill: $general-color;
-}
-
-.icon-chart,
-.icon-list {
-    fill: currentColor;
-}
-
-.icon-subject {
-    fill: currentColor;
 }
 
