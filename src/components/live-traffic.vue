@@ -4,11 +4,11 @@
     <div class="traffic-info" v-if="!loading">
       <div class="info">
         <div class="label">Total Flights</div>
-        <div class="value">{{ CountAirline }}</div>
+        <div class="value">{{ CountFlightStatus }}</div>
       </div>
       <div class="info">
         <div class="label">Total Airlines</div>
-        <div class="value">{{ CountFlightStatus }}</div>
+        <div class="value">{{ CountAirline }}</div>
       </div>
       <div class="info">
         <div class="label">Higher Flight Speed</div>
