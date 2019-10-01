@@ -1,10 +1,8 @@
 <template>
-  <div>
+  <div class="dashboard">
     <button-pause />
-    <div class="dashboard">
-      <world-map />
-      <footer-stats />
-    </div>
+    <world-map />
+    <footer-stats />
   </div>
 </template>
 
