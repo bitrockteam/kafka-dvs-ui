@@ -184,7 +184,7 @@ pipeline {
             }
             steps {
 		build job: 'kafka-flightstream-cd/master', 
-                parameters: [[$class: 'StringParameterValue', name: 'deployment', value: "${GITHUB_REPO}@${tagAfter}"]],
+                parameters: [[$class: 'StringParameterValue', name: 'deployment', value: "${GITHUB_REPO}@${TAG}-${BUILD_NUMBER}"]],
                 wait: false
 	    }
     }
