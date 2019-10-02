@@ -4,7 +4,7 @@
     <div class="traffic-info" v-if="!loading">
       <div class="info">
         <div class="label">Total Flights</div>
-        <div class="value">{{ CountFlightStatus }}</div>
+        <div class="value">{{ CountFlight }}</div>
       </div>
       <div class="info">
         <div class="label">Total Airlines</div>
@@ -36,7 +36,7 @@ import LoadingPlaceholderStat from '@/components/loading-placeholder-stat.vue';
 export default class extends DashboardWidget {
   @Getter private maxSpeed!: number;
   private CountAirline: number = 0;
-  private CountFlightStatus: number = 0;
+  private CountFlight: number = 0;
   private loading: boolean = true;
 
   private listen(url: string) {
@@ -49,8 +49,8 @@ export default class extends DashboardWidget {
         case 'CountAirline':
           this.CountAirline = eventCount;
           break;
-        case 'CountFlightStatus':
-          this.CountFlightStatus = eventCount;
+        case 'CountFlight':
+          this.CountFlight = eventCount;
           break;
         default:
           return;
