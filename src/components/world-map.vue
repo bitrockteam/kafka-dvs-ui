@@ -137,19 +137,20 @@ export default class extends Vue {
     return marker;
   }
 
-  private updateMarker(marker: any, event: Flight): Marker {
+  private updateMarker(marker: any, event: Flight) {
     const { geography: { latitude, longitude, direction }, icaoNumber, updated } = event;
+    // TODO check se longitude o latitude sono cambiate
     marker.setLngLat([longitude, latitude]);
+    // TODO capire se va aggiornato anche il popup (mi sa di sì)
     const markerIcon = marker._element.firstElementChild;
     markerIcon.style.transform = `rotate(${direction - 90}deg)`;
     const flightIndex = this.flightsMarkers.findIndex((flightMarker) => flightMarker.id === icaoNumber);
     this.flightsMarkers[flightIndex].updated = updated;
-    return marker;
   }
 
   private deleteMarker(flightUpdate: any) {
     flightUpdate.marker.remove();
-    this.flightsMarkers.filter((flightMarker) => flightMarker.id === flightUpdate.id);
+    this.flightsMarkers = this.flightsMarkers.filter((flightMarker) => flightMarker.id === flightUpdate.id);
   }
 
   private manageFlight(event: Flight) {

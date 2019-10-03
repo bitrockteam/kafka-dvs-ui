@@ -12,7 +12,7 @@ export interface Flight {
 }
 
 export interface FlightList {
-  elements: [Flight]
+  elements: [Flight];
 }
 
 interface GeographyInfo {
