@@ -2,13 +2,17 @@ export interface Flight {
   iataNumber: string;
   icaoNumber: string;
   speed: number;
+  updated: string;
   geography: GeographyInfo;
   status: string;
-  updated: string;
   airportDeparture: AirportInfo ;
   airportArrival: AirportInfo;
   airline: AirlineInfo;
   airplane?: AirplaneInfo;
+}
+
+export interface FlightList {
+  elements: [Flight]
 }
 
 interface GeographyInfo {
@@ -23,6 +27,8 @@ interface AirportInfo {
   nameAirport: string;
   nameCountry: string;
   codeIso2Country: string;
+  gmt: string;
+  timezone: string;
 }
 
 interface AirplaneInfo {

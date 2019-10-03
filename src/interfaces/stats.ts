@@ -5,11 +5,6 @@ export interface StatData {
   format?: string;
 }
 
-export interface CountFlightStatus {
-  flightStatus: string;
-  eventCount: number;
-}
-
 export interface CountAirline {
   eventCount: number;
 }
