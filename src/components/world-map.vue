@@ -16,7 +16,7 @@ import { webSocket } from 'rxjs/webSocket';
 import { map } from 'rxjs/operators';
 import { streamWS } from '@/libs/endpoints';
 import { customMarker, setToken, customBounds } from '@/libs/map';
-import { Flight } from '@/interfaces/flight';
+import { Flight, FlightList } from '@/interfaces/flight';
 import WorldControl from '@/mapbox-controls/world-control';
 
 @Component({
@@ -26,9 +26,10 @@ export default class extends Vue {
   @State private paused!: boolean;
 
   private map: any|Map = undefined;
-  private flightsMarkers: Array<{ id: string, marker: Marker }> = [];
+  private flightsMarkers: Array<{ id: string, updated: string, marker: Marker }> = [];
   private socket: any = null;
-  private socketURL: string = 'flights';
+  // private socketURL: string = 'flights';
+  private socketURL: string = 'flight-list';
   private mapToken: string =
           'pk.eyJ1IjoiYml0cm9jayIsImEiOiJjanJrdWVvZWYwMXA2NGF0a2R6ajJjdXRpIn0.Ldc2OgW7lv_16VufwApmuA';
 
@@ -62,7 +63,7 @@ export default class extends Vue {
       container: 'map',
       style: 'mapbox://styles/bitrock/cjv7xe7yc0lh51fqkpe2nm44b',
       center: [10, 45],
-      zoom: 3.3,
+      zoom: 5,
       minZoom: 0.4,
       maxZoom: 12,
       maxBounds: customBounds,
@@ -77,6 +78,7 @@ export default class extends Vue {
       icaoNumber,
       iataNumber,
       speed,
+      updated,
       airline: { nameAirline = '' } = {},
       airplane: { productionLine = '' } = {},
       airportArrival,
@@ -90,9 +92,15 @@ export default class extends Vue {
         <span>${nameAirline}</span>
       </div>
       <div class="flight-airport">
-        <b>${airportDeparture.codeAirport}</b>
+        <div class="airport">
+          <b>${airportDeparture.codeAirport}</b>
+          <div>${airportDeparture.timezone} <br> GMT ( +${airportDeparture.gmt}:00 )</div>
+        </div>
         <span></span>
-        <b>${airportArrival.codeAirport}</b>
+        <div class="airport">
+          <b>${airportArrival.codeAirport}</b>
+          <div>${airportArrival.timezone} <br> GMT ( +${airportArrival.gmt}:00 )</div>
+        </div>
       </div>
       <div class="flight-detail">
        <div class="detail-box-big">
@@ -125,18 +133,23 @@ export default class extends Vue {
       .setLngLat([longitude, latitude])
       .setPopup(popup)
       .addTo(this.map);
-    this.flightsMarkers.push({id: icaoNumber, marker });
+    this.flightsMarkers.push({id: icaoNumber, updated, marker });
     return marker;
   }
 
   private updateMarker(marker: any, event: Flight): Marker {
-    const { geography: { latitude, longitude, direction } } = event;
-    marker
-      .setLngLat([longitude, latitude])
-      .addTo(this.map);
+    const { geography: { latitude, longitude, direction }, icaoNumber, updated } = event;
+    marker.setLngLat([longitude, latitude]);
     const markerIcon = marker._element.firstElementChild;
     markerIcon.style.transform = `rotate(${direction - 90}deg)`;
+    const flightIndex = this.flightsMarkers.findIndex((flightMarker) => flightMarker.id === icaoNumber);
+    this.flightsMarkers[flightIndex].updated = updated;
     return marker;
+  }
+
+  private deleteMarker(flightUpdate: any) {
+    flightUpdate.marker.remove();
+    this.flightsMarkers.filter((flightMarker) => flightMarker.id === flightUpdate.id);
   }
 
   private manageFlight(event: Flight) {
@@ -148,11 +161,28 @@ export default class extends Vue {
     }
   }
 
+  private manageFlightList(event: FlightList) {
+    const { elements } = event;
+    elements.forEach((flight: Flight) => {
+      const flightUpdate = this.flightsMarkers.find((flightMarker) => flightMarker.id === flight.icaoNumber);
+      if (flightUpdate) {
+        if (flight.geography.altitude === 0) {
+          this.deleteMarker(flightUpdate);
+        } else if (flightUpdate.updated !== flight.updated) {
+          this.updateMarker(flightUpdate.marker, flight);
+        }
+      } else if (flight.geography.altitude !== 0) {
+        this.createMarker(flight);
+      }
+    });
+  }
+
   private listen(url: string) {
     this.socket = webSocket(url);
 
     this.socket.pipe(
-      map(this.manageFlight),
+      map(this.manageFlightList),
+      // map(this.manageFlight),
     ).subscribe();
   }
 

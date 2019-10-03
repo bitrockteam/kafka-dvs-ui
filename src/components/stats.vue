@@ -40,7 +40,7 @@ export default class extends DashboardWidget {
 
       switch (eventType) {
         case 'TopDepartureAirportList':
-          this.originAirport = event.eventPayload.elements.forEach((airport: Airport): StatData => ({
+          this.originAirport = event.eventPayload.elements.map((airport: Airport): StatData => ({
             name: airport.airportCode,
             count: airport.eventCount,
             percent: (100 * airport.eventCount) / event.eventPayload.elements[0].eventCount,

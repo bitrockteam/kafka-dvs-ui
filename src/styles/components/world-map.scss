@@ -72,10 +72,22 @@
 			justify-content: space-between;
 			border-top: 1px solid lightgray;
 
-			b {
+			.airport {
 				padding: 20px;
-				font-size: 24px;
-				color: $primary-text-color;
+				font-size: 9px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+
+				div {
+					line-height: 10px;
+					margin-top: 10px;
+				}
+
+				b {
+					font-size: 24px;
+					color: $primary-text-color;
+				}
 			}
 
 			span {
