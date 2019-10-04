@@ -65,7 +65,7 @@ export default class extends DashboardWidget {
           this.setMaxSpeed(maxSpeed);
           this.fastestFlights = event.eventPayload.elements.map((speed: SpeedFlight): StatData => ({
             name: speed.flightCode,
-            count: speed.speed,
+            count: speed.speed.toFixed(0),
             percent: (100 * speed.speed) / maxSpeed,
             format: ' km/h',
           }));

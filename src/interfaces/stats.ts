@@ -1,6 +1,6 @@
 export interface StatData {
   name?: string;
-  count: number;
+  count: number|string;
   percent: number;
   format?: string;
 }

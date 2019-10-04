@@ -4,15 +4,15 @@
     <div class="traffic-info" v-if="!loading">
       <div class="info">
         <div class="label">Total Flights</div>
-        <div class="value">{{ CountFlight }}</div>
+        <div class="value">{{ CountFlight || '-' }}</div>
       </div>
       <div class="info">
         <div class="label">Total Airlines</div>
-        <div class="value">{{ CountAirline }}</div>
+        <div class="value">{{ CountAirline || '-' }}</div>
       </div>
       <div class="info">
         <div class="label">Higher Flight Speed</div>
-        <div class="value">{{ maxSpeed }} km/h</div>
+        <div class="value">{{ maxSpeed.toFixed(0) }} km/h</div>
       </div>
     </div>
     <loading-placeholder-stat v-else />
