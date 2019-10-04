@@ -26,7 +26,7 @@ export default class extends Vue {
   @State private paused!: boolean;
 
   private map: any|Map = undefined;
-  private flightsMarkers: Array<{ id: string, updated: string, marker: Marker }> = [];
+  private flightsMarkers: { [icaoNumber: string]: {updated: string, marker: Marker}} = {};
   private socket: any = null;
   // private socketURL: string = 'flights';
   private socketURL: string = 'flight-list';
@@ -133,7 +133,7 @@ export default class extends Vue {
       .setLngLat([longitude, latitude])
       .setPopup(popup)
       .addTo(this.map);
-    this.flightsMarkers.push({id: icaoNumber, updated, marker });
+    this.flightsMarkers[icaoNumber] = { updated, marker };
     return marker;
   }
 
@@ -144,17 +144,16 @@ export default class extends Vue {
     // TODO capire se va aggiornato anche il popup (mi sa di sì)
     const markerIcon = marker._element.firstElementChild;
     markerIcon.style.transform = `rotate(${direction - 90}deg)`;
-    const flightIndex = this.flightsMarkers.findIndex((flightMarker) => flightMarker.id === icaoNumber);
-    this.flightsMarkers[flightIndex].updated = updated;
+    this.flightsMarkers[icaoNumber].updated = updated;
   }
 
-  private deleteMarker(flightUpdate: any) {
+  private deleteMarker(icaoNumber: string, flightUpdate: any) {
     flightUpdate.marker.remove();
-    this.flightsMarkers = this.flightsMarkers.filter((flightMarker) => flightMarker.id === flightUpdate.id);
+    delete this.flightsMarkers[icaoNumber];
   }
 
   private manageFlight(event: Flight) {
-    const flightUpdate = this.flightsMarkers.find((flight) => flight.id === event.icaoNumber);
+    const flightUpdate = this.flightsMarkers[event.icaoNumber];
     if (flightUpdate) {
       this.updateMarker(flightUpdate.marker, event);
     } else {
@@ -165,10 +164,10 @@ export default class extends Vue {
   private manageFlightList(event: FlightList) {
     const { elements } = event;
     elements.forEach((flight: Flight) => {
-      const flightUpdate = this.flightsMarkers.find((flightMarker) => flightMarker.id === flight.icaoNumber);
+      const flightUpdate = this.flightsMarkers[flight.icaoNumber];
       if (flightUpdate) {
         if (flight.geography.altitude === 0) {
-          this.deleteMarker(flightUpdate);
+          this.deleteMarker(flight.icaoNumber, flightUpdate);
         } else if (flightUpdate.updated !== flight.updated) {
           this.updateMarker(flightUpdate.marker, flight);
         }
