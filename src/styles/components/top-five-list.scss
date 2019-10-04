@@ -1,15 +1,11 @@
 @import '../styles.scss';
-
 .top-five-list {
     width: 250px;
     padding: 10px;
-
     .title-section {
         color: $primary-text-color;
     }
-
     .label {
         font-size: 12px;
     }
 }
-
