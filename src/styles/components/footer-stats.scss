@@ -5,17 +5,16 @@
     height: 250px;
     bottom: -250px;
     border-top: 1px solid rgba(0, 0, 0, 0.17);
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.9);
     z-index: 10;
     transition: all 1s;
-
     .toggle-button {
         width: 40px;
         height: 30px;
         position: absolute;
         top: -30px;
         left: calc(50% - 20px);
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: rgba(255, 255, 255, 1);
         outline: none;
         padding: 0;
         transform: rotate(180deg);
@@ -26,14 +25,13 @@
         border-right: 1px solid rgba(0, 0, 0, 0.17);
         cursor: pointer;
     }
-
     .copyright {
         position: absolute;
         left: 15px;
         top: -35px;
         font-size: 10px;
         color: $primary-text-color;
-        opacity: 0;
+        opacity: 1;
         a {
             font-weight: 500;
             color: #fb8f2d;
@@ -43,11 +41,9 @@
             font-size: 9px;
         }
     }
-
     &.slide-in {
         bottom: 0;
         transition: all 1s;
-
         .toggle-button {
             transform: rotate(0deg);
             border-radius: 4px 4px 0 0;

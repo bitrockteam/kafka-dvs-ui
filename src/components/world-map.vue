@@ -69,7 +69,7 @@ export default class extends Vue {
       maxBounds: customBounds,
     });
 
-    this.map.addControl(new WorldControl(), 'bottom-right');
+    this.map.addControl(new WorldControl(), 'top-right');
   }
 
   private createMarker(event: Flight): Marker {
