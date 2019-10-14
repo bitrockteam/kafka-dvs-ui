@@ -169,16 +169,10 @@ export default class extends Vue {
   }
 
   private manageFlightList(event: FlightList) {
+    Object.entries(this.flightsMarkers).forEach(([icaoNumber, flight]) => this.deleteMarker(icaoNumber, flight));
     const { elements } = event;
     elements.forEach((flight: Flight) => {
-      const flightUpdate = this.flightsMarkers[flight.icaoNumber];
-      if (flightUpdate) {
-        if (flight.geography.altitude === 0) {
-          this.deleteMarker(flight.icaoNumber, flightUpdate);
-        } else if (flightUpdate.updated !== flight.updated) {
-          this.updateMarker(flightUpdate.marker, flight);
-        }
-      } else if (flight.geography.altitude !== 0) {
+      if (flight.geography.altitude !== 0) {
         this.createMarker(flight);
       }
     });
