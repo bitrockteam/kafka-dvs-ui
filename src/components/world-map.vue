@@ -1,43 +1,39 @@
 <template>
-  <div
-    id="map"
-    ref="map"
-    class="mapboxgl-map"
-  >
+  <div id="map" ref="map" class="mapboxgl-map">
     <slot></slot>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import { State } from 'vuex-class';
-import mapboxgl, { Marker, Popup, Map } from 'mapbox-gl';
-import { webSocket } from 'rxjs/webSocket';
-import { map } from 'rxjs/operators';
-import { streamWS } from '@/libs/endpoints';
-import { customMarker, setToken, customBounds } from '@/libs/map';
-import { Flight, FlightList } from '@/interfaces/flight';
-import WorldControl from '@/mapbox-controls/world-control';
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { State } from "vuex-class";
+import mapboxgl, { Marker, Popup, Map } from "mapbox-gl";
+import { webSocket } from "rxjs/webSocket";
+import { map } from "rxjs/operators";
+import { streamWS } from "@/libs/endpoints";
+import { customMarker, setToken, customBounds } from "@/libs/map";
+import { Flight, FlightList } from "@/interfaces/flight";
+import WorldControl from "@/mapbox-controls/world-control";
 
 @Component({
-  name: 'world-map',
+  name: "world-map"
 })
 export default class extends Vue {
   @State private paused!: boolean;
 
-  private map: any|Map = undefined;
-  private flightsMarkers: { [icaoNumber: string]: {updated: string, marker: Marker}} = {};
+  private map: any | Map = undefined;
+  private flightsMarkers: {
+    [icaoNumber: string]: { updated: string; marker: Marker };
+  } = {};
   private socket: any = null;
   // private socketURL: string = 'flights';
-  private socketURL: string = 'flight-list';
+  private socketURL: string = "flight-list";
   private mapToken: string =
-          'pk.eyJ1IjoiYml0cm9jayIsImEiOiJjanJrdWVvZWYwMXA2NGF0a2R6ajJjdXRpIn0.Ldc2OgW7lv_16VufwApmuA';
+    "pk.eyJ1IjoiYml0cm9jayIsImEiOiJjanJrdWVvZWYwMXA2NGF0a2R6ajJjdXRpIn0.Ldc2OgW7lv_16VufwApmuA";
 
-  @Watch('paused')
+  @Watch("paused")
   private togglePause(val: boolean) {
-    val ?
-      this.unsubscribe() :
-      this.listen(streamWS(this.socketURL));
+    val ? this.unsubscribe() : this.listen(streamWS(this.socketURL));
   }
 
   private mounted() {
@@ -60,16 +56,18 @@ export default class extends Vue {
     setToken(this.mapToken);
 
     this.map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/bitrock/cjv7xe7yc0lh51fqkpe2nm44b',
+      container: "map",
+      style: "mapbox://styles/bitrock/cjv7xe7yc0lh51fqkpe2nm44b",
       center: [10, 45],
       zoom: 5,
       minZoom: 0.4,
       maxZoom: 12,
-      maxBounds: customBounds,
+      maxBounds: customBounds
     });
 
-    this.map.addControl(new WorldControl(), 'top-right');
+    this.map.addControl(new WorldControl(), "top-right");
+
+    this.map.on('moveend', this.sendBoundingBox);
   }
 
   private createMarker(event: Flight): Marker {
@@ -79,27 +77,32 @@ export default class extends Vue {
       iataNumber,
       speed,
       updated,
-      airline: { nameAirline = '' } = {},
-      airplane: { productionLine = '' } = {},
+      airline: { nameAirline = "" } = {},
+      airplane: { productionLine = "" } = {},
       airportArrival,
-      airportDeparture,
+      airportDeparture
     } = event;
     const marker: Marker = new mapboxgl.Marker(customMarker(direction));
     const popup: Popup = new mapboxgl.Popup().setHTML(`
     <div class="custom-popup">
       <div class="flight-ids-info">
-        <div class="ids"><b>${icaoNumber}</b>${iataNumber && `/${iataNumber}`}</div>
+        <div class="ids"><b>${icaoNumber}</b>${iataNumber &&
+      `/${iataNumber}`}</div>
         <span>${nameAirline}</span>
       </div>
       <div class="flight-airport">
         <div class="airport">
           <b>${airportDeparture.codeAirport}</b>
-          <div>${airportDeparture.timezone} <br> GMT ( +${airportDeparture.gmt}:00 )</div>
+          <div>${airportDeparture.timezone} <br> GMT ( +${
+      airportDeparture.gmt
+    }:00 )</div>
         </div>
         <span></span>
         <div class="airport">
           <b>${airportArrival.codeAirport}</b>
-          <div>${airportArrival.timezone} <br> GMT ( +${airportArrival.gmt}:00 )</div>
+          <div>${airportArrival.timezone} <br> GMT ( +${
+      airportArrival.gmt
+    }:00 )</div>
         </div>
       </div>
       <div class="flight-detail">
@@ -138,7 +141,11 @@ export default class extends Vue {
   }
 
   private updateMarker(marker: any, event: Flight) {
-    const { geography: { latitude, longitude, direction }, icaoNumber, updated } = event;
+    const {
+      geography: { latitude, longitude, direction },
+      icaoNumber,
+      updated
+    } = event;
     // TODO check se longitude o latitude sono cambiate
     marker.setLngLat([longitude, latitude]);
     // TODO capire se va aggiornato anche il popup (mi sa di sì)
@@ -180,12 +187,23 @@ export default class extends Vue {
   private listen(url: string) {
     this.socket = webSocket(url);
 
-    this.socket.pipe(
-      map(this.manageFlightList),
-      // map(this.manageFlight),
-    ).subscribe();
+    this.socket
+      .pipe(
+        map(this.manageFlightList)
+        // map(this.manageFlight),
+      )
+      .subscribe();
   }
 
+  private sendBoundingBox() {
+    const bounds = this.map.getBounds();
+    this.socket.next({
+      leftHighLat: bounds.getNorth(),
+      leftHighLon: bounds.getWest(),
+      rightLowLat: bounds.getSouth(),
+      rightLowLon: bounds.getEast(),
+    });
+  }
 }
 </script>
 
