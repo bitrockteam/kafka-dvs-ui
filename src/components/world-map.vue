@@ -180,6 +180,7 @@ export default class extends Vue {
 
   private listen(url: string) {
     this.socket = webSocket(url);
+    this.sendBoundingBox();
 
     this.socket
       .pipe(
