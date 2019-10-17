@@ -29,7 +29,7 @@ export default class extends Vue {
   // private socketURL: string = 'flights';
   private socketURL: string = "flight-list";
   private mapToken: string =
-    "pk.eyJ1IjoiYml0cm9jayIsImEiOiJjanJrdWVvZWYwMXA2NGF0a2R6ajJjdXRpIn0.Ldc2OgW7lv_16VufwApmuA";
+    "pk.eyJ1IjoibWFwYm94Yml0cm9jayIsImEiOiJjazFjNzk4eTQwOWNnM2hyeWxwdWZ3azM1In0.3MBAlwbpNpBFnmMHdKppOg";
 
   @Watch("paused")
   private togglePause(val: boolean) {
@@ -57,7 +57,7 @@ export default class extends Vue {
 
     this.map = new mapboxgl.Map({
       container: "map",
-      style: "mapbox://styles/bitrock/cjv7xe7yc0lh51fqkpe2nm44b",
+      style: "mapbox://styles/mapboxbitrock/ck1uemr9300i81cmwnc26ddks",
       center: [10, 45],
       zoom: 5,
       minZoom: 0.4,
