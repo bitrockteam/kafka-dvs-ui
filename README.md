@@ -3,7 +3,7 @@
 ![https://david-dm.org/bitrockteam/kafka-geostream-ui.svg](https://david-dm.org/bitrockteam/kafka-geostream-ui.svg)
 
 
-[PWA](https://developers.google.com/web/progressive-web-apps/) built in [Vue.js](https://vuejs.org/) for the [K·FlightStream project](https://github.com/search?q=topic%3Akafka-geostream+org%3Abitrockteam&type=Repositories). It's a realtime dashboard that visualize activities on the Meetup platform, the data is processed through a backend developed in Scala with Kafka Streams & KSQL.
+[PWA](https://developers.google.com/web/progressive-web-apps/) built in [Vue.js](https://vuejs.org/) for the [K·FlightStream project](https://github.com/search?q=topic%3Akafka-geostream+org%3Abitrockteam&type=Repositories). It's a realtime dashboard that visualize the flights activities. The data is processed through a backend developed in Scala with Kafka Streams & KSQL.
 
 [https://geostream.bitrock.it](https://geostream.bitrock.it)
 
