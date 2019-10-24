@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="7fbddfc0-3250-4d6d-b2d2-f1683c48b1b3" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/src/components/world-map.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/world-map.vue" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="$PROJECT_DIR$/.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectId" id="1RHhv9qjPVOfoQW59R9pMq1o4pM" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/styles/components" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="nodejs_package_manager_path" value="yarn" />
+    <property name="prettierjs.PrettierConfiguration.Package" value="$PROJECT_DIR$/node_modules/prettier" />
+    <property name="settings.editor.selected.configurable" value="watcher.settings" />
+    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/styles/components" />
+      <recent name="$PROJECT_DIR$/src/libs" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="test" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="test" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.test" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7fbddfc0-3250-4d6d-b2d2-f1683c48b1b3" name="Default Changelist" comment="" />
+      <created>1569330156144</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1569330156144</updated>
+      <workItem from="1569330157226" duration="633000" />
+      <workItem from="1569331038441" duration="1278000" />
+      <workItem from="1569487318445" duration="20239000" />
+      <workItem from="1569526207059" duration="6333000" />
+      <workItem from="1569569167839" duration="7352000" />
+      <workItem from="1569579919309" duration="4095000" />
+      <workItem from="1569831281731" duration="291000" />
+      <workItem from="1569909335971" duration="631000" />
+      <workItem from="1570089708199" duration="14191000" />
+      <workItem from="1570192607872" duration="739000" />
+      <workItem from="1570431757043" duration="7000" />
+      <workItem from="1570717905573" duration="379000" />
+      <workItem from="1571905651267" duration="109000" />
+      <workItem from="1571905884618" duration="522000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/components/library.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/libs/utils.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/libs/decorators.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/libs/amber-element.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/types/events.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/types/styles.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/types/md.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/index.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/elements.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@vue/cli-plugin-unit-mocha/generator/template/tests/unit/example.spec.js" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/components/banner/index.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/components/modal/index.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/components/button/index.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/components/code/index.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/components/date/index.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/components/progress-bar/parts.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/components/progress-bar/index.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/components/progress/maths.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/components/progress/index.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/components/card/parts.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/components/card/index.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/components/tabs/tab-content.d.ts" />
+        <option value="$PROJECT_DIR$/node_modules/@amber-ds/components/src/components/tabs/index.d.ts" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
