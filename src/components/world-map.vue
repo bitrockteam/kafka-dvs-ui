@@ -29,7 +29,7 @@ export default class extends Vue {
   // private socketURL: string = 'flights';
   private socketURL: string = 'flight-list';
   private mapToken: string =
-    'pk.eyJ1IjoiYml0cm9jayIsImEiOiJjanJrdWVvZWYwMXA2NGF0a2R6ajJjdXRpIn0.Ldc2OgW7lv_16VufwApmuA';
+    'pk.eyJ1IjoibWFwYm94Yml0cm9jayIsImEiOiJjazFjNzk4eTQwOWNnM2hyeWxwdWZ3azM1In0.3MBAlwbpNpBFnmMHdKppOg';
 
   @Watch('paused')
   private togglePause(val: boolean) {
@@ -57,7 +57,7 @@ export default class extends Vue {
 
     this.map = new mapboxgl.Map({
       container: 'map',
-      style: 'mapbox://styles/bitrock/cjv7xe7yc0lh51fqkpe2nm44b',
+      style: 'mapbox://styles/mapboxbitrock/ck1uemr9300i81cmwnc26ddks',
       center: [10, 45],
       zoom: 5,
       minZoom: 0.4,
@@ -66,43 +66,36 @@ export default class extends Vue {
     });
 
     this.map.addControl(new WorldControl(), 'top-right');
-
+    this.map.dragRotate.disable();
     this.map.on('moveend', this.sendBoundingBox);
   }
 
-  private createMarker(event: Flight): Marker {
+  private createPopup(flight: Flight): string {
     const {
-      geography: { latitude, longitude, direction, altitude },
+      geography: { latitude, longitude, altitude },
       icaoNumber,
       iataNumber,
       speed,
-      updated,
       airline: { nameAirline = '' } = {},
       airplane: { productionLine = '' } = {},
       airportArrival,
       airportDeparture,
-    } = event;
-    const marker: Marker = new mapboxgl.Marker(customMarker(direction));
-    const popup: Popup = new mapboxgl.Popup().setHTML(`
+    } = flight;
+    return (`
     <div class='custom-popup'>
       <div class='flight-ids-info'>
-        <div class='ids'><b>${icaoNumber}</b>${iataNumber &&
-      `/${iataNumber}`}</div>
+        <div class='ids'><b>${icaoNumber}</b>${iataNumber && `/${iataNumber}`}</div>
         <span>${nameAirline}</span>
       </div>
       <div class='flight-airport'>
         <div class='airport'>
           <b>${airportDeparture.codeAirport}</b>
-          <div>${airportDeparture.timezone} <br> GMT ( +${
-      airportDeparture.gmt
-    }:00 )</div>
+          <div>${airportDeparture.timezone} <br> GMT ( +${airportDeparture.gmt}:00 )</div>
         </div>
         <span></span>
         <div class='airport'>
           <b>${airportArrival.codeAirport}</b>
-          <div>${airportArrival.timezone} <br> GMT ( +${
-      airportArrival.gmt
-    }:00 )</div>
+          <div>${airportArrival.timezone} <br> GMT ( +${airportArrival.gmt}:00 )</div>
         </div>
       </div>
       <div class='flight-detail'>
@@ -132,6 +125,16 @@ export default class extends Vue {
       </div>
     </div>
     `);
+  }
+
+  private createMarker(event: Flight): Marker {
+    const {
+      geography: { latitude, longitude, direction },
+      icaoNumber,
+      updated,
+    } = event;
+    const marker: Marker = new mapboxgl.Marker(customMarker(direction));
+    const popup: Popup = new mapboxgl.Popup().setHTML(this.createPopup(event));
     marker
       .setLngLat([longitude, latitude])
       .setPopup(popup)
@@ -146,11 +149,17 @@ export default class extends Vue {
       icaoNumber,
       updated,
     } = event;
-    // TODO check se longitude o latitude sono cambiate
-    marker.setLngLat([longitude, latitude]);
-    // TODO capire se va aggiornato anche il popup (mi sa di sì)
+    // Update lng and lat only if really change
+    const { lat, lng } = marker.getLngLat();
+    if (latitude !== lat || longitude !== lng) {
+      marker.setLngLat([longitude, latitude]);
+    }
+    // Change direction
     const markerIcon = marker._element.firstElementChild;
     markerIcon.style.transform = `rotate(${direction - 90}deg)`;
+    // Update Popup
+    const popup = marker.getPopup();
+    popup.setHTML(this.createPopup(event));
     this.flightsMarkers[icaoNumber].updated = updated;
   }
 
@@ -169,14 +178,24 @@ export default class extends Vue {
   }
 
   private manageFlightList(event: FlightList) {
-    Object.entries(this.flightsMarkers).forEach(([icaoNumber, flight]) => this.deleteMarker(icaoNumber, flight));
     const { elements } = event;
-    elements.forEach((flight: Flight) => {
-      if (flight.geography.altitude !== 0) {
-        this.createMarker(flight);
+    elements.forEach((flightUpdate: Flight) => {
+      const oldFlight = this.flightsMarkers[flightUpdate.icaoNumber];
+      if (oldFlight) {
+        // If flight is on 0 altitude delete it
+        if (flightUpdate.geography.altitude === 0) {
+          this.deleteMarker(flightUpdate.icaoNumber, oldFlight);
+          // Update flight only on update change
+        } else if (oldFlight.updated !== flightUpdate.updated) {
+          this.updateMarker(oldFlight.marker, flightUpdate);
+        }
+        // create marker only for flight with altitude
+      } else if (flightUpdate.geography.altitude !== 0) {
+        this.createMarker(flightUpdate);
       }
     });
   }
+
 
   private listen(url: string) {
     this.socket = webSocket(url);
@@ -192,12 +211,23 @@ export default class extends Vue {
 
   private sendBoundingBox() {
     const bounds = this.map.getBounds();
-    this.socket.next({
+    const mapBounds = {
       leftHighLat: bounds.getNorth(),
       leftHighLon: bounds.getWest(),
       rightLowLat: bounds.getSouth(),
       rightLowLon: bounds.getEast(),
+    };
+
+    // Delete flights(marker) out of bounds
+    Object.keys(this.flightsMarkers).forEach((icaoNumber) => {
+      const { lat, lng } = this.flightsMarkers[icaoNumber].marker.getLngLat();
+      if (!(lat > mapBounds.rightLowLat && lat < mapBounds.leftHighLat) ||
+              !(lng > mapBounds.leftHighLon && lng < mapBounds.rightLowLon)) {
+        this.deleteMarker(icaoNumber, this.flightsMarkers[icaoNumber]);
+      }
     });
+
+    this.socket.next(mapBounds);
   }
 }
 </script>

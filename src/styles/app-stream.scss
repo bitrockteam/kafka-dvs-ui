@@ -19,14 +19,14 @@
             display: flex;
             align-items: center;
             flex-direction: column;
-            width: 200px;
-            font-size: 18px;
+            width: 310px;
+            font-size: 16px;
             color: $general-color;
             padding-top: 8px;
             .logo {
                 display: flex;
                 align-items: center;
-                width: 210px;
+                width: 310px;
                 padding-top: 1px;
             }
             .icon-logo {
@@ -40,15 +40,15 @@
                 color: $general-color;
             }
             @media #{$small-devices} {
-                width: 195px;
-                font-size: 18px;
+                width: 300px;
+                font-size: 16px;
             }
             .geo-k {
                 display: inline-block;
                 position: relative;
                 padding: 0 8px;
                 &:before {
-                    content: '';
+                    // content: '';
                     background: $primary-color;
                     width: 6px;
                     height: 6px;
@@ -75,7 +75,7 @@
                 height: 25px;
                 position: relative;
                 top: -15px;
-                left: -10px;
+                left: -60px;
             }
         }
         .navbar-admin {
