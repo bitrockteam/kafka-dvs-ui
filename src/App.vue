@@ -5,8 +5,7 @@
         <div class="logo">
           <span class="icon-logo"><icon-logo /></span>
           <router-link class="link-geo" to="/" >
-            <span class="geo-k">DATA VISUALIZATION</span>
-            <span class="geo-stream">STREAMING</span>
+            <span class="geo-k">DATA VISUALIZATION STREAMING</span>
           </router-link>
         </div>
         <div class="powered"><icon-bitrock/></div>
