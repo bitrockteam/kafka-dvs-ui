@@ -196,7 +196,9 @@ export default class extends Vue {
         this.createMarker(flightUpdate);
       }
     });
+    // tslint:disable-next-line
     console.log('Aerei Renderizzati: ', Object.keys(this.flightsMarkers).length);
+    // tslint:disable-next-line
     console.log('Max Timestamp: ', new Date(maxTimestap * 1000));
   }
 
