@@ -179,7 +179,9 @@ export default class extends Vue {
 
   private manageFlightList(event: FlightList) {
     const { elements } = event;
+    let maxTimestap = 0;
     elements.forEach((flightUpdate: Flight) => {
+      maxTimestap = Math.max(maxTimestap, Number(flightUpdate.updated));
       const oldFlight = this.flightsMarkers[flightUpdate.icaoNumber];
       if (oldFlight) {
         // If flight is on 0 altitude delete it
@@ -194,6 +196,8 @@ export default class extends Vue {
         this.createMarker(flightUpdate);
       }
     });
+    console.log('Aerei Renderizzati: ', Object.keys(this.flightsMarkers).length);
+    console.log('Max Timestamp: ', new Date(maxTimestap * 1000));
   }
 
 
