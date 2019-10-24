@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7fbddfc0-3250-4d6d-b2d2-f1683c48b1b3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/components/world-map.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/world-map.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -97,7 +97,7 @@
       <workItem from="1570431757043" duration="7000" />
       <workItem from="1570717905573" duration="379000" />
       <workItem from="1571905651267" duration="109000" />
-      <workItem from="1571905884618" duration="522000" />
+      <workItem from="1571905884618" duration="597000" />
     </task>
     <servers />
   </component>
