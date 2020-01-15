@@ -6,7 +6,7 @@ pipeline {
   environment {
       GITHUB_CREDENTIALS = 'BitrockCI token'
       GITHUB_ACCOUNT = 'bitrockteam'
-      GITHUB_REPO = 'kafka-flightstream-ui'
+      GITHUB_REPO = 'kafka-dvs-ui'
       GITHUB_SSH = "centos"
       RELEASE_BRANCH = "master"
   }
@@ -183,7 +183,7 @@ pipeline {
                 }
             }
             steps {
-		build job: 'kafka-flightstream-cd/master', 
+		build job: 'kafka-dvs-cd/master', 
                 parameters: [[$class: 'StringParameterValue', name: 'deployment', value: "${GITHUB_REPO}@${TAG}-${BUILD_NUMBER}"]],
                 wait: false
 	    }

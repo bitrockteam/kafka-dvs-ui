@@ -28,7 +28,7 @@ import IconBitrock from '@/components/icon-bitrock.vue';
 import '@amber-ds/components/banner';
 
 @Component({
-  name: 'kakfa-flightstream',
+  name: 'kafka-dvs',
   components: {
     IconLogo,
     IconBitrock,
