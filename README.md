@@ -1,14 +1,14 @@
-# K·FlightStream UI
-[![Build Status](https://iproject-jenkins.reactive-labs.io/buildStatus/icon?job=kafka-geostream-ui%2Fmaster)](https://iproject-jenkins.reactive-labs.io/view/Kafka%20Geostream/job/kafka-geostream-ui/job/master/)
-![https://david-dm.org/bitrockteam/kafka-geostream-ui.svg](https://david-dm.org/bitrockteam/kafka-geostream-ui.svg)
+# DVS UI
+[![Build Status](https://iproject-jenkins.reactive-labs.io/buildStatus/icon?job=kafka-dvs-ui%2Fmaster)](https://iproject-jenkins.reactive-labs.io/view/DVS/job/kafka-dvs-ui/job/master/)
+![https://david-dm.org/bitrockteam/kafka-dvs-ui.svg](https://david-dm.org/bitrockteam/kafka-dvs-ui.svg)
 
 
-[PWA](https://developers.google.com/web/progressive-web-apps/) built in [Vue.js](https://vuejs.org/) for the [K·FlightStream project](https://github.com/search?q=topic%3Akafka-geostream+org%3Abitrockteam&type=Repositories). It's a realtime dashboard that visualize the flights activities. The data is processed through a backend developed in Scala with Kafka Streams & KSQL.
+[PWA](https://developers.google.com/web/progressive-web-apps/) built in [Vue.js](https://vuejs.org/) for the [DVS project](https://github.com/search?q=topic%3Akafka-dvs+org%3Abitrockteam&type=Repositories). It's a realtime dashboard that visualize the flights activities. The data is processed through a backend developed in Scala with Kafka Streams & KSQL.
 
 [https://geostream.bitrock.it](https://geostream.bitrock.it)
 
 ## Screenshot
-![K·FlightStream UI screenshot](public/img/kgs.png)
+![DVS UI screenshot](public/img/kgs.png)
 
 ## Demo mode
 You can append the query parameter `?demo=[NUMBER-OF-MINUTES]` to the url to enable the demo mode, once activated it will fully refresh the application every specified minutes.
@@ -16,7 +16,7 @@ You can append the query parameter `?demo=[NUMBER-OF-MINUTES]` to the url to ena
 For example, this will refresh the application every 30 minutes:
 
 ```
-http://geostream.bitrock.it/?demo=30
+http://flightstream.reactive-labs.io/?demo=30
 ```
 
 This is useful if you want to run the application for an indefinite amount of time, like in a kiosk or totem device.
@@ -39,8 +39,8 @@ To prevent an overhead of visible informations for the user, the map shows the l
 ### Getting started
 Clone the repo
 ```bash
-$ git clone git@github.com:bitrockteam/kafka-geostream-ui.git
-$ cd kafka-geostream-ui
+$ git clone git@github.com:bitrockteam/kafka-dvs-ui.git
+$ cd kafka-dvs-ui
 ```
 
 Install dependencies
