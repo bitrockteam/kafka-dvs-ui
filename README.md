@@ -5,7 +5,7 @@
 
 [PWA](https://developers.google.com/web/progressive-web-apps/) built in [Vue.js](https://vuejs.org/) for the [DVS project](https://github.com/search?q=topic%3Akafka-dvs+org%3Abitrockteam&type=Repositories). It's a realtime dashboard that visualize the flights activities. The data is processed through a backend developed in Scala with Kafka Streams & KSQL.
 
-[https://geostream.bitrock.it](https://geostream.bitrock.it)
+[http://dvs.reactive-labs.io/](http://dvs.reactive-labs.io/)
 
 ## Screenshot
 ![DVS UI screenshot](public/img/kgs.png)
@@ -16,7 +16,7 @@ You can append the query parameter `?demo=[NUMBER-OF-MINUTES]` to the url to ena
 For example, this will refresh the application every 30 minutes:
 
 ```
-http://flightstream.reactive-labs.io/?demo=30
+http://dvs.reactive-labs.io/?demo=30
 ```
 
 This is useful if you want to run the application for an indefinite amount of time, like in a kiosk or totem device.
