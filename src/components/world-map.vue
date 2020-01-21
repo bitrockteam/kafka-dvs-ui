@@ -57,7 +57,7 @@ export default class extends Vue {
 
     this.map = new mapboxgl.Map({
       container: 'map',
-      style: 'mapbox://styles/mapboxbitrock/ck1uemr9300i81cmwnc26ddks',
+      style: 'mapbox://styles/mapboxbitrock/ck1uemr9300i81cmwnc26ddks?optimize=true',
       center: [10, 45],
       zoom: 5,
       minZoom: 0.4,
