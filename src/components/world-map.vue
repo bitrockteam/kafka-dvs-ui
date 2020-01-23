@@ -1,5 +1,5 @@
 <template>
-  <div id="map" ref="map" class="mapboxgl-map">
+  <div id='map' ref='map' class='mapboxgl-map'>
     <slot></slot>
   </div>
 </template>
