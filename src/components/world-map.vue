@@ -24,7 +24,7 @@ export default class extends Vue {
 
   private map: any | Map = undefined;
   private flightsMarkers: {
-    [icaoNumber: string]: { updated: string; marker: Marker };
+    [icaoNumber: string]: { updated: number; marker: Marker };
   } = {};
   private socketURL: string = 'dvs';
   private mapToken: string =
@@ -178,7 +178,7 @@ export default class extends Vue {
     const { elements } = event;
     let maxTimestap = 0;
     elements.forEach((flightUpdate: Flight) => {
-      maxTimestap = Math.max(maxTimestap, Number(flightUpdate.updated));
+      maxTimestap = Math.max(maxTimestap, flightUpdate.updated);
       const oldFlight = this.flightsMarkers[flightUpdate.icaoNumber];
       if (oldFlight) {
         // If flight is on 0 altitude delete it
