@@ -8,12 +8,13 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import mapboxgl, { Marker, Popup, Map } from 'mapbox-gl';
-import { webSocket } from 'rxjs/webSocket';
 import { map } from 'rxjs/operators';
 import { streamWS } from '@/libs/endpoints';
 import { customMarker, setToken, customBounds } from '@/libs/map';
 import { Flight, FlightList } from '@/interfaces/flight';
 import WorldControl from '@/mapbox-controls/world-control';
+import { CoordinatesBox } from '@/interfaces/serverProtocol';
+import { store } from '@/store';
 
 @Component({
   name: 'world-map',
@@ -25,9 +26,7 @@ export default class extends Vue {
   private flightsMarkers: {
     [icaoNumber: string]: { updated: string; marker: Marker };
   } = {};
-  private socket: any = null;
-  // private socketURL: string = 'flights';
-  private socketURL: string = 'flight-list';
+  private socketURL: string = 'dvs';
   private mapToken: string =
     'pk.eyJ1IjoibWFwYm94Yml0cm9jayIsImEiOiJjazFjNzk4eTQwOWNnM2hyeWxwdWZ3azM1In0.3MBAlwbpNpBFnmMHdKppOg';
 
@@ -42,9 +41,7 @@ export default class extends Vue {
   }
 
   private unsubscribe() {
-    if (this.socket) {
-      this.socket.unsubscribe();
-    }
+    store.dispatch('stopFlightList');
   }
 
   private destroyed() {
@@ -197,31 +194,31 @@ export default class extends Vue {
       }
     });
     // tslint:disable-next-line
-    console.log('Aerei Renderizzati: ', Object.keys(this.flightsMarkers).length);
+    console.log('Flights on screen: ', Object.keys(this.flightsMarkers).length);
     // tslint:disable-next-line
-    console.log('Max Timestamp: ', new Date(maxTimestap * 1000));
+    console.log('Max Timestamp: ', new Date(maxTimestap));
   }
 
-
   private listen(url: string) {
-    this.socket = webSocket(url);
-    this.sendBoundingBox();
+    store.dispatch('attachWebSocket', { url }).then((socket) => {
+      this.sendBoundingBox();
 
-    this.socket
-      .pipe(
-        map(this.manageFlightList),
-        // map(this.manageFlight),
-      )
-      .subscribe();
+      socket
+        .pipe(
+          map(this.manageFlightList),
+        )
+        .subscribe();
+      });
   }
 
   private sendBoundingBox() {
     const bounds = this.map.getBounds();
-    const mapBounds = {
-      leftHighLat: bounds.getNorth(),
-      leftHighLon: bounds.getWest(),
-      rightLowLat: bounds.getSouth(),
-      rightLowLon: bounds.getEast(),
+    const mapBounds: CoordinatesBox = {
+      '@type': 'startFlightList',
+      'leftHighLat': bounds.getNorth(),
+      'leftHighLon': bounds.getWest(),
+      'rightLowLat': bounds.getSouth(),
+      'rightLowLon': bounds.getEast(),
     };
 
     // Delete flights(marker) out of bounds
@@ -233,7 +230,7 @@ export default class extends Vue {
       }
     });
 
-    this.socket.next(mapBounds);
+    store.dispatch('startFlightList', mapBounds);
   }
 }
 </script>
