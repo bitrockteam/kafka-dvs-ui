@@ -1,5 +1,5 @@
 
-import mapboxgl, { Map, LngLatBounds } from 'mapbox-gl';
+import mapboxgl, { LngLatBounds } from 'mapbox-gl';
 
 const customMarker = (direction: number): HTMLElement => {
   const marker: HTMLElement = document.createElement('div');

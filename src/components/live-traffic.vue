@@ -21,11 +21,11 @@
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator';
-import { webSocket } from 'rxjs/webSocket';
 import { Getter } from 'vuex-class';
 import { streamWS } from '@/libs/endpoints';
 import DashboardWidget from '@/libs/classes/dashboardwidget';
 import LoadingPlaceholderStat from '@/components/loading-placeholder-stat.vue';
+import { store } from '@/store';
 
 @Component({
   name: 'live-traffic',
@@ -40,26 +40,26 @@ export default class extends DashboardWidget {
   private loading: boolean = true;
 
   private listen(url: string) {
-    this.socket = webSocket(url);
-
-    this.socket.subscribe((event: any) => {
-      const { eventType, eventPayload: { eventCount } } = event;
-      this.loading = false;
-      switch (eventType) {
-        case 'CountAirline':
-          this.CountAirline = eventCount;
-          break;
-        case 'CountFlight':
-          this.CountFlight = eventCount;
-          break;
-        default:
-          return;
-      }
+    store.dispatch('attachWebSocket', { url }).then((socket) => {
+      socket.subscribe((event: any) => {
+        const { eventType, eventPayload: { eventCount } } = event;
+        this.loading = false;
+        switch (eventType) {
+          case 'CountAirline':
+            this.CountAirline = eventCount;
+            break;
+          case 'CountFlight':
+            this.CountFlight = eventCount;
+            break;
+          default:
+            return;
+        }
+      });
     });
   }
 
   private mounted() {
-    this.listen(streamWS('totalElementsChanged'));
+    this.listen(streamWS('dvs'));
   }
 }
 </script>
