@@ -1,31 +1,37 @@
 export interface ServerProtocol {
-    readonly '@type': 'startFlightList' | 'stopFlightList' | 'startTop' | 'stopTop' | 'startTotal' | 'stopTotal';
+  readonly '@type':
+    | 'startFlightList'
+    | 'stopFlightList'
+    | 'startTop'
+    | 'stopTop'
+    | 'startTotal'
+    | 'stopTotal';
 }
 
 export interface CoordinatesBox extends ServerProtocol {
-    readonly '@type': 'startFlightList';
-    readonly 'leftHighLat': number;
-    readonly 'leftHighLon': number;
-    readonly 'rightLowLat': number;
-    readonly 'rightLowLon': number;
+  readonly '@type': 'startFlightList';
+  readonly leftHighLat: number;
+  readonly leftHighLon: number;
+  readonly rightLowLat: number;
+  readonly rightLowLon: number;
 }
 
 export interface StopFlightList extends ServerProtocol {
-    readonly '@type': 'stopFlightList';
+  readonly '@type': 'stopFlightList';
 }
 
 export interface StartTop extends ServerProtocol {
-    readonly '@type': 'startTop';
+  readonly '@type': 'startTop';
 }
 
 export interface StopTop extends ServerProtocol {
-    readonly '@type': 'stopTop';
+  readonly '@type': 'stopTop';
 }
 
 export interface StartTotal extends ServerProtocol {
-    readonly '@type': 'startTotal';
+  readonly '@type': 'startTotal';
 }
 
 export interface StopTotal extends ServerProtocol {
-    readonly '@type': 'stopTotal';
+  readonly '@type': 'stopTotal';
 }
