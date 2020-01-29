@@ -2,7 +2,7 @@ export interface Flight {
   iataNumber: string;
   icaoNumber: string;
   speed: number;
-  updated: string;
+  updated: number;
   geography: GeographyInfo;
   status: string;
   airportDeparture: AirportInfo ;
@@ -40,5 +40,5 @@ interface AirplaneInfo {
 interface AirlineInfo {
   codeAirline: string;
   nameAirline: string;
-  sizeAirline: string;
+  sizeAirline: number;
 }

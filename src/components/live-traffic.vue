@@ -45,10 +45,10 @@ export default class extends DashboardWidget {
         const { eventType, eventPayload: { eventCount } } = event;
         this.loading = false;
         switch (eventType) {
-          case 'CountAirline':
+          case 'TotalAirlinesCount':
             this.CountAirline = eventCount;
             break;
-          case 'CountFlight':
+          case 'TotalFlightsCount':
             this.CountFlight = eventCount;
             break;
           default:
