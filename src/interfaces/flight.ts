@@ -12,6 +12,7 @@ export interface Flight {
 }
 
 export interface FlightList {
+  eventType: string;
   elements: [Flight];
 }
 
