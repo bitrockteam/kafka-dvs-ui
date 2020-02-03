@@ -1,0 +1,13 @@
+FROM node:lts-jessie
+
+WORKDIR /app
+
+COPY .npmrc ./
+COPY package*.json ./
+RUN npm install
+
+COPY *.js *.json *.ts ./
+
+# source directories should be mounted
+
+ENTRYPOINT ["npm", "start"]
