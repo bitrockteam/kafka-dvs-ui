@@ -41,6 +41,7 @@ export default class extends DashboardWidget {
 
   private listen(url: string) {
     store.dispatch('attachWebSocket', { url }).then((socket) => {
+      store.dispatch('startTotal');
       socket.subscribe((event: any) => {
         const { eventType, eventPayload: { eventCount } } = event;
         this.loading = false;
