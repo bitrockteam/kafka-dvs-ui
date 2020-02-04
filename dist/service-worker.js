@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.57e21edf4d53f6a08154fa7f4920e139.js"
+  "/precache-manifest.ede9cfaabf07db0aec5133f421328759.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "kafka-geostream-ui"});

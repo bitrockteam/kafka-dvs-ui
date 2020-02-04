@@ -11,12 +11,12 @@
 <script lang="ts">
 import { Component } from 'vue-property-decorator';
 import { Mutation } from 'vuex-class';
-import { webSocket } from 'rxjs/webSocket';
 import TopFiveList from '@/components/top-five-list.vue';
 const LiveTraffic = () => import('@/components/live-traffic.vue');
 import DashboardWidget from '@/libs/classes/dashboardwidget';
 import { streamWS } from '@/libs/endpoints';
 import { StatData, Airline, Airport, SpeedFlight } from '@/interfaces/stats';
+import { store } from '@/store';
 
 @Component({
   name: 'top-five',
@@ -33,51 +33,60 @@ export default class extends DashboardWidget {
   @Mutation private setMaxSpeed!: (speed: number) => void;
 
   private listen(url: string) {
-    this.socket = webSocket(url);
+    store.dispatch('attachWebSocket', { url }).then((socket) => {
+      store.dispatch('startTop');
+      socket.subscribe((event: any) => {
+        const { eventType } = event;
 
-    this.socket.subscribe((event: any) => {
-      const { eventType } = event;
-
-      switch (eventType) {
-        case 'TopDepartureAirportList':
-          this.originAirport = event.eventPayload.elements.map((airport: Airport): StatData => ({
-            name: airport.airportCode,
-            count: airport.eventCount,
-            percent: (100 * airport.eventCount) / event.eventPayload.elements[0].eventCount,
-          }));
-          break;
-        case 'TopArrivalAirportList':
-          this.destinationAirport = event.eventPayload.elements.map((airport: Airport): StatData => ({
-            name: airport.airportCode,
-            count: airport.eventCount,
-            percent: (100 * airport.eventCount) / event.eventPayload.elements[0].eventCount,
-          }));
-          break;
-        case 'TopAirlineList':
-          this.airlines = event.eventPayload.elements.map((airline: Airline): StatData => ({
-            name: airline.airlineName,
-            count: airline.eventCount,
-            percent: (100 * airline.eventCount) / event.eventPayload.elements[0].eventCount,
-          }));
-          break;
-        case 'TopSpeedList':
-          const maxSpeed = event.eventPayload.elements[0].speed;
-          this.setMaxSpeed(maxSpeed);
-          this.fastestFlights = event.eventPayload.elements.map((speed: SpeedFlight): StatData => ({
-            name: speed.flightCode,
-            count: speed.speed.toFixed(0),
-            percent: (100 * speed.speed) / maxSpeed,
-            format: ' km/h',
-          }));
-          break;
-        default:
-          return;
-      }
+        switch (eventType) {
+          case 'TopDepartureAirportList':
+            this.originAirport = event.eventPayload.elements.map(
+              (airport: Airport): StatData => ({
+                name: airport.airportCode,
+                count: airport.eventCount,
+                percent: (100 * airport.eventCount) / event.eventPayload.elements[0].eventCount,
+              }),
+            );
+            break;
+            case 'TopArrivalAirportList':
+              this.destinationAirport = event.eventPayload.elements.map(
+                (airport: Airport): StatData => ({
+                  name: airport.airportCode,
+                  count: airport.eventCount,
+                  percent: (100 * airport.eventCount) / event.eventPayload.elements[0].eventCount,
+                }),
+              );
+              break;
+            case 'TopAirlineList':
+              this.airlines = event.eventPayload.elements.map(
+                (airline: Airline): StatData => ({
+                  name: airline.airlineName,
+                  count: airline.eventCount,
+                  percent: (100 * airline.eventCount) / event.eventPayload.elements[0].eventCount,
+                }),
+              );
+              break;
+            case 'TopSpeedList':
+              const maxSpeed = event.eventPayload.elements[0].speed;
+              this.setMaxSpeed(maxSpeed);
+              this.fastestFlights = event.eventPayload.elements.map(
+                (speed: SpeedFlight): StatData => ({
+                  name: speed.flightCode,
+                  count: speed.speed.toFixed(0),
+                  percent: (100 * speed.speed) / maxSpeed,
+                  format: ' km/h',
+                }),
+              );
+              break;
+            default:
+              return;
+        }
+      });
     });
   }
 
   private mounted() {
-    this.listen(streamWS('topElementsChanged'));
+    this.listen(streamWS('dvs'));
   }
 }
 </script>

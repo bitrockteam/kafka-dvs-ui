@@ -1,13 +1,10 @@
 {
 	"name": "kafka-geostream-ui",
 	"displayName": "Kafka Geostream",
-	"version": "1.1.5",
+	"version": "1.1.6",
 	"private": true,
 	"contributors": [
-		"Salvatore Laisa <salvatore.laisa@bitrock.it>",
-		"Angela Gargallo <angela.gargallo@bitrock.it>",
-		"Anthony Penna <anthony.penna@bitrock.it",
-		"Wellington Pecchini <wellington.pecchini@bitrock.it>"
+		"Bitrock DVS team <dvs@bitrock.it>"
 	],
 	"scripts": {
 		"start": "npm run serve",
@@ -23,7 +20,7 @@
 		"@amber-ds/components": "1.2.4",
 		"@amber-ds/visual": "1.0.1",
 		"@types/mapbox-gl": "^0.54.4",
-		"mapbox-gl": "^1.3.2",
+		"mapbox-gl": "^1.6.1",
 		"register-service-worker": "1.6.2",
 		"rxjs": "6.5.2",
 		"vue": "2.6.10",
@@ -45,11 +42,11 @@
 		"@vue/cli-service": "3.7.0",
 		"@vue/test-utils": "1.0.0-beta.29",
 		"chai": "4.2.0",
-		"cypress": "3.2.0",
+		"cypress": "3.8.3",
 		"jest": "24.8.0",
 		"jest-junit": "6.4.0",
 		"lowercase-keys": "2.0.0",
-		"node-sass": "4.12.0",
+		"node-sass": "4.13.1",
 		"sass-loader": "7.1.0",
 		"stickybits": "3.6.5",
 		"ts-jest": "24.0.2",
