@@ -1,13 +1,10 @@
 {
 	"name": "kafka-geostream-ui",
 	"displayName": "Kafka Geostream",
-	"version": "1.1.5",
+	"version": "1.1.6",
 	"private": true,
 	"contributors": [
-		"Salvatore Laisa <salvatore.laisa@bitrock.it>",
-		"Angela Gargallo <angela.gargallo@bitrock.it>",
-		"Anthony Penna <anthony.penna@bitrock.it",
-		"Wellington Pecchini <wellington.pecchini@bitrock.it>"
+		"Bitrock DVS team <dvs@bitrock.it>"
 	],
 	"scripts": {
 		"start": "npm run serve",
