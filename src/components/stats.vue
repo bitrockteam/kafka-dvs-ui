@@ -13,6 +13,7 @@ import { Component } from 'vue-property-decorator';
 import { Mutation } from 'vuex-class';
 import TopFiveList from '@/components/top-five-list.vue';
 const LiveTraffic = () => import('@/components/live-traffic.vue');
+import { types } from '@/interfaces/serverProtocol';
 import DashboardWidget from '@/libs/classes/dashboardwidget';
 import { streamWS } from '@/libs/endpoints';
 import { StatData, Airline, Airport, SpeedFlight } from '@/interfaces/stats';
@@ -34,7 +35,7 @@ export default class extends DashboardWidget {
 
   private listen(url: string) {
     store.dispatch('attachWebSocket', { url }).then((socket) => {
-      store.dispatch('startTop');
+      store.dispatch(types.startTop);
       socket.subscribe((event: any) => {
         const { eventType } = event;
 

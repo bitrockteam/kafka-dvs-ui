@@ -22,6 +22,7 @@
 <script lang="ts">
 import { Component } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
+import { types } from '@/interfaces/serverProtocol';
 import { streamWS } from '@/libs/endpoints';
 import DashboardWidget from '@/libs/classes/dashboardwidget';
 import LoadingPlaceholderStat from '@/components/loading-placeholder-stat.vue';
@@ -41,7 +42,7 @@ export default class extends DashboardWidget {
 
   private listen(url: string) {
     store.dispatch('attachWebSocket', { url }).then((socket) => {
-      store.dispatch('startTotal');
+      store.dispatch(types.startTotal);
       socket.subscribe((event: any) => {
         const { eventType, eventPayload: { eventCount } } = event;
         this.loading = false;

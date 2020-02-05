@@ -12,7 +12,7 @@ import { map, filter } from 'rxjs/operators';
 import { streamWS } from '@/libs/endpoints';
 import { Flight, FlightList } from '@/interfaces/flight';
 import MapEngine from '@/libs/map-engine';
-import { CoordinatesBox } from '@/interfaces/serverProtocol';
+import { CoordinatesBox, types } from '@/interfaces/serverProtocol';
 import { store } from '@/store';
 
 @Component({
@@ -37,7 +37,7 @@ export default class extends Vue {
   }
 
   private unsubscribe() {
-    store.dispatch('stopFlightList');
+    store.dispatch(types.stopFlightList);
   }
 
   private destroyed() {
@@ -96,7 +96,7 @@ export default class extends Vue {
 
   private sendBoundingBox() {
       this.map.removeAllFlightsOutOfBoundingBox();
-      store.dispatch('startFlightList', this.createCommand());
+      store.dispatch(types.startFlightList, this.createCommand());
   }
 }
 </script>
