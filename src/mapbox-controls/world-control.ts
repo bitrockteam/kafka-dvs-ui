@@ -1,12 +1,16 @@
 // Control(Custom)implemented as ES6 class
 export default class WorldControl {
-    private Map: any;
+    private getZoom: () => number;
+    private SetZoom: (n: number) => void;
     private Container: any;
 
     private ZoomInButton: HTMLElement;
     private ZoomOutButton: HTMLElement;
 
-    public constructor() {
+    public constructor(getZoom: () => number, setZoom: (n: number) => void) {
+        this.getZoom = getZoom;
+        this.SetZoom = setZoom;
+
         this.onZoomIn = this.onZoomIn.bind(this);
         this.onZoomOut = this.onZoomOut.bind(this);
 
@@ -20,14 +24,8 @@ export default class WorldControl {
         this.Container.append (this.ZoomOutButton);
     }
 
-    public onAdd(map: any) {
-        this.Map = map;
+    public getContainer() {
         return this.Container;
-    }
-
-    public onRemove() {
-        this.Container.parentNode.removeChild(this.Container);
-        this.Map = undefined;
     }
 
     private createButton(classNames: string, onClickHandler:
@@ -39,10 +37,10 @@ export default class WorldControl {
     }
 
     private onZoomIn(e: Event) {
-        this.Map.zoomIn();
+        this.SetZoom(this.getZoom() + 1);
     }
 
     private onZoomOut(e: Event) {
-        this.Map.zoomOut();
+        this.SetZoom(this.getZoom() - 1);
     }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div id='map' ref='map' class='mapboxgl-map'>
+  <div id='map' ref='map' class='map-canvas'>
     <slot></slot>
   </div>
 </template>
@@ -23,8 +23,6 @@ export default class extends Vue {
 
   private map: any | MapEngine = undefined;
   private socketURL: string = 'dvs';
-  private mapToken: string =
-    'pk.eyJ1IjoibWFwYm94Yml0cm9jayIsImEiOiJjazFjNzk4eTQwOWNnM2hyeWxwdWZ3azM1In0.3MBAlwbpNpBFnmMHdKppOg';
 
   @Watch('paused')
   private togglePause(val: boolean) {
@@ -46,13 +44,15 @@ export default class extends Vue {
   }
 
   private createMapInstance() {
-    this.map = new MapEngine(this.mapToken, 'map');
+    this.map = new MapEngine('map');
     this.map.onMove(this.sendBoundingBox);
   }
 
   private manageFlightList(event: FlightList) {
     const { elements } = event;
     let maxTimestap = 0;
+    const newIcaoNumbers = new Set(elements.map((f: Flight) => f.icaoNumber));
+    this.map.removeOldFlights(newIcaoNumbers);
     elements.forEach((flightUpdate: Flight) => {
       maxTimestap = Math.max(maxTimestap, flightUpdate.updated);
       this.map.updateFlight(flightUpdate);
@@ -95,8 +95,10 @@ export default class extends Vue {
   }
 
   private sendBoundingBox() {
+    if (!this.paused) {
       this.map.removeAllFlightsOutOfBoundingBox();
       store.dispatch(types.startFlightList, this.createCommand());
+    }
   }
 }
 </script>
