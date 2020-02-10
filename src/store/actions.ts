@@ -1,7 +1,7 @@
 import { ActionTree } from 'vuex';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { State } from '@/interfaces/store';
-import { CoordinatesBox } from '@/interfaces/serverProtocol';
+import { CoordinatesBox, types } from '@/interfaces/serverProtocol';
 
 const actions: ActionTree<State, any> = {
   attachWebSocket({ state }, url: string): WebSocketSubject<unknown> {
@@ -17,27 +17,27 @@ const actions: ActionTree<State, any> = {
   },
   stopFlightList({ state: { socket } }): void {
     if (socket) {
-      socket.next({ '@type': 'stopFlightList' });
+      socket.next({ '@type': types.stopFlightList });
     }
   },
   startTop({ state: { socket } }): void {
     if (socket) {
-      socket.next({ '@type': 'startTop' });
+      socket.next({ '@type': types.startTop });
     }
   },
   stopTop({ state: { socket } }): void {
     if (socket) {
-      socket.next({ '@type': 'stopTop' });
+      socket.next({ '@type': types.stopTop });
     }
   },
   startTotal({ state: { socket } }): void {
     if (socket) {
-      socket.next({ '@type': 'startTotal' });
+      socket.next({ '@type': types.startTotal });
     }
   },
   stopTotal({ state: { socket } }): void {
     if (socket) {
-      socket.next({ '@type': 'stopTotal' });
+      socket.next({ '@type': types.stopTotal });
     }
   },
 };
