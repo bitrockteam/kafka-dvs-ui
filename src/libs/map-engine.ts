@@ -20,6 +20,7 @@ export default class MapEngine {
                     center: { lat: 45, lng: 10 },
                     zoom: 5,
                     minZoom: 3,
+                    maxZoom: 11,
                     restriction: {
                         latLngBounds: this.defaultBounds,
                         strictBounds: true,
