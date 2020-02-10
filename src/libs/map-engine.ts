@@ -1,49 +1,56 @@
 import WorldControl from '../mapbox-controls/world-control';
-import mapboxgl, { Map, Popup, LngLatBounds, Marker, Point } from 'mapbox-gl';
 import { Flight } from '../interfaces/flight';
 import BoundingBox from './bounding-box';
+import {} from 'googlemaps';
 
 export default class MapEngine {
-    private map: Map;
+    private map: google.maps.Map | any;
+    private popup: google.maps.InfoWindow | any;
     private flights: {
-        [icaoNumber: string]: { flight: Flight, marker: Marker };
+        [icaoNumber: string]: { flight: Flight, marker: google.maps.Marker };
     } = {};
+    private defaultBounds = new google.maps.LatLngBounds({ lat: -60, lng: -179 }, { lat: 80, lng: 179 });
 
-    constructor(token: string, containerId: string) {
-        setToken(token);
+    constructor(containerId: string) {
+        const elem = document.getElementById(containerId);
+        if (elem) {
+            this.map = new google.maps.Map(
+                elem,
+                {
+                    center: { lat: 45, lng: 10 },
+                    zoom: 5,
+                    minZoom: 3,
+                    restriction: {
+                        latLngBounds: this.defaultBounds,
+                        strictBounds: true,
+                    },
+                    disableDefaultUI: true,
+                });
+        }
 
-        this.map = new mapboxgl.Map({
-            container: containerId,
-            style: 'mapbox://styles/mapboxbitrock/ck1uemr9300i81cmwnc26ddks?optimize=true',
-            center: [10, 45],
-            zoom: 5,
-            minZoom: 0.4,
-            maxZoom: 12,
-            maxBounds: new mapboxgl.LngLatBounds([
-                new mapboxgl.LngLat(-180, -55),
-                new mapboxgl.LngLat(180, 80),
-            ]),
-        });
-        this.map.addControl(new WorldControl(), 'top-right');
-        this.map.dragRotate.disable();
+        const worldControl = new WorldControl(() => this.map.getZoom(), (n: number) => this.map.setZoom(n));
+        this.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(worldControl.getContainer());
     }
 
     public getBoundingBox(): BoundingBox {
-        const bounds = this.map.getBounds();
+        const bounds = this.map.getBounds() || this.defaultBounds;
+        const ne = bounds.getNorthEast();
+        const sw = bounds.getSouthWest();
         return {
-            leftHighLat: bounds.getNorth(),
-            leftHighLon: bounds.getWest(),
-            rightLowLat: bounds.getSouth(),
-            rightLowLon: bounds.getEast(),
+            leftHighLat: ne.lat(),
+            leftHighLon: sw.lng(),
+            rightLowLat: sw.lat(),
+            rightLowLon: ne.lng(),
         };
     }
 
     public onMove(listener: (ev: any) => void) {
-        this.map.on('moveend', listener);
+        this.map.addListener('idle', listener);
+
     }
 
     public remove() {
-        this.map.remove();
+        this.map.unbindAll();
     }
 
     public totalFlights(): number {
@@ -66,39 +73,28 @@ export default class MapEngine {
                 if (flight.geography.altitude === 0) {
                     this.removeFlight(icaoNumber);
                 } else {
-                    // Update lng and lat only if really change
-                    const { lat, lng } = oldFlightInfo.marker.getLngLat();
-                    if (latitude !== lat || longitude !== lng) {
-                        oldFlightInfo.marker.setLngLat([longitude, latitude]);
-                    }
-                    // Change direction
-                    const marker = oldFlightInfo.marker;
-                    const markerIcon = marker.getElement().firstElementChild;
-                    const newStyle = `transform: rotate(${direction} - 90}deg)`;
-                    if (markerIcon && markerIcon.getAttribute('style') !== newStyle) {
-                        markerIcon.setAttribute('style', newStyle);
-                    }
-
-                    // Update Popup
-                    oldFlightInfo.marker.getPopup().setHTML(createPopup(flight));
-                    this.flights[icaoNumber] = { flight, marker };
+                    setPosition(oldFlightInfo.marker, longitude, latitude);
+                    setDirection(oldFlightInfo.marker, direction);
                 }
 
-            } else {
-                // No update, do nothing
             }
 
         } else if (altitude !== 0) {
             // Handle new flight
-            const marker: Marker = new mapboxgl.Marker(customMarker(direction));
-            const popup: Popup = new mapboxgl.Popup().setHTML(createPopup(flight));
-            marker
-                .setLngLat([longitude, latitude])
-                .setPopup(popup)
-                .addTo(this.map);
+            const marker: google.maps.Marker = createMarker(longitude, latitude, direction);
+            google.maps.event.addListener(marker, 'click', () => {
+                if (this.popup) {
+                    this.popup.close();
+                }
+                this.popup = new google.maps.InfoWindow({
+                    content: createPopup(flight),
+                    disableAutoPan: false,
+                });
+                this.popup.open(this.map, marker);
+            });
+
+            marker.setMap(this.map);
             this.flights[icaoNumber] = { flight, marker };
-        } else {
-            // Do noting when a new flight has altitude 0
         }
     }
 
@@ -110,41 +106,63 @@ export default class MapEngine {
             rightLowLon,
         } = this.getBoundingBox();
 
-        // TODO consider don't remove but just unsubscribe from update(but handle remove)
         Object.keys(this.flights).forEach((icaoNumber) => {
-            const { lat, lng } = this.flights[icaoNumber].marker.getLngLat();
+            const { lat, lng } = getPosition(this.flights[icaoNumber].marker);
             if (lat < rightLowLat || lat > leftHighLat || lng < leftHighLon || lng > rightLowLon) {
                 this.removeFlight(icaoNumber);
             }
         });
     }
 
+    public removeOldFlights(icaoNumbers: Set<string>) {
+        Object.keys(this.flights).forEach((icaoNumber) => {
+            if (!icaoNumbers.has(icaoNumber)) {
+                this.removeFlight(icaoNumber);
+            }
+        });
+    }
+
     private removeFlight(icaoNumber: string) {
-        this.flights[icaoNumber].marker.remove();
+        this.flights[icaoNumber].marker.setMap(null);
         delete this.flights[icaoNumber];
     }
 
 }
 
-const customMarker = (direction: number): HTMLElement => {
-    const marker: HTMLElement = document.createElement('div');
-    marker.classList.add('map-event');
-    const markerIcon = document.createElement('div');
-    markerIcon.classList.add('marker-icon');
-    markerIcon.style.transform = `rotate(${direction - 90}deg)`;
-    marker.appendChild(markerIcon);
+const createMarker = (longitude: number, latitude: number, direction: number) => {
+    const marker: google.maps.Marker = new google.maps.Marker({
+        draggable: false,
+        optimized: true,
+    });
+    setPosition(marker, longitude, latitude);
+    setDirection(marker, direction);
     return marker;
 };
 
-const customBounds: LngLatBounds = new mapboxgl.LngLatBounds([
-    new mapboxgl.LngLat(-180, -55),
-    new mapboxgl.LngLat(180, 80),
-]);
+const setPosition = (marker: google.maps.Marker, longitude: number, latitude: number) => {
+    marker.setPosition({lat: latitude, lng: longitude});
+};
 
-const setToken = (token: string) => {
-    const check: string | null = mapboxgl.accessToken;
-    if (!check) {
-        mapboxgl.accessToken = token;
+const setDirection = (marker: google.maps.Marker, direction: number) => {
+    const svg = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<svg version="1.1" id="airport-15" transform="rotate(',
+        direction,
+        ')" xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0 0 15 15">',
+        '<path fill="#eb6400"  id="path7712-0" d="M15,6.8182L15,8.5l-6.5-1&#xA;&#x9;l-0.3182,4.7727L11,14v1l-3.5-0.6818L4,15v-1l2.8182-1.7273L6.5,7.5L0,8.5V6.8182L6.5,4.5v-3c0,0,0-1.5,1-1.5s1,1.5,1,1.5v2.8182&#xA;&#x9;L15,6.8182z"/>',
+        '</svg>',
+    ].join('\n');
+    marker.setIcon({
+        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+    });
+};
+
+const getPosition = (marker: google.maps.Marker) => {
+    const position = marker.getPosition();
+    if (position) {
+        return {lat: position.lat(), lng: position.lng()};
+    } else {
+        throw new Error('Invalid marker position');
     }
 };
 
