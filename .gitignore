@@ -26,7 +26,7 @@ Temporary Items
 .apdisk
 
 node_modules
-dist
+dist/
 .idea
 *.log
 __tests__/results/junit.xml
