@@ -26,14 +26,19 @@
             .label {
                 font-size: 12px;
                 margin-bottom: 5px;
+                width: 100%;
             }
 
             .value {
                 color: $primary-text-color;
                 font-size: 24px;
                 font-weight: lighter;
+                width: 100%;
             }
         }
     }
 }
 
+.line-row {
+    display: flex;
+}
