@@ -12,12 +12,17 @@ export default class MapEngine {
     private defaultBounds = new google.maps.LatLngBounds({ lat: -60, lng: -179 }, { lat: 80, lng: 179 });
 
     constructor(containerId: string) {
-        const elem = document.getElementById(containerId);
-        if (elem) {
+        const elem = document.getElementById(containerId)!;
+        new Promise<{lat: number, lng: number}>((resolve, reject) =>
+            navigator.geolocation.getCurrentPosition(
+                (position) => resolve({ lat: position.coords.latitude, lng: position.coords.longitude }),
+                (_) => resolve({ lat: 45, lng: 10 }),
+            ),
+        ).then((center) => {
             this.map = new google.maps.Map(
                 elem,
                 {
-                    center: { lat: 45, lng: 10 },
+                    center,
                     zoom: 5,
                     minZoom: 3,
                     restriction: {
@@ -29,19 +34,20 @@ export default class MapEngine {
                         {
                             featureType: 'poi',
                             stylers: [
-                                { visibility: 'off' }
-                            ]
-                        }
-                    ]
-                });
-        }
+                                { visibility: 'off' },
+                            ],
+                        },
+                    ],
+                },
+            );
 
-        const worldControl = new WorldControl(() => this.map.getZoom(), (n: number) => this.map.setZoom(n));
-        this.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(worldControl.getContainer());
+            const worldControl = new WorldControl(() => this.map.getZoom(), (n: number) => this.map.setZoom(n));
+            this.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(worldControl.getContainer());
+        });
     }
 
     public getBoundingBox(): BoundingBox {
-        const bounds = this.map.getBounds() || this.defaultBounds;
+        const bounds = this.map ? this.map.getBounds() : this.defaultBounds;
         const ne = bounds.getNorthEast();
         const sw = bounds.getSouthWest();
         return {
@@ -53,8 +59,11 @@ export default class MapEngine {
     }
 
     public onMove(listener: (ev: any) => void) {
+        if (!this.map) {
+            setTimeout(() => this.onMove(listener), 1000);
+            return;
+        }
         this.map.addListener('idle', listener);
-
     }
 
     public remove() {
