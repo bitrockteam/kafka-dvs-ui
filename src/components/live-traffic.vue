@@ -15,7 +15,7 @@
       <div class="info">
         <div class="line-row">
           <div class="label">Total Airlines</div>
-          <div class="label">Airlines on screen</div>  
+          <div class="label">Airlines on screen</div>
         </div>
         <div class="line-row">
           <div class="value">{{ CountAirline || '-' }}</div>
