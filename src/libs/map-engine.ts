@@ -25,6 +25,14 @@ export default class MapEngine {
                         strictBounds: true,
                     },
                     disableDefaultUI: true,
+                    styles: [
+                        {
+                            featureType: 'poi',
+                            stylers: [
+                                { visibility: 'off' }
+                            ]
+                        }
+                    ]
                 });
         }
 
