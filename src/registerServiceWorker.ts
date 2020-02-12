@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === 'production') {
     },
     updated() {
       console.log('New content is available; please refresh.');
-      const event: CustomEvent = new CustomEvent('KGSUpdateAvailable', {
+      const event: CustomEvent = new CustomEvent('DVSUpdateAvailable', {
         bubbles: true,
         composed: true,
       });

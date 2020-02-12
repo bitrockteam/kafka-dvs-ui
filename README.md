@@ -8,7 +8,7 @@
 [http://dvs.reactive-labs.io/](http://dvs.reactive-labs.io/)
 
 ## Screenshot
-![DVS UI screenshot](public/img/kgs.png)
+![DVS UI screenshot](public/img/dvs.png)
 
 ## Demo mode
 You can append the query parameter `?demo=[NUMBER-OF-MINUTES]` to the url to enable the demo mode, once activated it will fully refresh the application every specified minutes.
@@ -34,7 +34,7 @@ To prevent an overhead of visible informations for the user, the map shows the l
 * [RxJS](https://rxjs.dev/)
 * [SASS](https://sass-lang.com/)
 * [Amber Design System](https://amber.bitrock.it/)
-* [Mapbox](https://www.mapbox.com/)
+* [Google Maps API](https://cloud.google.com/maps-platform/)
 
 ### Getting started
 Clone the repo
@@ -78,7 +78,7 @@ The project make use of `.env` files, just update the values before starting the
 ### Things to keep in mind
 * The Vuex store contains **only** global values for the application, the real time data coming from the websockets is processed & rendered directly in the relative component state. Otherwise the store would act as a computational bottleneck.
 * Each widget in the dashboard is **independent** on getting the data from the backend and is also exported as dedicated module for lazy loading. Both of these approaches also results in a better development experience.
-* For a cleaner UX, the map will show only **the latest 100 RSVP events**. The amount of markers for the "time window" is defined in the Vuex store.
+* For a cleaner UX, the map will show only **up to 1000 flights**. The amount of markers for the "time window" is defined in the Vuex store.
 
 ## How to contribute
 Pull Request Submitting Process:
@@ -91,12 +91,6 @@ Pull Request Submitting Process:
 7. if it's approved, merge and delete the feature branch
 
 Please refer to the [contributing.md](contributing.md) file for the full guidelines and code of conduct.
-
-<!-- ## Next steps
-* Development environment & branch
-* settings page/modal (activate demo mode & set event window from UI)
-* code highlightning in the KSQL queries related to the widgets
-* time travel events (with backend support) -->
 
 ## License
 Application developed by Bitrock UI Engineering team, released under the [MIT license](LICENSE).

@@ -38,7 +38,7 @@ export default class extends Vue {
   private update: boolean = false;
 
   private mounted() {
-    window.addEventListener('KGSUpdateAvailable', () => this.update = true);
+    window.addEventListener('DVSUpdateAvailable', () => this.update = true);
   }
 
   private refresh() {
