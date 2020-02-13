@@ -3,6 +3,8 @@ import { Flight } from '../interfaces/flight';
 import BoundingBox from './bounding-box';
 import {} from 'googlemaps';
 
+const directionDegPrecision: number = 10
+
 export default class MapEngine {
     private map: google.maps.Map | any;
     private popup: google.maps.InfoWindow | any;
@@ -164,7 +166,7 @@ const setDirection = (marker: google.maps.Marker, direction: number) => {
     const svg = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<svg version="1.1" id="airport-15" transform="rotate(',
-        direction,
+        Math.round(direction / directionDegPrecision) * directionDegPrecision,
         ')" xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0 0 15 15">',
         '<path fill="#eb6400"  id="path7712-0" d="M15,6.8182L15,8.5l-6.5-1&#xA;&#x9;l-0.3182,4.7727L11,14v1l-3.5-0.6818L4,15v-1l2.8182-1.7273L6.5,7.5L0,8.5V6.8182L6.5,4.5v-3c0,0,0-1.5,1-1.5s1,1.5,1,1.5v2.8182&#xA;&#x9;L15,6.8182z"/>',
         '</svg>',
