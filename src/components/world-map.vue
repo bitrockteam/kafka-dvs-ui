@@ -30,8 +30,23 @@ export default class extends Vue {
   }
 
   private mounted() {
-    this.createMapInstance();
-    this.listen(streamWS(this.socketURL));
+    const firstMapLoad = setTimeout(() => {
+      this.createMapInstance();
+      this.listen(streamWS(this.socketURL));
+    }, 500);
+
+    new Promise<{lat: number, lng: number}>((resolve, reject) => {
+      return navigator.geolocation.getCurrentPosition(
+          (position) =>  resolve({ lat: position.coords.latitude, lng: position.coords.longitude }),
+          (_) => resolve,
+          { maximumAge: 600000 },
+      );
+    },
+    ).then((center) => {
+      clearTimeout(firstMapLoad);
+      this.createMapInstance(center);
+      this.listen(streamWS(this.socketURL));
+    });
   }
 
   private unsubscribe() {
@@ -43,9 +58,13 @@ export default class extends Vue {
     this.unsubscribe();
   }
 
-  private createMapInstance() {
-    this.map = new MapEngine('map');
-    this.map.onMove(this.sendBoundingBox);
+  private createMapInstance(center?: {lat: number, lng: number}) {
+      if (!this.map) {
+        this.map = new MapEngine('map', center);
+        this.map.onMove(this.sendBoundingBox);
+      } else {
+        this.map.setCenter(center);
+      }
   }
 
   private manageFlightList(event: FlightList) {
@@ -58,9 +77,9 @@ export default class extends Vue {
       this.map.updateFlight(flightUpdate);
     });
     // tslint:disable-next-line
-    console.log("Flights on screen: ", this.map.totalFlights());
+    console.log('Flights on screen: ', this.map.totalFlights());
     // tslint:disable-next-line
-    console.log("Max Timestamp: ", new Date(maxTimestap));
+    console.log('Max Timestamp: ', new Date(maxTimestap));
   }
 
   private listen(url: string) {
@@ -103,4 +122,4 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss" src="@/styles/components/world-map.scss"></style>
+<style lang='scss' src='@/styles/components/world-map.scss'></style>
