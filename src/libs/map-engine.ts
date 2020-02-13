@@ -3,6 +3,8 @@ import { Flight } from '../interfaces/flight';
 import BoundingBox from './bounding-box';
 import {} from 'googlemaps';
 
+const directionDegPrecision: number = 10;
+
 export default class MapEngine {
     private map: google.maps.Map | any;
     private popup: google.maps.InfoWindow | any;
@@ -12,12 +14,17 @@ export default class MapEngine {
     private defaultBounds = new google.maps.LatLngBounds({ lat: -60, lng: -179 }, { lat: 80, lng: 179 });
 
     constructor(containerId: string) {
-        const elem = document.getElementById(containerId);
-        if (elem) {
+        const elem = document.getElementById(containerId)!;
+        new Promise<{lat: number, lng: number}>((resolve, reject) =>
+            navigator.geolocation.getCurrentPosition(
+                (position) => resolve({ lat: position.coords.latitude, lng: position.coords.longitude }),
+                (_) => resolve({ lat: 45, lng: 10 }),
+            ),
+        ).then((center) => {
             this.map = new google.maps.Map(
                 elem,
                 {
-                    center: { lat: 45, lng: 10 },
+                    center,
                     zoom: 5,
                     minZoom: 3,
                     restriction: {
@@ -25,15 +32,24 @@ export default class MapEngine {
                         strictBounds: true,
                     },
                     disableDefaultUI: true,
-                });
-        }
+                    styles: [
+                        {
+                            featureType: 'poi',
+                            stylers: [
+                                { visibility: 'off' },
+                            ],
+                        },
+                    ],
+                },
+            );
 
-        const worldControl = new WorldControl(() => this.map.getZoom(), (n: number) => this.map.setZoom(n));
-        this.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(worldControl.getContainer());
+            const worldControl = new WorldControl(() => this.map.getZoom(), (n: number) => this.map.setZoom(n));
+            this.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(worldControl.getContainer());
+        });
     }
 
     public getBoundingBox(): BoundingBox {
-        const bounds = this.map.getBounds() || this.defaultBounds;
+        const bounds = this.map ? this.map.getBounds() : this.defaultBounds;
         const ne = bounds.getNorthEast();
         const sw = bounds.getSouthWest();
         return {
@@ -45,8 +61,11 @@ export default class MapEngine {
     }
 
     public onMove(listener: (ev: any) => void) {
+        if (!this.map) {
+            setTimeout(() => this.onMove(listener), 1000);
+            return;
+        }
         this.map.addListener('idle', listener);
-
     }
 
     public remove() {
@@ -144,14 +163,12 @@ const setPosition = (marker: google.maps.Marker, longitude: number, latitude: nu
 };
 
 const setDirection = (marker: google.maps.Marker, direction: number) => {
-    const svg = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<svg version="1.1" id="airport-15" transform="rotate(',
-        direction,
-        ')" xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0 0 15 15">',
-        '<path fill="#eb6400"  id="path7712-0" d="M15,6.8182L15,8.5l-6.5-1&#xA;&#x9;l-0.3182,4.7727L11,14v1l-3.5-0.6818L4,15v-1l2.8182-1.7273L6.5,7.5L0,8.5V6.8182L6.5,4.5v-3c0,0,0-1.5,1-1.5s1,1.5,1,1.5v2.8182&#xA;&#x9;L15,6.8182z"/>',
-        '</svg>',
-    ].join('\n');
+    const svg = `<?xml version="1.0" encoding="UTF-8"?>
+    <svg version="1.1" id="airport-15" xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0 0 15 15">
+        <g transform="rotate(${Math.round(direction / directionDegPrecision) * directionDegPrecision}, 7.5, 7.5)">
+            <path fill="#eb6400" id="path7712-0" d="M15,6.8182L15,8.5l-6.5-1&#xA;&#x9;l-0.3182,4.7727L11,14v1l-3.5-0.6818L4,15v-1l2.8182-1.7273L6.5,7.5L0,8.5V6.8182L6.5,4.5v-3c0,0,0-1.5,1-1.5s1,1.5,1,1.5v2.8182&#xA;&#x9;L15,6.8182z"/>
+        </g>
+    </svg>`;
     marker.setIcon({
         url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
     });
