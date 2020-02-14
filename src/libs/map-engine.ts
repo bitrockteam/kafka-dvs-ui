@@ -196,11 +196,13 @@ const createPopup = (flight: Flight) => {
       <div class='flight-airport'>
         <div class='airport'>
           <b>${airportDeparture.codeAirport}</b>
+          <div style="text-align: center; max-width: 120px;">${airportDeparture.nameAirport}</br>${airportDeparture.nameCountry}</div>
           <div>${airportDeparture.timezone} <br> GMT ( +${airportDeparture.gmt}:00 )</div>
         </div>
         <span></span>
         <div class='airport'>
           <b>${airportArrival.codeAirport}</b>
+          <div style="text-align: center; max-width: 120px;">${airportArrival.nameAirport}</br>${airportArrival.nameCountry}</div>
           <div>${airportArrival.timezone} <br> GMT ( +${airportArrival.gmt}:00 )</div>
         </div>
       </div>
