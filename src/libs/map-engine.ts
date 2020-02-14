@@ -4,6 +4,8 @@ import BoundingBox from './bounding-box';
 import {} from 'googlemaps';
 
 const directionDegPrecision: number = 10;
+const zoomFactor: number = 2;
+const baseMarkerDimension: number = 10;
 
 export default class MapEngine {
     private map: google.maps.Map;
@@ -77,6 +79,7 @@ export default class MapEngine {
         } = flight;
 
         const oldFlightInfo = this.flights[icaoNumber];
+        const zoom = this.map.getZoom();
 
         if (oldFlightInfo) {
 
@@ -86,14 +89,16 @@ export default class MapEngine {
                     this.removeFlight(icaoNumber);
                 } else {
                     setPosition(oldFlightInfo.marker, longitude, latitude);
-                    setDirection(oldFlightInfo.marker, direction);
+                    setDirection(oldFlightInfo.marker, direction, zoom);
                 }
 
+            } else {
+                setDirection(oldFlightInfo.marker, direction, zoom);
             }
 
         } else if (altitude !== 0) {
             // Handle new flight
-            const marker: google.maps.Marker = createMarker(longitude, latitude, direction);
+            const marker: google.maps.Marker = createMarker(longitude, latitude, direction, zoom);
             google.maps.event.addListener(marker, 'click', () => {
                 if (this.popup) {
                     this.popup.close();
@@ -141,13 +146,13 @@ export default class MapEngine {
 
 }
 
-const createMarker = (longitude: number, latitude: number, direction: number) => {
+const createMarker = (longitude: number, latitude: number, direction: number, zoom: number) => {
     const marker: google.maps.Marker = new google.maps.Marker({
         draggable: false,
         optimized: true,
     });
     setPosition(marker, longitude, latitude);
-    setDirection(marker, direction);
+    setDirection(marker, direction, zoom);
     return marker;
 };
 
@@ -155,9 +160,10 @@ const setPosition = (marker: google.maps.Marker, longitude: number, latitude: nu
     marker.setPosition({lat: latitude, lng: longitude});
 };
 
-const setDirection = (marker: google.maps.Marker, direction: number) => {
+const setDirection = (marker: google.maps.Marker, direction: number, zoom: number) => {
+    const dimension = baseMarkerDimension + zoom * zoomFactor;
     const svg = `<?xml version="1.0" encoding="UTF-8"?>
-    <svg version="1.1" id="airport-15" xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0 0 15 15">
+    <svg version="1.1" id="airport-15" xmlns="http://www.w3.org/2000/svg" width="${dimension}px" height="${dimension}px" viewBox="0 0 15 15">
         <g transform="rotate(${Math.round(direction / directionDegPrecision) * directionDegPrecision}, 7.5, 7.5)">
             <path stroke="#000000" stroke-width="0.5" fill="#eb6400" id="path7712-0" d="M15,6.8182L15,8.5l-6.5-1&#xA;&#x9;l-0.3182,4.7727L11,14v1l-3.5-0.6818L4,15v-1l2.8182-1.7273L6.5,7.5L0,8.5V6.8182L6.5,4.5v-3c0,0,0-1.5,1-1.5s1,1.5,1,1.5v2.8182&#xA;&#x9;L15,6.8182z"/>
         </g>
