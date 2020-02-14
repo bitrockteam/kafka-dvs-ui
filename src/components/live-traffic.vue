@@ -90,13 +90,14 @@ export default class extends DashboardWidget {
   }
 
   private updateCounts(flights: Flight[]) {
-    const airlines = new Set(flights.map((f: Flight) => f.airline.nameAirline));
-    this.BoxedCountFlight = Object.keys(flights).length;
+    const validFlights = flights.filter((f: Flight) => f.geography.altitude !== 0);
+    const airlines = new Set(validFlights.map((f: Flight) => f.airline.nameAirline));
+    this.BoxedCountFlight = Object.keys(validFlights).length;
     this.BoxedCountAirline = airlines.size;
     if (this.BoxedCountAirline !== 0) {
       this.BoxedMaxSpeed = Math.max.apply(
         0,
-        flights.map((f: Flight) => f.speed),
+        validFlights.map((f: Flight) => f.speed),
       );
     } else {
       this.BoxedMaxSpeed = NaN;
