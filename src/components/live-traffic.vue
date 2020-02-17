@@ -24,8 +24,8 @@
       </div>
       <div class="info">
         <div class="line-row">
-          <div class="label">Global Top Speed</div>
-          <div class="label">Top Speed</div>
+          <div class="label">Overall Top Speed</div>
+          <div class="label">Current Top Speed</div>
         </div>
         <div class="line-row">
           <div class="value">{{ maxSpeed.toFixed(0) }} km/h</div>
