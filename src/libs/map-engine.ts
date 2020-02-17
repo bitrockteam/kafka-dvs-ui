@@ -219,7 +219,7 @@ const createPopup = (flight: Flight) => {
       <div class='flight-detail'>
          <div class='detail-box'>
            <h6>Altitude</h6>
-           <div>${altitude} ft</div>
+           <div>${altitude} m</div>
          </div>
          <div class='detail-box'>
            <h6>Latitude</h6>
