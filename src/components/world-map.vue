@@ -23,6 +23,7 @@ export default class extends Vue {
 
   private map: any | MapEngine = undefined;
   private socketURL: string = 'dvs';
+  private isListening: boolean = false;
 
   @Watch('paused')
   private togglePause(val: boolean) {
@@ -83,17 +84,20 @@ export default class extends Vue {
   }
 
   private listen(url: string) {
-    store.dispatch('attachWebSocket', { url }).then((socket) => {
-      this.sendBoundingBox();
-      socket
-        .pipe(
-          filter((event: any) =>
-            event.eventType === 'FlightList',
-          ),
-          map((event: any) => this.manageFlightList(event.eventPayload)),
-        )
-        .subscribe();
-    });
+    if (!this.isListening) {
+      store.dispatch('attachWebSocket', { url }).then((socket) => {
+        this.sendBoundingBox();
+        socket
+          .pipe(
+            filter((event: any) =>
+              event.eventType === 'FlightList',
+            ),
+            map((event: any) => this.manageFlightList(event.eventPayload)),
+          )
+          .subscribe();
+      });
+      this.isListening = true;
+    }
   }
 
   private createCommand(): CoordinatesBox {
