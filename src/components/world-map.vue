@@ -23,7 +23,7 @@ export default class extends Vue {
 
   private map: any | MapEngine = undefined;
   private socketURL: string = 'dvs';
-  private listener: any | Promise<void> = undefined;
+  private isListening: boolean = false;
 
   @Watch('paused')
   private togglePause(val: boolean) {
@@ -84,8 +84,8 @@ export default class extends Vue {
   }
 
   private listen(url: string) {
-    if (!this.listener) {
-      this.listener = store.dispatch('attachWebSocket', { url }).then((socket) => {
+    if (!this.isListening) {
+      store.dispatch('attachWebSocket', { url }).then((socket) => {
         this.sendBoundingBox();
         socket
           .pipe(
@@ -96,6 +96,7 @@ export default class extends Vue {
           )
           .subscribe();
       });
+      this.isListening = true;
     }
   }
 
