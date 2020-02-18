@@ -31,10 +31,80 @@ export default class MapEngine {
                 disableDefaultUI: true,
                 styles: [
                     {
-                        featureType: 'poi',
-                        stylers: [
-                            { visibility: 'off' },
-                        ],
+                      featureType: 'administrative.land_parcel',
+                      stylers: [
+                        {
+                          visibility: 'off',
+                        },
+                      ],
+                    },
+                    {
+                      featureType: 'administrative.neighborhood',
+                      stylers: [
+                        {
+                          visibility: 'off',
+                        },
+                      ],
+                    },
+                    {
+                      featureType: 'administrative.province',
+                      stylers: [
+                        {
+                          visibility: 'off',
+                        },
+                      ],
+                    },
+                    {
+                      featureType: 'landscape',
+                      stylers: [
+                        {
+                          visibility: 'off',
+                        },
+                      ],
+                    },
+                    {
+                      featureType: 'poi',
+                      stylers: [
+                        {
+                          visibility: 'off',
+                        },
+                      ],
+                    },
+                    {
+                      featureType: 'road',
+                      stylers: [
+                        {
+                          color: '#ffffff',
+                        },
+                        {
+                          visibility: 'simplified',
+                        },
+                      ],
+                    },
+                    {
+                      featureType: 'road',
+                      elementType: 'labels',
+                      stylers: [
+                        {
+                          visibility: 'off',
+                        },
+                      ],
+                    },
+                    {
+                      featureType: 'transit',
+                      stylers: [
+                        {
+                          visibility: 'off',
+                        },
+                      ],
+                    },
+                    {
+                      featureType: 'transit.station.airport',
+                      stylers: [
+                        {
+                          visibility: 'on',
+                        },
+                      ],
                     },
                 ],
             },
@@ -165,7 +235,7 @@ const setDirection = (marker: google.maps.Marker, direction: number, zoom: numbe
     const svg = `<?xml version="1.0" encoding="UTF-8"?>
     <svg version="1.1" id="airport-15" xmlns="http://www.w3.org/2000/svg" width="${dimension}px" height="${dimension}px" viewBox="-1 -1 18 18">
         <g transform="rotate(${Math.round(direction / directionDegPrecision) * directionDegPrecision}, 7.5, 7.5)">
-            <path stroke="#000000" stroke-width="0.5" fill="#eb6400" id="path7712-0" d="M15,6.8182L15,8.5l-6.5-1&#xA;&#x9;l-0.3182,4.7727L11,14v1l-3.5-0.6818L4,15v-1l2.8182-1.7273L6.5,7.5L0,8.5V6.8182L6.5,4.5v-3c0,0,0-1.5,1-1.5s1,1.5,1,1.5v2.8182&#xA;&#x9;L15,6.8182z"/>
+            <path stroke="#933400" stroke-width="0.5" fill="#FB8F2D" id="path7712-0" d="M15,6.8182L15,8.5l-6.5-1&#xA;&#x9;l-0.3182,4.7727L11,14v1l-3.5-0.6818L4,15v-1l2.8182-1.7273L6.5,7.5L0,8.5V6.8182L6.5,4.5v-3c0,0,0-1.5,1-1.5s1,1.5,1,1.5v2.8182&#xA;&#x9;L15,6.8182z"/>
         </g>
     </svg>`;
     marker.setIcon({
