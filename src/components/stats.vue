@@ -1,10 +1,10 @@
 <template>
   <div class="stats-row">
     <live-traffic />
-    <top-five-list :data="originAirport" titleSection="Origin Airport"/>
-    <top-five-list :data="destinationAirport" titleSection="Destination Airport"/>
-    <top-five-list :data="airlines" titleSection="Airlines"/>
-    <top-five-list :data="fastestFlights" titleSection="Fast Flights"/>
+    <top-five-list :data="originAirport" titleSection="Top 5 Departure Airports"/>
+    <top-five-list :data="destinationAirport" titleSection="Top 5 Destination Airports"/>
+    <top-five-list :data="airlines" titleSection="Top 5 Airlines"/>
+    <top-five-list :data="fastestFlights" titleSection="Top 5 Fastest Flights"/>
   </div>
 </template>
 
