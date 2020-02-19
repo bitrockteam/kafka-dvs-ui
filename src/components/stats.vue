@@ -68,7 +68,7 @@ export default class extends DashboardWidget {
               );
               break;
             case 'TopSpeedList':
-              const maxSpeed = event.eventPayload.elements[0].speed;
+              const maxSpeed = event.eventPayload.elements.map((speedFlight: SpeedFlight) => speedFlight.speed)[0] || 0;
               this.setMaxSpeed(maxSpeed);
               this.fastestFlights = event.eventPayload.elements.map(
                 (speed: SpeedFlight): StatData => ({
