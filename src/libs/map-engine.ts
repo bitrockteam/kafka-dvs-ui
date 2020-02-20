@@ -158,6 +158,9 @@ export default class MapEngine {
                 if (flight.geography.altitude === 0) {
                     this.removeFlight(icaoNumber);
                 } else {
+                    const marker = oldFlightInfo.marker;
+                    google.maps.event.clearListeners(marker, 'click');
+                    marker.addListener('click', () => this.openPopupForFlight(flight, marker));
                     setPosition(oldFlightInfo.marker, longitude, latitude);
                     setDirection(oldFlightInfo.marker, direction, zoom);
                 }
@@ -169,17 +172,7 @@ export default class MapEngine {
         } else if (altitude !== 0) {
             // Handle new flight
             const marker: google.maps.Marker = createMarker(longitude, latitude, direction, zoom);
-            google.maps.event.addListener(marker, 'click', () => {
-                if (this.popup) {
-                    this.popup.close();
-                }
-                this.popup = new google.maps.InfoWindow({
-                    content: createPopup(flight),
-                    disableAutoPan: false,
-                });
-                this.popup.open(this.map, marker);
-            });
-
+            google.maps.event.addListener(marker, 'click', () => this.openPopupForFlight(flight, marker));
             marker.setMap(this.map);
             this.flights[icaoNumber] = { flight, marker };
         }
@@ -207,6 +200,17 @@ export default class MapEngine {
                 this.removeFlight(icaoNumber);
             }
         });
+    }
+
+    private openPopupForFlight(flight: Flight, anchor: google.maps.MVCObject) {
+        if (this.popup) {
+            this.popup.close();
+        }
+        this.popup = new google.maps.InfoWindow({
+            content: createPopup(flight),
+            disableAutoPan: false,
+        });
+        this.popup.open(this.map, anchor);
     }
 
     private removeFlight(icaoNumber: string) {
@@ -296,15 +300,15 @@ const createPopup = (flight: Flight) => {
       <div class='flight-detail'>
          <div class='detail-box'>
            <h6>Altitude</h6>
-           <div>${altitude} m</div>
+           <div>${altitude.toFixed(2)} m</div>
          </div>
          <div class='detail-box'>
            <h6>Latitude</h6>
-           <div>${latitude}</div>
+           <div>${latitude.toFixed(4)}</div>
          </div>
          <div class='detail-box'>
           <h6>Longitude</h6>
-           <div>${longitude}</div>
+           <div>${longitude.toFixed(4)}</div>
          </div>
        </div>
       </div>
