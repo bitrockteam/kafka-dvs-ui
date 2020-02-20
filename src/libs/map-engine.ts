@@ -300,15 +300,15 @@ const createPopup = (flight: Flight) => {
       <div class='flight-detail'>
          <div class='detail-box'>
            <h6>Altitude</h6>
-           <div>${altitude} m</div>
+           <div>${altitude.toFixed(2)} m</div>
          </div>
          <div class='detail-box'>
            <h6>Latitude</h6>
-           <div>${latitude}</div>
+           <div>${latitude.toFixed(4)}</div>
          </div>
          <div class='detail-box'>
           <h6>Longitude</h6>
-           <div>${longitude}</div>
+           <div>${longitude.toFixed(4)}</div>
          </div>
        </div>
       </div>
