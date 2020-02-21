@@ -83,7 +83,7 @@ export default class MapEngine {
                     },
                     {
                       featureType: 'road',
-                      elementType: 'labels',
+                      xelementType: 'labels',
                       stylers: [
                         {
                           visibility: 'off',
@@ -161,7 +161,7 @@ export default class MapEngine {
                     const marker = oldFlightInfo.marker;
                     google.maps.event.clearListeners(marker, 'click');
                     marker.addListener('click', () => this.openPopupForFlight(flight, marker));
-                    if (this.icaoNumberToPopup.icaoNumber == flight.icaoNumber && this.icaoNumberToPopup.popup) {
+                    if (this.icaoNumberToPopup.icaoNumber === flight.icaoNumber && this.icaoNumberToPopup.popup) {
                       this.icaoNumberToPopup.popup.setContent(createPopup(flight));
                     }
                     setPosition(oldFlightInfo.marker, longitude, latitude);
