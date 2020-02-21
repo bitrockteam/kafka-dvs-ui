@@ -83,7 +83,7 @@ export default class MapEngine {
                     },
                     {
                       featureType: 'road',
-                      xelementType: 'labels',
+                      elementType: 'labels',
                       stylers: [
                         {
                           visibility: 'off',
@@ -209,15 +209,15 @@ export default class MapEngine {
         if (this.icaoNumberToPopup.popup) {
           this.icaoNumberToPopup.popup.close();
         }
-        const popup = new google.maps.InfoWindow({
+        const infoWindow = new google.maps.InfoWindow({
           content: createPopup(flight),
           disableAutoPan: false,
         });
         this.icaoNumberToPopup = {
           icaoNumber: flight.icaoNumber,
-          popup: popup,
+          popup: infoWindow,
         };
-        popup.open(this.map, anchor);
+        infoWindow.open(this.map, anchor);
     }
 
     private removeFlight(icaoNumber: string) {
