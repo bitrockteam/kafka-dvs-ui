@@ -1,6 +1,6 @@
 <template>
   <div v-bind:class="{ 'slide-in': maximized, 'footer-stats': true }">
-    <div class="copyright">Copyright &copy; 2019 -
+    <div class="copyright">Copyright &copy; 2020 -
       <a href="https://bitrock.it/" rel="noopener" target=_blank>BITROCK S.R.L.</a>
     </div>
     <button class="toggle-button" aria-label="toggle map button" @click="toggleMaximize">
