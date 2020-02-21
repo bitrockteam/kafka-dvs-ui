@@ -52,6 +52,7 @@ export default class extends Vue {
 
   private unsubscribe() {
     store.dispatch(types.stopFlightList);
+    this.isListening = false;
   }
 
   private destroyed() {
