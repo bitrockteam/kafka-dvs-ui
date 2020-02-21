@@ -9,7 +9,7 @@ const baseMarkerDimension: number = 10;
 
 export default class MapEngine {
     private map: google.maps.Map;
-    private popup?: google.maps.InfoWindow;
+    private icaoNumberToPopup: { icaoNumber?: string, popup?: google.maps.InfoWindow } = {};
     private flights: {
         [icaoNumber: string]: { flight: Flight, marker: google.maps.Marker };
     } = {};
@@ -161,6 +161,9 @@ export default class MapEngine {
                     const marker = oldFlightInfo.marker;
                     google.maps.event.clearListeners(marker, 'click');
                     marker.addListener('click', () => this.openPopupForFlight(flight, marker));
+                    if (this.icaoNumberToPopup.icaoNumber == flight.icaoNumber && this.icaoNumberToPopup.popup) {
+                      this.icaoNumberToPopup.popup.setContent(createPopup(flight));
+                    }
                     setPosition(oldFlightInfo.marker, longitude, latitude);
                     setDirection(oldFlightInfo.marker, direction, zoom);
                 }
@@ -203,14 +206,18 @@ export default class MapEngine {
     }
 
     private openPopupForFlight(flight: Flight, anchor: google.maps.MVCObject) {
-        if (this.popup) {
-            this.popup.close();
+        if (this.icaoNumberToPopup.popup) {
+          this.icaoNumberToPopup.popup.close();
         }
-        this.popup = new google.maps.InfoWindow({
-            content: createPopup(flight),
-            disableAutoPan: false,
+        const popup = new google.maps.InfoWindow({
+          content: createPopup(flight),
+          disableAutoPan: false,
         });
-        this.popup.open(this.map, anchor);
+        this.icaoNumberToPopup = {
+          icaoNumber: flight.icaoNumber,
+          popup: popup,
+        };
+        popup.open(this.map, anchor);
     }
 
     private removeFlight(icaoNumber: string) {
