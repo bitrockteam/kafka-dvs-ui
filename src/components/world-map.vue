@@ -110,7 +110,9 @@ export default class extends Vue {
     } = this.map.getBoundingBox();
 
     return {
-      '@type': 'startFlightList',
+      '@type': types.startFlightList,
+      'maxFlights': store.getters.maxFlights,
+      'updateRate': store.getters.updateRate,
       'leftHighLat': leftHighLat,
       'leftHighLon': leftHighLon,
       'rightLowLat': rightLowLat,

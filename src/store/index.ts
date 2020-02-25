@@ -8,6 +8,10 @@ import { getters } from './getters';
 Vue.use(Vuex);
 
 const state: State = {
+  configuration: {
+    maxFlights: 1500,
+    updateRate: 30,
+  },
   maximized: true,
   paused: false,
   maxSpeed: 0,
