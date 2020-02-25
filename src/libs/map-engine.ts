@@ -141,6 +141,10 @@ export default class MapEngine {
         return Object.keys(this.flights).length;
     }
 
+    public getZoom(): number {
+        return this.map.getZoom();
+    }
+
     public updateFlight(flight: Flight) {
         const {
             geography: { latitude, longitude, direction, altitude },

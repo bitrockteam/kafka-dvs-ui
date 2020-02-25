@@ -101,6 +101,14 @@ export default class extends Vue {
     }
   }
 
+  private fibonacci(n: number): number {
+    if (n <= 1) {
+      return 1;
+    }
+
+    return this.fibonacci(n - 1) + this.fibonacci(n - 2);
+  }
+
   private createCommand(): CoordinatesBox {
     const {
       leftHighLat,
@@ -109,10 +117,13 @@ export default class extends Vue {
       rightLowLon,
     } = this.map.getBoundingBox();
 
+    const zoom = this.map.getZoom();
+    const updateRate = this.fibonacci(Math.max(0, 14 - zoom));
+
     return {
       '@type': types.startFlightList,
       'maxFlights': store.getters.maxFlights,
-      'updateRate': store.getters.updateRate,
+      'updateRate': zoom,
       'leftHighLat': leftHighLat,
       'leftHighLon': leftHighLon,
       'rightLowLat': rightLowLat,
