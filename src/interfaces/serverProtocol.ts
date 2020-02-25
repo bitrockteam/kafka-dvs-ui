@@ -1,4 +1,4 @@
-export interface ServerProtocol {
+interface ServerProtocol {
   readonly '@type':
     | 'startFlightList'
     | 'stopFlightList'
@@ -19,6 +19,8 @@ export const types = {
 
 export interface CoordinatesBox extends ServerProtocol {
   readonly '@type': typeof types.startFlightList;
+  readonly maxFlights?: number;
+  readonly updateRate?: number;
   readonly leftHighLat: number;
   readonly leftHighLon: number;
   readonly rightLowLat: number;
@@ -31,6 +33,7 @@ export interface StopFlightList extends ServerProtocol {
 
 export interface StartTop extends ServerProtocol {
   readonly '@type': typeof types.startTop;
+  readonly updateRate?: number;
 }
 
 export interface StopTop extends ServerProtocol {
@@ -39,6 +42,7 @@ export interface StopTop extends ServerProtocol {
 
 export interface StartTotal extends ServerProtocol {
   readonly '@type': typeof types.startTotal;
+  readonly updateRate?: number;
 }
 
 export interface StopTotal extends ServerProtocol {
