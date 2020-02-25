@@ -7,8 +7,8 @@
 <script lang='ts'>
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { State } from 'vuex-class';
-import { webSocket } from 'rxjs/webSocket';
-import { map, filter } from 'rxjs/operators';
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { map, filter, tap, onErrorResumeNext, retry, retryWhen } from 'rxjs/operators';
 import { streamWS } from '@/libs/endpoints';
 import { Flight, FlightList } from '@/interfaces/flight';
 import MapEngine from '@/libs/map-engine';
@@ -86,10 +86,14 @@ export default class extends Vue {
 
   private listen(url: string) {
     if (!this.isListening) {
-      store.dispatch('attachWebSocket', { url }).then((socket) => {
+      store.dispatch('attachWebSocket', { url }).then((socket: WebSocketSubject<unknown>) => {
         this.sendBoundingBox();
         socket
           .pipe(
+            tap((event: any) => void 0, (err) => {
+              this.isListening = false;
+              this.listen(url);
+            }),
             filter((event: any) =>
               event.eventType === 'FlightList',
             ),
