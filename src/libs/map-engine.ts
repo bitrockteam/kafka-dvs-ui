@@ -4,8 +4,8 @@ import BoundingBox from './bounding-box';
 import {} from 'googlemaps';
 
 const directionDegPrecision: number = 10;
-const zoomFactor: number = 2;
-const baseMarkerDimension: number = 10;
+const zoomFactor: number = 3;
+const baseMarkerDimension: number = 4;
 
 export default class MapEngine {
     private map: google.maps.Map;
