@@ -174,7 +174,7 @@ export default class MapEngine {
 
         } else if (altitude !== 0) {
             // Handle new flight
-            const marker: google.maps.Marker = createMarker(longitude, latitude, direction, zoom);
+            const marker: google.maps.Marker = createMarker(icaoNumber, longitude, latitude, direction, zoom);
             google.maps.event.addListener(marker, 'click', () => this.openPopupForFlight(flight, marker));
             marker.setMap(this.map);
             this.flights[icaoNumber] = { flight, marker };
@@ -227,10 +227,11 @@ export default class MapEngine {
 
 }
 
-const createMarker = (longitude: number, latitude: number, direction: number, zoom: number) => {
+const createMarker = (icaoNumber: string, longitude: number, latitude: number, direction: number, zoom: number) => {
     const marker: google.maps.Marker = new google.maps.Marker({
         draggable: false,
         optimized: true,
+        title: icaoNumber,
     });
     setPosition(marker, longitude, latitude);
     setDirection(marker, direction, zoom);
