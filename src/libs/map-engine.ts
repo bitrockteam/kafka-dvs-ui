@@ -109,7 +109,26 @@ export default class MapEngine {
                 ],
             },
         );
-        const worldControl = new WorldControl(() => this.map.getZoom(), (n: number) => this.map.setZoom(n));
+        const worldControl = new WorldControl(() => this.map.getZoom(), (n: number) => {
+            this.map.setZoom(n);
+            if (this.icaoNumberToPopup.icaoNumber) {
+                const marker = this.flights[this.icaoNumberToPopup.icaoNumber].marker;
+                const pos = marker.getPosition();
+                if (pos) {
+                    if (n < 12) {
+                        const pxZoomFactor = Math.pow(2, n);
+                        const sw =
+                            new google.maps.LatLng(pos.lat() - (300 / pxZoomFactor), pos.lng() - (200 / pxZoomFactor));
+                        const ne =
+                            new google.maps.LatLng(pos.lat() + (180 / pxZoomFactor), pos.lng() + (200 / pxZoomFactor));
+                        const newBounds = new google.maps.LatLngBounds(sw, ne);
+                        this.map.panToBounds(newBounds);
+                    } else {
+                        this.map.panTo(pos);
+                    }
+                }
+            }
+        });
         this.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(worldControl.getContainer());
     }
 
