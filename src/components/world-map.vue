@@ -8,7 +8,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { map, filter, tap, onErrorResumeNext, retry, retryWhen } from 'rxjs/operators';
+import { map, filter, tap } from 'rxjs/operators';
 import { streamWS } from '@/libs/endpoints';
 import { Flight, FlightList } from '@/interfaces/flight';
 import MapEngine from '@/libs/map-engine';
