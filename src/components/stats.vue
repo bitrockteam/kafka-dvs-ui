@@ -18,6 +18,7 @@ import DashboardWidget from '@/libs/classes/dashboardwidget';
 import { streamWS } from '@/libs/endpoints';
 import { StatData, Airline, Airport, SpeedFlight } from '@/interfaces/stats';
 import { store } from '@/store';
+import { WebSocketSubject } from 'rxjs/webSocket';
 
 @Component({
   name: 'top-five',
@@ -34,7 +35,7 @@ export default class extends DashboardWidget {
   @Mutation private setMaxSpeed!: (speed: number) => void;
 
   private listen(url: string) {
-    store.dispatch('attachWebSocket', { url }).then((socket) => {
+    store.dispatch('attachWebSocket', { url }).then((socket: WebSocketSubject<unknown>) => {
       store.dispatch(types.startTop);
       socket.subscribe((event: any) => {
         const { eventType } = event;
@@ -82,7 +83,7 @@ export default class extends DashboardWidget {
             default:
               return;
         }
-      });
+      }, (error) => this.listen(url));
     });
   }
 
