@@ -47,6 +47,7 @@ import DashboardWidget from '@/libs/classes/dashboardwidget';
 import LoadingPlaceholderStat from '@/components/loading-placeholder-stat.vue';
 import { store } from '@/store';
 import { Flight } from '../interfaces/flight';
+import { WebSocketSubject } from 'rxjs/webSocket';
 
 @Component({
   name: 'live-traffic',
@@ -67,7 +68,7 @@ export default class extends DashboardWidget {
   private loading: boolean = true;
 
   private listen(url: string) {
-    store.dispatch('attachWebSocket', { url }).then((socket) => {
+    store.dispatch('attachWebSocket', { url }).then((socket: WebSocketSubject<unknown>) => {
       store.dispatch(types.startTotal);
       socket.subscribe((event: any) => {
         const { eventType, eventPayload: { eventCount } } = event;
@@ -85,7 +86,7 @@ export default class extends DashboardWidget {
           default:
             return;
         }
-      });
+      }, (error) => this.listen(url));
     });
   }
 
