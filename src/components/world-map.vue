@@ -106,7 +106,7 @@ export default class extends Vue {
   }
 
   private getUpdateRate(n: number): number {
-    const arr = [5, 8, 13, 21, 34, 55, 89, 144]
+    const arr = [5, 8, 13, 21, 34, 55, 89, 144];
     const index = Math.max(0, Math.min(n, arr.length - 1));
 
     return arr[index];

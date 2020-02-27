@@ -109,30 +109,7 @@ export default class MapEngine {
                 ],
             },
         );
-        const worldControl = new WorldControl(() => this.map.getZoom(), (n: number) => {
-            this.map.setZoom(n);
-            if (this.icaoNumberToPopup.icaoNumber) {
-                const marker = this.flights[this.icaoNumberToPopup.icaoNumber].marker;
-                const position = marker.getPosition();
-                if (position) {
-                    if (n < 12) {
-                        const pxZoomFactor = Math.pow(2, n);
-                        const sw = new google.maps.LatLng(
-                            position.lat() - (300 / pxZoomFactor),
-                            position.lng() - (200 / pxZoomFactor),
-                        );
-                        const ne = new google.maps.LatLng(
-                            position.lat() + (180 / pxZoomFactor),
-                            position.lng() + (200 / pxZoomFactor),
-                        );
-                        const newBounds = new google.maps.LatLngBounds(sw, ne);
-                        this.map.panToBounds(newBounds);
-                    } else {
-                        this.map.panTo(position);
-                    }
-                }
-            }
-        });
+        const worldControl = new WorldControl(() => this.map.getZoom(), (n: number) => this.zoomOnFocusedMarker(n));
         this.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(worldControl.getContainer());
     }
 
@@ -250,6 +227,35 @@ export default class MapEngine {
     private removeFlight(icaoNumber: string) {
         this.flights[icaoNumber].marker.setMap(null);
         delete this.flights[icaoNumber];
+    }
+
+    private zoomOnFocusedMarker(n: number) {
+        const centerMarkerZoomLevel = 12;
+        const horizontalPadding = 200;
+        const bottomPadding = 300;
+        const topPadding = 180;
+        this.map.setZoom(n);
+        if (this.icaoNumberToPopup.icaoNumber) {
+            const marker = this.flights[this.icaoNumberToPopup.icaoNumber].marker;
+            const position = marker.getPosition();
+            if (position) {
+                if (n < centerMarkerZoomLevel) {
+                    const pxZoomFactor = Math.pow(2, n);
+                    const sw = new google.maps.LatLng(
+                        position.lat() - (bottomPadding / pxZoomFactor),
+                        position.lng() - (horizontalPadding / pxZoomFactor),
+                    );
+                    const ne = new google.maps.LatLng(
+                        position.lat() + (topPadding / pxZoomFactor),
+                        position.lng() + (horizontalPadding / pxZoomFactor),
+                    );
+                    const newBounds = new google.maps.LatLngBounds(sw, ne);
+                    this.map.panToBounds(newBounds);
+                } else {
+                    this.map.panTo(position);
+                }
+            }
+        }
     }
 
 }
