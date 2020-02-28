@@ -8,7 +8,7 @@
               :value="percent"
               :display="count"
               :format="format"
-              :disabled=!selected
+              :disabled=isDisabled
         />
     </div>
 </template>
@@ -29,7 +29,6 @@ import '@amber-ds/components/progress-bar';
             required: true,
         },
         count: {
-            type: Number,
             required: true,
         },
         format: {
@@ -37,15 +36,19 @@ import '@amber-ds/components/progress-bar';
             required: false,
             default: '',
         },
+        selectedItem: {
+            type: String,
+            required: false,
+        },
     },
-    data() {
-        return {
-            selected: true,
-        };
+    computed: {
+        isDisabled() {
+            return this.$props.selectedItem != null && this.$props.selectedItem !== this.$props.name;
+        },
     },
     methods: {
         select() {
-            this.$data.selected = !this.$data.selected;
+            this.$emit('select', this.$props.name);
         },
     },
 })

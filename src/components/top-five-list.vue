@@ -4,11 +4,13 @@
     <div v-if="data.length">
       <top-list-item 
               v-for="(item, index) in data"
+              @select="pipeUp"
               :key="index"
               :name="item.name"
               :percent="item.percent"
               :count="item.count"
-              :format="item.format"            
+              :format="item.format"
+              :selectedItem="selectedItem"         
       />
     </div>
     <loading-placeholder-stat v-else />
@@ -26,10 +28,15 @@ import TopListItem from '@/components/top-list-item.vue';
     TopListItem,
     LoadingPlaceholderStat,
   },
-  props: ['titleSection', 'loading'],
+  props: ['titleSection', 'loading', 'selectedItem'],
   computed: {
     data() {
       return this.$attrs.data || [];
+    },
+  },
+  methods: {
+    pipeUp(item) {
+        this.$emit('select', item);
     },
   },
 })

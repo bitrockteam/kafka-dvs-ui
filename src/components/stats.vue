@@ -1,10 +1,10 @@
 <template>
   <div class="stats-row">
     <live-traffic />
-    <top-five-list :data="originAirport" titleSection="Top 5 Departure Airports"/>
-    <top-five-list :data="destinationAirport" titleSection="Top 5 Destination Airports"/>
-    <top-five-list :data="airlines" titleSection="Top 5 Airlines"/>
-    <top-five-list :data="fastestFlights" titleSection="Top 5 Fastest Flights"/>
+    <top-five-list :data="originAirport" :selectedItem=selectedItem @select="selectItem" titleSection="Top 5 Departure Airports"/>
+    <top-five-list :data="destinationAirport" :selectedItem=selectedItem @select="selectItem" titleSection="Top 5 Destination Airports"/>
+    <top-five-list :data="airlines" :selectedItem=selectedItem @select="selectItem" titleSection="Top 5 Airlines"/>
+    <top-five-list :data="fastestFlights" :selectedItem=selectedItem @select="selectItem" titleSection="Top 5 Fastest Flights"/>
   </div>
 </template>
 
@@ -25,6 +25,20 @@ import { WebSocketSubject } from 'rxjs/webSocket';
   components: {
     TopFiveList,
     LiveTraffic,
+  },
+  data() {
+    return {
+        selectedItem: null,
+    };
+  },
+  methods: {
+    selectItem(item) {
+      if (item === this.$data.selectedItem) {
+        this.$data.selectedItem = null;
+      } else {
+        this.$data.selectedItem = item;
+      }
+    },
   },
 })
 export default class extends DashboardWidget {
