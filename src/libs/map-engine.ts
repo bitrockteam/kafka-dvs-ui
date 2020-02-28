@@ -235,26 +235,29 @@ export default class MapEngine {
         const bottomPadding = 300;
         const topPadding = 180;
         this.map.setZoom(n);
-        if (this.icaoNumberToPopup.icaoNumber) {
-            const marker = this.flights[this.icaoNumberToPopup.icaoNumber].marker;
-            const position = marker.getPosition();
-            if (position) {
-                if (n < centerMarkerZoomLevel) {
-                    const pxZoomFactor = Math.pow(2, n);
-                    const sw = new google.maps.LatLng(
-                        position.lat() - (bottomPadding / pxZoomFactor),
-                        position.lng() - (horizontalPadding / pxZoomFactor),
-                    );
-                    const ne = new google.maps.LatLng(
-                        position.lat() + (topPadding / pxZoomFactor),
-                        position.lng() + (horizontalPadding / pxZoomFactor),
-                    );
-                    const newBounds = new google.maps.LatLngBounds(sw, ne);
-                    this.map.panToBounds(newBounds);
-                } else {
-                    this.map.panTo(position);
-                }
+        const position = this.selectedMarker()?.getPosition();
+        if (position) {
+            if (n < centerMarkerZoomLevel) {
+                const pxZoomFactor = Math.pow(2, n);
+                const sw = new google.maps.LatLng(
+                    position.lat() - (bottomPadding / pxZoomFactor),
+                    position.lng() - (horizontalPadding / pxZoomFactor),
+                );
+                const ne = new google.maps.LatLng(
+                    position.lat() + (topPadding / pxZoomFactor),
+                    position.lng() + (horizontalPadding / pxZoomFactor),
+                );
+                const newBounds = new google.maps.LatLngBounds(sw, ne);
+                this.map.panToBounds(newBounds);
+            } else {
+                this.map.panTo(position);
             }
+        }
+    }
+
+    private selectedMarker(): google.maps.Marker | undefined {
+        if (this.icaoNumberToPopup.icaoNumber) {
+            return this.flights[this.icaoNumberToPopup.icaoNumber].marker;
         }
     }
 
