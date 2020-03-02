@@ -7,6 +7,13 @@ const directionDegPrecision: number = 10;
 const zoomFactor: number = 3;
 const baseMarkerDimension: number = 4;
 
+interface MarkerData {
+  direction: number;
+  enabled: boolean;
+  marker?: google.maps.Marker;
+  zoom: number;
+}
+
 export default class MapEngine {
     private map: google.maps.Map;
     private icaoNumberToPopup: { icaoNumber?: string, popup?: google.maps.InfoWindow } = {};
@@ -129,6 +136,15 @@ export default class MapEngine {
         };
     }
 
+    public highlightFlights(f: (_: Flight) => boolean): void {
+      Object.values(this.flights).forEach((flightObject) => drawMarker({
+        direction: flightObject.flight.geography.direction,
+        enabled: f(flightObject.flight),
+        marker: flightObject.marker,
+        zoom: this.getZoom(),
+      }));
+    }
+
     public onMove(listener: (ev: any) => void) {
         this.map.addListener('idle', listener);
     }
@@ -149,39 +165,30 @@ export default class MapEngine {
         const {
             geography: { latitude, longitude, direction, altitude },
             icaoNumber,
-            updated,
         } = flight;
 
+        const enabled = true;
         const oldFlightInfo = this.flights[icaoNumber];
         const zoom = this.map.getZoom();
 
         if (oldFlightInfo) {
-
-            if (oldFlightInfo.flight.updated < updated) {
-
-                if (flight.geography.altitude === 0) {
-                    this.removeFlight(icaoNumber);
-                } else {
-                    const marker = oldFlightInfo.marker;
-                    google.maps.event.clearListeners(marker, 'click');
-                    marker.addListener('click', () => this.openPopupForFlight(flight, marker));
-                    if (this.icaoNumberToPopup.icaoNumber === flight.icaoNumber && this.icaoNumberToPopup.popup) {
-                      this.icaoNumberToPopup.popup.setContent(createPopup(flight));
-                    }
-                    setPosition(oldFlightInfo.marker, longitude, latitude);
-                    setDirection(oldFlightInfo.marker, direction, zoom);
-                }
-
-            } else {
-                setDirection(oldFlightInfo.marker, direction, zoom);
-            }
-
+          if (altitude === 0) {
+              this.removeFlight(icaoNumber);
+          } else {
+              const marker = oldFlightInfo.marker;
+              google.maps.event.clearListeners(marker, 'click');
+              marker.addListener('click', () => this.openPopupForFlight(flight, marker));
+              if (this.icaoNumberToPopup.icaoNumber === icaoNumber && this.icaoNumberToPopup.popup) {
+                this.icaoNumberToPopup.popup.setContent(createPopup(flight));
+              }
+              createOrUpdateMarker(icaoNumber, longitude, latitude, { direction, enabled, marker, zoom });
+          }
         } else if (altitude !== 0) {
             // Handle new flight
-            const marker: google.maps.Marker = createMarker(icaoNumber, longitude, latitude, direction, zoom);
-            google.maps.event.addListener(marker, 'click', () => this.openPopupForFlight(flight, marker));
-            marker.setMap(this.map);
-            this.flights[icaoNumber] = { flight, marker };
+            const { marker } = createOrUpdateMarker(icaoNumber, longitude, latitude, { direction, enabled, zoom });
+            google.maps.event.addListener(marker!, 'click', () => this.openPopupForFlight(flight, marker!));
+            marker!.setMap(this.map);
+            this.flights[icaoNumber] = { flight, marker: marker! };
         }
     }
 
@@ -263,33 +270,33 @@ export default class MapEngine {
 
 }
 
-const createMarker = (icaoNumber: string, longitude: number, latitude: number, direction: number, zoom: number) => {
-    const marker: google.maps.Marker = new google.maps.Marker({
+const createOrUpdateMarker = (icaoNumber: string, longitude: number, latitude: number, markerData: MarkerData) => {
+    markerData.marker = markerData.marker || new google.maps.Marker({
         draggable: false,
         optimized: true,
         title: icaoNumber,
     });
-    setPosition(marker, longitude, latitude);
-    setDirection(marker, direction, zoom);
-    return marker;
+    markerData.marker.setPosition({lat: latitude, lng: longitude});
+    drawMarker(markerData);
+    return markerData;
 };
 
-const setPosition = (marker: google.maps.Marker, longitude: number, latitude: number) => {
-    marker.setPosition({lat: latitude, lng: longitude});
-};
-
-const setDirection = (marker: google.maps.Marker, direction: number, zoom: number) => {
-    const dimension = baseMarkerDimension + zoom * zoomFactor;
-    const svg = `<?xml version="1.0" encoding="UTF-8"?>
-    <svg version="1.1" id="airport-15" xmlns="http://www.w3.org/2000/svg" width="${dimension}px" height="${dimension}px" viewBox="-1 -1 18 18">
-        <g transform="rotate(${Math.round(direction / directionDegPrecision) * directionDegPrecision}, 7.5, 7.5)">
-            <path stroke="#933400" stroke-width="0.5" fill="#FB8F2D" id="path7712-0" d="M15,6.8182L15,8.5l-6.5-1&#xA;&#x9;l-0.3182,4.7727L11,14v1l-3.5-0.6818L4,15v-1l2.8182-1.7273L6.5,7.5L0,8.5V6.8182L6.5,4.5v-3c0,0,0-1.5,1-1.5s1,1.5,1,1.5v2.8182&#xA;&#x9;L15,6.8182z"/>
-        </g>
-    </svg>`;
-    marker.setIcon({
-        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
-        anchor: new google.maps.Point(dimension / 2, dimension / 2),
-    });
+const drawMarker = (markerData: MarkerData) => {
+  const borderColor = markerData.enabled ? '#933400' : '#999999';
+  const innerColor = markerData.enabled ? '#FB8F2D' : '#b8b8b8';
+  const opacity = markerData.enabled ? 1 : 0.4;
+  const dimension = baseMarkerDimension + markerData.zoom * zoomFactor;
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+  <svg version="1.1" id="airport-15" xmlns="http://www.w3.org/2000/svg" width="${dimension}px" height="${dimension}px" viewBox="-1 -1 18 18">
+    <g transform="rotate(${Math.round(markerData.direction / directionDegPrecision) * directionDegPrecision}, 7.5, 7.5)">
+      <path opacity="${opacity}" stroke="${borderColor}" stroke-width="0.5" fill="${innerColor}" id="path7712-0" d="M15,6.8182L15,8.5l-6.5-1&#xA;&#x9;l-0.3182,4.7727L11,14v1l-3.5-0.6818L4,15v-1l2.8182-1.7273L6.5,7.5L0,8.5V6.8182L6.5,4.5v-3c0,0,0-1.5,1-1.5s1,1.5,1,1.5v2.8182&#xA;&#x9;L15,6.8182z"/>
+    </g>
+  </svg>`;
+  markerData?.marker?.setIcon({
+    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+    anchor: new google.maps.Point(dimension / 2, dimension / 2),
+  });
+  markerData?.marker?.setZIndex(markerData?.enabled ? 0 : -1);
 };
 
 const getPosition = (marker: google.maps.Marker) => {

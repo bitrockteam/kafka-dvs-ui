@@ -2,13 +2,16 @@
   <div class="top-five-list">
     <div class="title-section">{{ titleSection }}</div>
     <div v-if="data.length">
-      <amber-progress-bar
+      <top-list-item 
               v-for="(item, index) in data"
+              @select="pipeUp"
               :key="index"
-              :label="item.name"
-              :value="item.percent"
-              :display="item.count"
-              :format="item.format || ''"
+              :name="item.name"
+              :type="item.type"
+              :percent="item.percent"
+              :count="item.count"
+              :format="item.format"
+              :selectedItem="selectedItem"
       />
     </div>
     <loading-placeholder-stat v-else />
@@ -18,17 +21,24 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import LoadingPlaceholderStat from '@/components/loading-placeholder-stat.vue';
-import '@amber-ds/components/progress-bar';
+import TopListItem from '@/components/top-list-item.vue';
+import TopSelectedItem from '@/libs/classes/top-selected-item';
 
 @Component({
   name: 'top-five-list',
   components: {
+    TopListItem,
     LoadingPlaceholderStat,
   },
-  props: ['titleSection', 'loading'],
+  props: {titleSection: String, selectedItem: TopSelectedItem},
   computed: {
     data() {
       return this.$attrs.data || [];
+    },
+  },
+  methods: {
+    pipeUp(topSelectedItem: TopSelectedItem) {
+        this.$emit('select', topSelectedItem);
     },
   },
 })

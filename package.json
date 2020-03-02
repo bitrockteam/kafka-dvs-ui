@@ -1,7 +1,7 @@
 {
 	"name": "kafka-dvs-ui",
 	"displayName": "Bitrock DVS",
-	"version": "1.1.13",
+	"version": "1.1.14",
 	"private": true,
 	"contributors": [
 		"Bitrock DVS team <dvs@bitrock.it>"
@@ -17,7 +17,7 @@
 		"test": "npm run test:unit"
 	},
 	"dependencies": {
-		"@amber-ds/components": "1.2.4",
+		"@amber-ds/components": "1.2.6",
 		"@amber-ds/visual": "1.0.1",
 		"@types/googlemaps": "3.39.2",
 		"googlemaps": "1.12.0",

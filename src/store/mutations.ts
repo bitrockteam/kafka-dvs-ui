@@ -2,6 +2,7 @@ import { State } from '@/interfaces/store';
 import { types } from '@/interfaces/serverProtocol';
 import { store } from '@/store';
 import { MutationTree } from 'vuex';
+import TopSelectedItem from '@/libs/classes/top-selected-item';
 
 const mutations: MutationTree<State> = {
   togglePause(currentState: State) {
@@ -19,6 +20,14 @@ const mutations: MutationTree<State> = {
   },
   setMaxSpeed(currentState: State, speed: number) {
     currentState.maxSpeed = speed;
+  },
+  topSelectedItem(currentState: State, item?: TopSelectedItem) {
+    currentState.topSelectedItem = item;
+    if (!!item) {
+      store.dispatch(types.stopTop);
+    } else {
+      store.dispatch(types.startTop);
+    }
   },
 };
 
