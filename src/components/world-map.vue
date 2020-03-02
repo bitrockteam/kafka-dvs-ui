@@ -14,20 +14,42 @@ import { Flight, FlightList } from '@/interfaces/flight';
 import MapEngine from '@/libs/map-engine';
 import { CoordinatesBox, types } from '@/interfaces/serverProtocol';
 import { store } from '@/store';
+import TopSelectedItem from '../libs/classes/top-selected-item';
 
 @Component({
   name: 'world-map',
 })
 export default class extends Vue {
   @State private paused!: boolean;
+  @State private topSelectedItem?: TopSelectedItem;
 
-  private map: any | MapEngine = undefined;
+  private map?: MapEngine = undefined;
   private socketURL: string = 'dvs';
   private isListening: boolean = false;
 
   @Watch('paused')
   private togglePause(val: boolean) {
     val ? this.unsubscribe() : this.listen(streamWS(this.socketURL));
+  }
+
+  @Watch('topSelectedItem')
+  private toggleFlights(item?: TopSelectedItem) {
+    const highlight: (_: Flight) => boolean = (flight) => {
+      if (!item) {
+        return true;
+      }
+      switch (item.type) {
+        case 'originAirport':
+          return flight.airportDeparture.nameAirport === item.value;
+        case 'destinationAirport':
+          return flight.airportArrival.nameAirport === item.value;
+        case 'airlines':
+          return flight.airline.nameAirline === item.value;
+        default:
+          return true;
+      }
+    };
+    this.map?.highlightFlights(highlight);
   }
 
   private mounted() {
@@ -56,7 +78,7 @@ export default class extends Vue {
   }
 
   private destroyed() {
-    this.map.remove();
+    this.map!.remove();
     this.unsubscribe();
   }
 
@@ -65,7 +87,7 @@ export default class extends Vue {
         this.map = new MapEngine('map', center);
         this.map.onMove(this.sendBoundingBox);
       } else {
-        this.map.setCenter(center);
+        this.map.setCenter(center!);
       }
   }
 
@@ -73,13 +95,14 @@ export default class extends Vue {
     const { elements } = event;
     let maxTimestap = 0;
     const newIcaoNumbers = new Set(elements.map((f: Flight) => f.icaoNumber));
-    this.map.removeOldFlights(newIcaoNumbers);
+    this.map!.removeOldFlights(newIcaoNumbers);
     elements.forEach((flightUpdate: Flight) => {
       maxTimestap = Math.max(maxTimestap, flightUpdate.updated);
-      this.map.updateFlight(flightUpdate);
+      this.map!.updateFlight(flightUpdate);
     });
+    this.toggleFlights(this.topSelectedItem);
     // tslint:disable-next-line
-    console.log('Flights on screen: ', this.map.totalFlights());
+    console.log('Flights on screen: ', this.map!.totalFlights());
     // tslint:disable-next-line
     console.log('Max Timestamp: ', new Date(maxTimestap));
   }
@@ -118,9 +141,9 @@ export default class extends Vue {
       leftHighLon,
       rightLowLat,
       rightLowLon,
-    } = this.map.getBoundingBox();
+    } = this.map!.getBoundingBox();
 
-    const zoom = this.map.getZoom();
+    const zoom = this.map!.getZoom();
     const updateRate = this.getUpdateRate(Math.max(0, 10 - zoom));
 
     return {
@@ -136,7 +159,7 @@ export default class extends Vue {
 
   private sendBoundingBox() {
     if (!this.paused) {
-      this.map.removeAllFlightsOutOfBoundingBox();
+      this.map!.removeAllFlightsOutOfBoundingBox();
       store.dispatch(types.startFlightList, this.createCommand());
     }
   }
