@@ -16,6 +16,7 @@ const state: State = {
   paused: false,
   maxSpeed: 0,
   socket: undefined,
+  topSelectedItem: undefined,
 };
 
 export const store = new Vuex.Store({

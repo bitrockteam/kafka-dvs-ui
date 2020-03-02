@@ -129,6 +129,10 @@ export default class MapEngine {
         };
     }
 
+    public highlightFlights(f: (_: Flight) => boolean): void {
+      Object.values(this.flights).forEach((flightObject) => flightObject.marker.setVisible(f(flightObject.flight)));
+    }
+
     public onMove(listener: (ev: any) => void) {
         this.map.addListener('idle', listener);
     }

@@ -49,7 +49,8 @@ import TopSelectedItem from '@/libs/classes/top-selected-item';
     computed: {
         isDisabled() {
             return this.$props.selectedItem != null && (
-                this.$props.selectedItem.type !== this.$props.type || this.$props.selectedItem.value !== this.$props.name
+                this.$props.selectedItem.type !== this.$props.type ||
+                this.$props.selectedItem.value !== this.$props.name
             );
         },
     },

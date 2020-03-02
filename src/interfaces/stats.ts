@@ -1,6 +1,6 @@
 export interface StatData {
   name?: string;
-  type: string;
+  type: 'originAirport' | 'destinationAirport' | 'airlines' | 'fastestFlights';
   count: number|string;
   percent: number;
   format?: string;

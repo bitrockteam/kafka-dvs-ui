@@ -39,6 +39,7 @@ import TopSelectedItem from '@/libs/classes/top-selected-item';
       } else {
         this.$data.selectedItem = item;
       }
+      store.commit('topSelectedItem', this.$data.selectedItem);
     },
   },
 })
