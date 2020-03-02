@@ -1,7 +1,7 @@
 {
 	"name": "kafka-dvs-ui",
 	"displayName": "Bitrock DVS",
-	"version": "1.1.13",
+	"version": "1.1.14",
 	"private": true,
 	"contributors": [
 		"Bitrock DVS team <dvs@bitrock.it>"
