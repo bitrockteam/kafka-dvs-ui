@@ -4,8 +4,8 @@ import BoundingBox from './bounding-box';
 import {} from 'googlemaps';
 
 const directionDegPrecision: number = 10;
-const zoomFactor: number = 2;
-const baseMarkerDimension: number = 10;
+const zoomFactor: number = 3;
+const baseMarkerDimension: number = 4;
 
 export default class MapEngine {
     private map: google.maps.Map;
@@ -109,7 +109,7 @@ export default class MapEngine {
                 ],
             },
         );
-        const worldControl = new WorldControl(() => this.map.getZoom(), (n: number) => this.map.setZoom(n));
+        const worldControl = new WorldControl(() => this.map.getZoom(), (n: number) => this.zoomOnFocusedMarker(n));
         this.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(worldControl.getContainer());
     }
 
@@ -139,6 +139,10 @@ export default class MapEngine {
 
     public totalFlights(): number {
         return Object.keys(this.flights).length;
+    }
+
+    public getZoom(): number {
+        return this.map.getZoom();
     }
 
     public updateFlight(flight: Flight) {
@@ -174,7 +178,7 @@ export default class MapEngine {
 
         } else if (altitude !== 0) {
             // Handle new flight
-            const marker: google.maps.Marker = createMarker(longitude, latitude, direction, zoom);
+            const marker: google.maps.Marker = createMarker(icaoNumber, longitude, latitude, direction, zoom);
             google.maps.event.addListener(marker, 'click', () => this.openPopupForFlight(flight, marker));
             marker.setMap(this.map);
             this.flights[icaoNumber] = { flight, marker };
@@ -225,12 +229,45 @@ export default class MapEngine {
         delete this.flights[icaoNumber];
     }
 
+    private zoomOnFocusedMarker(n: number) {
+        const centerMarkerZoomLevel = 12;
+        const horizontalPadding = 200;
+        const bottomPadding = 300;
+        const topPadding = 180;
+        this.map.setZoom(n);
+        const position = this.selectedMarker()?.getPosition();
+        if (position) {
+            if (n < centerMarkerZoomLevel) {
+                const pxZoomFactor = Math.pow(2, n);
+                const sw = new google.maps.LatLng(
+                    position.lat() - (bottomPadding / pxZoomFactor),
+                    position.lng() - (horizontalPadding / pxZoomFactor),
+                );
+                const ne = new google.maps.LatLng(
+                    position.lat() + (topPadding / pxZoomFactor),
+                    position.lng() + (horizontalPadding / pxZoomFactor),
+                );
+                const newBounds = new google.maps.LatLngBounds(sw, ne);
+                this.map.panToBounds(newBounds);
+            } else {
+                this.map.panTo(position);
+            }
+        }
+    }
+
+    private selectedMarker(): google.maps.Marker | undefined {
+        if (this.icaoNumberToPopup.icaoNumber) {
+            return this.flights[this.icaoNumberToPopup.icaoNumber].marker;
+        }
+    }
+
 }
 
-const createMarker = (longitude: number, latitude: number, direction: number, zoom: number) => {
+const createMarker = (icaoNumber: string, longitude: number, latitude: number, direction: number, zoom: number) => {
     const marker: google.maps.Marker = new google.maps.Marker({
         draggable: false,
         optimized: true,
+        title: icaoNumber,
     });
     setPosition(marker, longitude, latitude);
     setDirection(marker, direction, zoom);

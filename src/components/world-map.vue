@@ -105,6 +105,13 @@ export default class extends Vue {
     }
   }
 
+  private getUpdateRate(n: number): number {
+    const arr = [5, 8, 13, 21, 34, 55, 89, 144];
+    const index = Math.max(0, Math.min(n, arr.length - 1));
+
+    return arr[index];
+  }
+
   private createCommand(): CoordinatesBox {
     const {
       leftHighLat,
@@ -113,10 +120,13 @@ export default class extends Vue {
       rightLowLon,
     } = this.map.getBoundingBox();
 
+    const zoom = this.map.getZoom();
+    const updateRate = this.getUpdateRate(Math.max(0, 10 - zoom));
+
     return {
       '@type': types.startFlightList,
       'maxFlights': store.getters.maxFlights,
-      'updateRate': store.getters.updateRate,
+      'updateRate': updateRate,
       'leftHighLat': leftHighLat,
       'leftHighLon': leftHighLon,
       'rightLowLat': rightLowLat,

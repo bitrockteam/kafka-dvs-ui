@@ -30,3 +30,4 @@ dist/
 .idea
 *.log
 __tests__/results/junit.xml
+.env
