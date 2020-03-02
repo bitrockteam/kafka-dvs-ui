@@ -7,10 +7,11 @@
               @select="pipeUp"
               :key="index"
               :name="item.name"
+              :type="item.type"
               :percent="item.percent"
               :count="item.count"
               :format="item.format"
-              :selectedItem="selectedItem"         
+              :selectedItem="selectedItem"
       />
     </div>
     <loading-placeholder-stat v-else />
@@ -21,6 +22,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import LoadingPlaceholderStat from '@/components/loading-placeholder-stat.vue';
 import TopListItem from '@/components/top-list-item.vue';
+import TopSelectedItem from '@/libs/classes/top-selected-item';
 
 @Component({
   name: 'top-five-list',
@@ -28,15 +30,15 @@ import TopListItem from '@/components/top-list-item.vue';
     TopListItem,
     LoadingPlaceholderStat,
   },
-  props: ['titleSection', 'loading', 'selectedItem'],
+  props: {titleSection: String, selectedItem: TopSelectedItem},
   computed: {
     data() {
       return this.$attrs.data || [];
     },
   },
   methods: {
-    pipeUp(item) {
-        this.$emit('select', item);
+    pipeUp(topSelectedItem: TopSelectedItem) {
+        this.$emit('select', topSelectedItem);
     },
   },
 })

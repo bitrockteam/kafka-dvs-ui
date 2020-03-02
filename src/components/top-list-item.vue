@@ -16,11 +16,16 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import '@amber-ds/components/progress-bar';
+import TopSelectedItem from '@/libs/classes/top-selected-item';
 
 @Component({
     name: 'top-list-item',
     props: {
         name: {
+            type: String,
+            required: true,
+        },
+        type: {
             type: String,
             required: true,
         },
@@ -37,18 +42,20 @@ import '@amber-ds/components/progress-bar';
             default: '',
         },
         selectedItem: {
-            type: String,
+            type: TopSelectedItem,
             required: false,
         },
     },
     computed: {
         isDisabled() {
-            return this.$props.selectedItem != null && this.$props.selectedItem !== this.$props.name;
+            return this.$props.selectedItem != null && (
+                this.$props.selectedItem.type !== this.$props.type || this.$props.selectedItem.value !== this.$props.name
+            );
         },
     },
     methods: {
         select() {
-            this.$emit('select', this.$props.name);
+            this.$emit('select', new TopSelectedItem(this.$props.type, this.$props.name));
         },
     },
 })
