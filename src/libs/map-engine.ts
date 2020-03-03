@@ -163,32 +163,27 @@ export default class MapEngine {
 
     public updateFlight(flight: Flight) {
         const {
-            geography: { latitude, longitude, direction, altitude },
+            geography: { latitude, longitude, direction },
             icaoNumber,
         } = flight;
 
         const enabled = true;
         const oldFlightInfo = this.flights[icaoNumber];
         const zoom = this.map.getZoom();
-
-        if (oldFlightInfo) {
-          if (altitude === 0) {
-              this.removeFlight(icaoNumber);
-          } else {
-              const marker = oldFlightInfo.marker;
-              google.maps.event.clearListeners(marker, 'click');
-              marker.addListener('click', () => this.openPopupForFlight(flight, marker));
-              if (this.icaoNumberToPopup.icaoNumber === icaoNumber && this.icaoNumberToPopup.popup) {
-                this.icaoNumberToPopup.popup.setContent(createPopup(flight));
-              }
-              createOrUpdateMarker(icaoNumber, longitude, latitude, { direction, enabled, marker, zoom });
-          }
-        } else if (altitude !== 0) {
-            // Handle new flight
-            const { marker } = createOrUpdateMarker(icaoNumber, longitude, latitude, { direction, enabled, zoom });
-            google.maps.event.addListener(marker!, 'click', () => this.openPopupForFlight(flight, marker!));
-            marker!.setMap(this.map);
-            this.flights[icaoNumber] = { flight, marker: marker! };
+        const marker = createOrUpdateMarker(
+          icaoNumber,
+          longitude,
+          latitude,
+          { direction, enabled, marker: oldFlightInfo?.marker, zoom },
+        ).marker!;
+        google.maps.event.clearListeners(marker, 'click');
+        google.maps.event.addListener(marker, 'click', () => this.openPopupForFlight(flight, marker));
+        if (this.icaoNumberToPopup.icaoNumber === icaoNumber && this.icaoNumberToPopup.popup) {
+          this.icaoNumberToPopup.popup.setContent(createPopup(flight));
+        }
+        if (!oldFlightInfo) {
+          marker.setMap(this.map);
+          this.flights[icaoNumber] = { flight, marker };
         }
     }
 
@@ -286,9 +281,10 @@ const drawMarker = (markerData: MarkerData) => {
   const innerColor = markerData.enabled ? '#FB8F2D' : '#b8b8b8';
   const opacity = markerData.enabled ? 1 : 0.4;
   const dimension = baseMarkerDimension + markerData.zoom * zoomFactor;
+  const direction = Math.round(markerData.direction / directionDegPrecision) * directionDegPrecision;
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
   <svg version="1.1" id="airport-15" xmlns="http://www.w3.org/2000/svg" width="${dimension}px" height="${dimension}px" viewBox="-1 -1 18 18">
-    <g transform="rotate(${Math.round(markerData.direction / directionDegPrecision) * directionDegPrecision}, 7.5, 7.5)">
+    <g transform="rotate(${direction}, 7.5, 7.5)">
       <path opacity="${opacity}" stroke="${borderColor}" stroke-width="0.5" fill="${innerColor}" id="path7712-0" d="M15,6.8182L15,8.5l-6.5-1&#xA;&#x9;l-0.3182,4.7727L11,14v1l-3.5-0.6818L4,15v-1l2.8182-1.7273L6.5,7.5L0,8.5V6.8182L6.5,4.5v-3c0,0,0-1.5,1-1.5s1,1.5,1,1.5v2.8182&#xA;&#x9;L15,6.8182z"/>
     </g>
   </svg>`;
