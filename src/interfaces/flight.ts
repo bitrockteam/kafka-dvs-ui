@@ -1,3 +1,10 @@
+import DVSEvent from './dvs.event';
+
+export interface FlightListEvent extends DVSEvent {
+  eventType: 'FlightList';
+  eventPayload: FlightList;
+}
+
 export interface Flight {
   iataNumber: string;
   icaoNumber: string;
@@ -12,7 +19,6 @@ export interface Flight {
 }
 
 export interface FlightList {
-  eventType: string;
   elements: [Flight];
 }
 
@@ -23,8 +29,10 @@ interface GeographyInfo {
   direction: number;
 }
 
-interface AirportInfo {
+export interface AirportInfo {
   codeAirport: string;
+  latitude: number;
+  longitude: number;
   nameAirport: string;
   nameCountry: string;
   codeIso2Country: string;
