@@ -181,10 +181,8 @@ export default class MapEngine {
         if (this.icaoNumberToPopup.icaoNumber === icaoNumber && this.icaoNumberToPopup.popup) {
           this.icaoNumberToPopup.popup.setContent(createPopup(flight));
         }
-        if (!oldFlightInfo) {
-          marker.setMap(this.map);
-          this.flights[icaoNumber] = { flight, marker };
-        }
+        marker.setMap(this.map);
+        this.flights[icaoNumber] = { flight, marker };
     }
 
     public removeAllFlightsOutOfBoundingBox() {
