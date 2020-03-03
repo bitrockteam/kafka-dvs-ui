@@ -268,7 +268,8 @@ export default class MapEngine {
 
 }
 
-const createOrUpdateAirportMarker = (title: string, longitude: number, latitude: number, marker?: google.maps.Marker) => {
+const createOrUpdateAirportMarker =
+  (title: string, longitude: number, latitude: number, marker?: google.maps.Marker) => {
     marker = marker || new google.maps.Marker({
         draggable: false,
         optimized: true,
