@@ -30,7 +30,7 @@ interface GeographyInfo {
 }
 
 export interface AirportInfo {
-  city: string;
+  cityName: string;
   codeAirport: string;
   latitude: number;
   longitude: number;

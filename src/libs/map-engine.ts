@@ -332,7 +332,7 @@ const createPopup = (flight: Flight) => {
           <div style="text-align: center; max-width: 120px;">
             ${airportDeparture.nameAirport}
             </br>
-            ${airportDeparture.city}
+            ${airportDeparture.cityName}
             </br>
             ${airportDeparture.nameCountry}
           </div>
@@ -343,7 +343,7 @@ const createPopup = (flight: Flight) => {
           <div style="text-align: center; max-width: 120px;">
             ${airportArrival.nameAirport}
             </br>
-            ${airportArrival.city}
+            ${airportArrival.cityName}
             </br>
             ${airportArrival.nameCountry}
           </div>
