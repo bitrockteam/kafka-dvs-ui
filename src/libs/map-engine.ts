@@ -2,6 +2,7 @@ import WorldControl from '../mapbox-controls/world-control';
 import { Flight, AirportInfo } from '../interfaces/flight';
 import BoundingBox from './bounding-box';
 import {} from 'googlemaps';
+import { mapState } from 'vuex';
 
 const directionDegPrecision: number = 10;
 const zoomFactor: number = 3;
@@ -131,6 +132,11 @@ export default class MapEngine {
 
     public setCenter(center: {lat: number, lng: number}) {
         this.map.setCenter(center);
+    }
+
+    public clickFlightMarker(icao: string) {
+      const {flight, marker} = this.flights[icao];
+      this.openPopupForFlight(flight, marker);
     }
 
     public getBoundingBox(): BoundingBox {

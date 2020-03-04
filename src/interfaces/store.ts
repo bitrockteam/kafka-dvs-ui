@@ -1,5 +1,6 @@
 import { WebSocketSubject } from 'rxjs/webSocket';
 import TopSelectedItem from '@/libs/classes/top-selected-item';
+import MaxSpeedFlight from '@/libs/classes/max-speed-flight';
 
 interface SocketConfiguration {
   maxFlights: number;
@@ -13,4 +14,5 @@ export interface State {
   maximized: boolean;
   socket?: WebSocketSubject<unknown>;
   topSelectedItem?: TopSelectedItem;
+  boxedMapSpeedFlight?: MaxSpeedFlight;
 }
