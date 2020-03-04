@@ -1,11 +1,5 @@
 interface ServerProtocol {
-  readonly '@type':
-    | 'startFlightList'
-    | 'stopFlightList'
-    | 'startTop'
-    | 'stopTop'
-    | 'startTotal'
-    | 'stopTotal';
+  readonly '@type': keyof typeof types;
 }
 
 export const types = {

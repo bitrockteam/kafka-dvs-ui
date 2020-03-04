@@ -1,4 +1,5 @@
 # DVS UI
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a14cf221df7d454ea6625f5915dfd315)](https://app.codacy.com/gh/bitrockteam/kafka-dvs-ui?utm_source=github.com&utm_medium=referral&utm_content=bitrockteam/kafka-dvs-ui&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://iproject-jenkins.reactive-labs.io/buildStatus/icon?job=kafka-dvs-ui%2Fmaster)](https://iproject-jenkins.reactive-labs.io/view/DVS/job/kafka-dvs-ui/job/master/)
 ![https://david-dm.org/bitrockteam/kafka-dvs-ui.svg](https://david-dm.org/bitrockteam/kafka-dvs-ui.svg)
 

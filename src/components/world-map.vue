@@ -8,13 +8,16 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { map, filter, tap } from 'rxjs/operators';
+import { map, filter, tap, share } from 'rxjs/operators';
 import { streamWS } from '@/libs/endpoints';
-import { Flight, FlightList } from '@/interfaces/flight';
+import { AirportList, AirportListEvent } from '@/interfaces/airport';
+import { AirportInfo, Flight, FlightList, FlightListEvent } from '@/interfaces/flight';
 import MapEngine from '@/libs/map-engine';
 import { CoordinatesBox, types } from '@/interfaces/serverProtocol';
 import { store } from '@/store';
 import TopSelectedItem from '../libs/classes/top-selected-item';
+import { Airport } from '../interfaces/stats';
+import DVSEvent from '../interfaces/dvs.event';
 
 @Component({
   name: 'world-map',
@@ -91,7 +94,35 @@ export default class extends Vue {
       }
   }
 
-  private manageFlightList(event: FlightList) {
+  private listen(url: string) {
+    if (!this.isListening) {
+      store.dispatch('attachWebSocket', { url }).then((socket: WebSocketSubject<unknown>) => {
+        this.sendBoundingBox();
+        const messages = socket
+          .pipe(
+            tap((event: any) => void 0, (err) => {
+              this.isListening = false;
+              this.listen(url);
+            }),
+            share(),
+          );
+        messages.pipe(filter<FlightListEvent>((event: DVSEvent) => event.eventType === 'FlightList'))
+          .subscribe((event: FlightListEvent) => this.manageFlightList(event.eventPayload));
+        messages.pipe(filter<AirportListEvent>((event: DVSEvent) => event.eventType === 'AirportList'))
+          .subscribe((event: AirportListEvent) => this.manageAirportList(event.eventPayload));
+      });
+      this.isListening = true;
+    }
+  }
+
+  private manageAirportList(event: AirportList): void {
+    const { elements } = event;
+    const newCodes = new Set(elements.map((f: AirportInfo) => f.codeAirport));
+    this.map!.removeAirportsNotIn(newCodes);
+    elements.forEach((airportUpdate) => this.map!.updateAirport(airportUpdate));
+  }
+
+  private manageFlightList(event: FlightList): void {
     const { elements } = event;
     let maxTimestap = 0;
     const newIcaoNumbers = new Set(elements.map((f: Flight) => f.icaoNumber));
@@ -105,27 +136,6 @@ export default class extends Vue {
     console.log('Flights on screen: ', this.map!.totalFlights());
     // tslint:disable-next-line
     console.log('Max Timestamp: ', new Date(maxTimestap));
-  }
-
-  private listen(url: string) {
-    if (!this.isListening) {
-      store.dispatch('attachWebSocket', { url }).then((socket: WebSocketSubject<unknown>) => {
-        this.sendBoundingBox();
-        socket
-          .pipe(
-            tap((event: any) => void 0, (err) => {
-              this.isListening = false;
-              this.listen(url);
-            }),
-            filter((event: any) =>
-              event.eventType === 'FlightList',
-            ),
-            map((event: any) => this.manageFlightList(event.eventPayload)),
-          )
-          .subscribe();
-      });
-      this.isListening = true;
-    }
   }
 
   private getUpdateRate(n: number): number {
@@ -159,7 +169,6 @@ export default class extends Vue {
 
   private sendBoundingBox() {
     if (!this.paused) {
-      this.map!.removeAllFlightsOutOfBoundingBox();
       store.dispatch(types.startFlightList, this.createCommand());
     }
   }

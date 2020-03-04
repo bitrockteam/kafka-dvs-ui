@@ -1,5 +1,5 @@
 import WorldControl from '../mapbox-controls/world-control';
-import { Flight } from '../interfaces/flight';
+import { Flight, AirportInfo } from '../interfaces/flight';
 import BoundingBox from './bounding-box';
 import {} from 'googlemaps';
 
@@ -7,7 +7,13 @@ const directionDegPrecision: number = 10;
 const zoomFactor: number = 3;
 const baseMarkerDimension: number = 4;
 
-interface MarkerData {
+interface AirportMarkerData {
+  enabled: boolean;
+  marker?: google.maps.Marker;
+  zoom: number;
+}
+
+interface FlightMarkerData {
   direction: number;
   enabled: boolean;
   marker?: google.maps.Marker;
@@ -16,6 +22,9 @@ interface MarkerData {
 
 export default class MapEngine {
     private map: google.maps.Map;
+    private airports: {
+      [airportCode: string]: { marker: google.maps.Marker };
+    } = {};
     private icaoNumberToPopup: { icaoNumber?: string, popup?: google.maps.InfoWindow } = {};
     private flights: {
         [icaoNumber: string]: { flight: Flight, marker: google.maps.Marker };
@@ -116,7 +125,7 @@ export default class MapEngine {
                 ],
             },
         );
-        const worldControl = new WorldControl(() => this.map.getZoom(), (n: number) => this.zoomOnFocusedMarker(n));
+        const worldControl = new WorldControl(() => this.getZoom(), (n: number) => this.zoomOnFocusedMarker(n));
         this.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(worldControl.getContainer());
     }
 
@@ -163,57 +172,57 @@ export default class MapEngine {
 
     public updateFlight(flight: Flight) {
         const {
-            geography: { latitude, longitude, direction, altitude },
+            geography: { latitude, longitude, direction },
             icaoNumber,
         } = flight;
 
         const enabled = true;
         const oldFlightInfo = this.flights[icaoNumber];
-        const zoom = this.map.getZoom();
-
-        if (oldFlightInfo) {
-          if (altitude === 0) {
-              this.removeFlight(icaoNumber);
-          } else {
-              const marker = oldFlightInfo.marker;
-              google.maps.event.clearListeners(marker, 'click');
-              marker.addListener('click', () => this.openPopupForFlight(flight, marker));
-              if (this.icaoNumberToPopup.icaoNumber === icaoNumber && this.icaoNumberToPopup.popup) {
-                this.icaoNumberToPopup.popup.setContent(createPopup(flight));
-              }
-              createOrUpdateMarker(icaoNumber, longitude, latitude, { direction, enabled, marker, zoom });
-          }
-        } else if (altitude !== 0) {
-            // Handle new flight
-            const { marker } = createOrUpdateMarker(icaoNumber, longitude, latitude, { direction, enabled, zoom });
-            google.maps.event.addListener(marker!, 'click', () => this.openPopupForFlight(flight, marker!));
-            marker!.setMap(this.map);
-            this.flights[icaoNumber] = { flight, marker: marker! };
+        const zoom = this.getZoom();
+        const marker = createOrUpdateMarker(
+          icaoNumber,
+          longitude,
+          latitude,
+          { direction, enabled, marker: oldFlightInfo?.marker, zoom },
+        ).marker!;
+        google.maps.event.clearListeners(marker, 'click');
+        google.maps.event.addListener(marker, 'click', () => this.openPopupForFlight(flight, marker));
+        if (this.icaoNumberToPopup.icaoNumber === icaoNumber && this.icaoNumberToPopup.popup) {
+          this.icaoNumberToPopup.popup.setContent(createPopup(flight));
         }
+        marker.setMap(this.map);
+        this.flights[icaoNumber] = { flight, marker };
     }
 
-    public removeAllFlightsOutOfBoundingBox() {
-        const {
-            leftHighLat,
-            leftHighLon,
-            rightLowLat,
-            rightLowLon,
-        } = this.getBoundingBox();
-
-        Object.keys(this.flights).forEach((icaoNumber) => {
-            const { lat, lng } = getPosition(this.flights[icaoNumber].marker);
-            if (lat < rightLowLat || lat > leftHighLat || lng < leftHighLon || lng > rightLowLon) {
-                this.removeFlight(icaoNumber);
-            }
-        });
+    public updateAirport(airport: AirportInfo) {
+        const { codeAirport, latitude, longitude } = airport;
+        const oldInfo = this.airports[codeAirport];
+        const marker = createOrUpdateAirportMarker(
+          codeAirport,
+          longitude,
+          latitude,
+          { enabled: true, marker: oldInfo?.marker, zoom: this.getZoom() },
+        ).marker!;
+        marker.setMap(this.map);
+        this.airports[codeAirport] = { marker };
     }
 
     public removeOldFlights(icaoNumbers: Set<string>) {
-        Object.keys(this.flights).forEach((icaoNumber) => {
-            if (!icaoNumbers.has(icaoNumber)) {
-                this.removeFlight(icaoNumber);
-            }
-        });
+      Object.keys(this.flights).forEach((icaoNumber) => {
+        if (!icaoNumbers.has(icaoNumber)) {
+          this.flights[icaoNumber].marker.setMap(null);
+          delete this.flights[icaoNumber];
+        }
+      });
+    }
+
+    public removeAirportsNotIn(codes: Set<string>): void {
+      Object.keys(this.airports).forEach((key) => {
+        if (!codes.has(key)) {
+          this.airports[key].marker.setMap(null);
+          delete this.airports[key];
+        }
+      });
     }
 
     private openPopupForFlight(flight: Flight, anchor: google.maps.MVCObject) {
@@ -229,11 +238,6 @@ export default class MapEngine {
           popup: infoWindow,
         };
         infoWindow.open(this.map, anchor);
-    }
-
-    private removeFlight(icaoNumber: string) {
-        this.flights[icaoNumber].marker.setMap(null);
-        delete this.flights[icaoNumber];
     }
 
     private zoomOnFocusedMarker(n: number) {
@@ -270,25 +274,54 @@ export default class MapEngine {
 
 }
 
-const createOrUpdateMarker = (icaoNumber: string, longitude: number, latitude: number, markerData: MarkerData) => {
+const createOrUpdateAirportMarker =
+  (title: string, longitude: number, latitude: number, markerData: AirportMarkerData): AirportMarkerData => {
     markerData.marker = markerData.marker || new google.maps.Marker({
         draggable: false,
         optimized: true,
-        title: icaoNumber,
+        title,
+    });
+    markerData.marker.setPosition({lat: latitude, lng: longitude});
+    drawAirportMarker(markerData);
+    return markerData;
+};
+
+function drawAirportMarker(markerData: AirportMarkerData): void {
+  const innerColor = markerData.enabled ? '#a94000' : '#7a7a7a';
+  const dimension = baseMarkerDimension + markerData.zoom * zoomFactor;
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="IconsRepoEditor" viewBox="-36.97 -36.97 443.69 443.69" width="${dimension}px" height="${dimension}px">
+    <g>
+      <path fill="${innerColor}" d="M328.646,130.413h10.773l30.328-59.871l-23.332-27.688h-16.813V22.696h11.988c2.127,0,3.852-1.727,3.852-3.854 c0-2.127-1.725-3.852-3.852-3.852h-30.497c-2.128,0-3.853,1.725-3.853,3.852c0,2.127,1.725,3.854,3.853,3.854h11.988v20.158h-72.172 l-23.333,27.688l30.328,59.871h10.773v64.029h-97.016v-32.5H36.334v32.5H0v160.314h45.664v-79.982h57.666v79.982H360V194.442 h-31.354V130.413z M267.974,115.249l-14.521-29.543h28.15v29.543H267.974z M107.33,241.108H29.996v-23.332h77.334V241.108z M199.33,241.108h-77.334v-23.332h77.334V241.108z M291.33,241.108h-77.334v-23.332h77.334V241.108z M309.404,115.249h-21.482 V85.706h21.482V115.249z M315.723,85.706h28.152l-14.522,29.543h-13.631V85.706z"></path>
+    </g>
+  </svg>`;
+  markerData.marker!.setIcon({
+    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+    anchor: new google.maps.Point(dimension / 2, dimension / 2),
+  });
+  markerData?.marker?.setZIndex(markerData?.enabled ? 0 : -1);
+}
+
+const createOrUpdateMarker = (title: string, longitude: number, latitude: number, markerData: FlightMarkerData) => {
+    markerData.marker = markerData.marker || new google.maps.Marker({
+        draggable: false,
+        optimized: true,
+        title,
     });
     markerData.marker.setPosition({lat: latitude, lng: longitude});
     drawMarker(markerData);
     return markerData;
 };
 
-const drawMarker = (markerData: MarkerData) => {
+const drawMarker = (markerData: FlightMarkerData) => {
   const borderColor = markerData.enabled ? '#933400' : '#999999';
   const innerColor = markerData.enabled ? '#FB8F2D' : '#b8b8b8';
   const opacity = markerData.enabled ? 1 : 0.4;
   const dimension = baseMarkerDimension + markerData.zoom * zoomFactor;
+  const direction = Math.round(markerData.direction / directionDegPrecision) * directionDegPrecision;
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
   <svg version="1.1" id="airport-15" xmlns="http://www.w3.org/2000/svg" width="${dimension}px" height="${dimension}px" viewBox="-1 -1 18 18">
-    <g transform="rotate(${Math.round(markerData.direction / directionDegPrecision) * directionDegPrecision}, 7.5, 7.5)">
+    <g transform="rotate(${direction}, 7.5, 7.5)">
       <path opacity="${opacity}" stroke="${borderColor}" stroke-width="0.5" fill="${innerColor}" id="path7712-0" d="M15,6.8182L15,8.5l-6.5-1&#xA;&#x9;l-0.3182,4.7727L11,14v1l-3.5-0.6818L4,15v-1l2.8182-1.7273L6.5,7.5L0,8.5V6.8182L6.5,4.5v-3c0,0,0-1.5,1-1.5s1,1.5,1,1.5v2.8182&#xA;&#x9;L15,6.8182z"/>
     </g>
   </svg>`;
@@ -296,16 +329,7 @@ const drawMarker = (markerData: MarkerData) => {
     url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
     anchor: new google.maps.Point(dimension / 2, dimension / 2),
   });
-  markerData?.marker?.setZIndex(markerData?.enabled ? 0 : -1);
-};
-
-const getPosition = (marker: google.maps.Marker) => {
-    const position = marker.getPosition();
-    if (position) {
-        return {lat: position.lat(), lng: position.lng()};
-    } else {
-        throw new Error('Invalid marker position');
-    }
+  markerData?.marker?.setZIndex(markerData?.enabled ? 1 : -1);
 };
 
 const createPopup = (flight: Flight) => {
