@@ -7,7 +7,13 @@ const directionDegPrecision: number = 10;
 const zoomFactor: number = 3;
 const baseMarkerDimension: number = 4;
 
-interface MarkerData {
+interface AirportMarkerData {
+  enabled: boolean;
+  marker?: google.maps.Marker;
+  zoom: number;
+}
+
+interface FlightMarkerData {
   direction: number;
   enabled: boolean;
   marker?: google.maps.Marker;
@@ -119,7 +125,7 @@ export default class MapEngine {
                 ],
             },
         );
-        const worldControl = new WorldControl(() => this.map.getZoom(), (n: number) => this.zoomOnFocusedMarker(n));
+        const worldControl = new WorldControl(() => this.getZoom(), (n: number) => this.zoomOnFocusedMarker(n));
         this.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(worldControl.getContainer());
     }
 
@@ -172,7 +178,7 @@ export default class MapEngine {
 
         const enabled = true;
         const oldFlightInfo = this.flights[icaoNumber];
-        const zoom = this.map.getZoom();
+        const zoom = this.getZoom();
         const marker = createOrUpdateMarker(
           icaoNumber,
           longitude,
@@ -195,8 +201,8 @@ export default class MapEngine {
           codeAirport,
           longitude,
           latitude,
-          oldInfo?.marker,
-        );
+          { enabled: true, marker: oldInfo?.marker, zoom: this.getZoom() },
+        ).marker!;
         marker.setMap(this.map);
         this.airports[codeAirport] = { marker };
     }
@@ -269,28 +275,45 @@ export default class MapEngine {
 }
 
 const createOrUpdateAirportMarker =
-  (title: string, longitude: number, latitude: number, marker?: google.maps.Marker) => {
-    marker = marker || new google.maps.Marker({
+  (title: string, longitude: number, latitude: number, markerData: AirportMarkerData): AirportMarkerData => {
+    markerData.marker = markerData.marker || new google.maps.Marker({
         draggable: false,
         optimized: true,
         title,
     });
-    marker.setPosition({lat: latitude, lng: longitude});
-    return marker;
+    markerData.marker.setPosition({lat: latitude, lng: longitude});
+    drawAirportMarker(markerData);
+    return markerData;
 };
 
-const createOrUpdateMarker = (icaoNumber: string, longitude: number, latitude: number, markerData: MarkerData) => {
+function drawAirportMarker(markerData: AirportMarkerData): void {
+  const innerColor = markerData.enabled ? '#933400' : '#7a7a7a';
+  const dimension = baseMarkerDimension + markerData.zoom * zoomFactor;
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="IconsRepoEditor" viewBox="-36.97 -36.97 443.69 443.69" width="${dimension}px" height="${dimension}px">
+    <g>
+      <path fill="${innerColor}" stroke="#FB8F2D" stroke-width="0" d="M328.646,130.413h10.773l30.328-59.871l-23.332-27.688h-16.813V22.696h11.988c2.127,0,3.852-1.727,3.852-3.854 c0-2.127-1.725-3.852-3.852-3.852h-30.497c-2.128,0-3.853,1.725-3.853,3.852c0,2.127,1.725,3.854,3.853,3.854h11.988v20.158h-72.172 l-23.333,27.688l30.328,59.871h10.773v64.029h-97.016v-32.5H36.334v32.5H0v160.314h45.664v-79.982h57.666v79.982H360V194.442 h-31.354V130.413z M267.974,115.249l-14.521-29.543h28.15v29.543H267.974z M107.33,241.108H29.996v-23.332h77.334V241.108z M199.33,241.108h-77.334v-23.332h77.334V241.108z M291.33,241.108h-77.334v-23.332h77.334V241.108z M309.404,115.249h-21.482 V85.706h21.482V115.249z M315.723,85.706h28.152l-14.522,29.543h-13.631V85.706z"></path>
+    </g>
+  </svg>`;
+  markerData.marker!.setIcon({
+    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+    anchor: new google.maps.Point(dimension / 2, dimension / 2),
+  });
+  markerData?.marker?.setZIndex(markerData?.enabled ? 0 : -1);
+}
+
+const createOrUpdateMarker = (title: string, longitude: number, latitude: number, markerData: FlightMarkerData) => {
     markerData.marker = markerData.marker || new google.maps.Marker({
         draggable: false,
         optimized: true,
-        title: icaoNumber,
+        title,
     });
     markerData.marker.setPosition({lat: latitude, lng: longitude});
     drawMarker(markerData);
     return markerData;
 };
 
-const drawMarker = (markerData: MarkerData) => {
+const drawMarker = (markerData: FlightMarkerData) => {
   const borderColor = markerData.enabled ? '#933400' : '#999999';
   const innerColor = markerData.enabled ? '#FB8F2D' : '#b8b8b8';
   const opacity = markerData.enabled ? 1 : 0.4;
@@ -306,7 +329,7 @@ const drawMarker = (markerData: MarkerData) => {
     url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
     anchor: new google.maps.Point(dimension / 2, dimension / 2),
   });
-  markerData?.marker?.setZIndex(markerData?.enabled ? 0 : -1);
+  markerData?.marker?.setZIndex(markerData?.enabled ? 1 : -1);
 };
 
 const createPopup = (flight: Flight) => {
