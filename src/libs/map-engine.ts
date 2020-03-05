@@ -133,6 +133,11 @@ export default class MapEngine {
         this.map.setCenter(center);
     }
 
+    public clickFlightMarker(icao: string) {
+      const {flight, marker} = this.flights[icao];
+      this.openPopupForFlight(flight, marker);
+    }
+
     public getBoundingBox(): BoundingBox {
         const bounds = this.map.getBounds() || this.defaultBounds;
         const ne = bounds.getNorthEast();
