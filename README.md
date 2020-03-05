@@ -3,7 +3,6 @@
 [![Build Status](https://iproject-jenkins.reactive-labs.io/buildStatus/icon?job=kafka-dvs-ui%2Fmaster)](https://iproject-jenkins.reactive-labs.io/view/DVS/job/kafka-dvs-ui/job/master/)
 ![https://david-dm.org/bitrockteam/kafka-dvs-ui.svg](https://david-dm.org/bitrockteam/kafka-dvs-ui.svg)
 
-
 [PWA](https://developers.google.com/web/progressive-web-apps/) built in [Vue.js](https://vuejs.org/) for the [DVS project](https://github.com/search?q=topic%3Akafka-dvs+org%3Abitrockteam&type=Repositories). It's a realtime dashboard that visualize the flights activities. The data is processed through a backend developed in Scala with Kafka Streams & KSQL.
 
 [http://dvs.reactive-labs.io/](http://dvs.reactive-labs.io/)
@@ -16,7 +15,7 @@ You can append the query parameter `?demo=[NUMBER-OF-MINUTES]` to the url to ena
 
 For example, this will refresh the application every 30 minutes:
 
-```
+```http
 http://dvs.reactive-labs.io/?demo=30
 ```
 
@@ -29,13 +28,13 @@ To prevent an overhead of visible informations for the user, the map shows the l
 
 ## Development
 
-### What is being used?
-* [Typescript](https://www.typescriptlang.org/)
-* [Vue](https://vuejs.org/) (CLI, Router, Vuex)
-* [RxJS](https://rxjs.dev/)
-* [SASS](https://sass-lang.com/)
-* [Amber Design System](https://amber.bitrock.it/)
-* [Google Maps API](https://cloud.google.com/maps-platform/)
+### What is being used
+  * [Typescript](https://www.typescriptlang.org/)
+  * [Vue](https://vuejs.org/) (CLI, Router, Vuex)
+  * [RxJS](https://rxjs.dev/)
+  * [SASS](https://sass-lang.com/)
+  * [Amber Design System](https://amber.bitrock.it/)
+  * [Google Maps API](https://cloud.google.com/maps-platform/)
 
 ### Getting started
 Clone the repo
@@ -77,9 +76,9 @@ $ npm run test:unit
 The project make use of `.env` files, just update the values before starting the local server or building.
 
 ### Things to keep in mind
-* The Vuex store contains **only** global values for the application, the real time data coming from the websockets is processed & rendered directly in the relative component state. Otherwise the store would act as a computational bottleneck.
-* Each widget in the dashboard is **independent** on getting the data from the backend and is also exported as dedicated module for lazy loading. Both of these approaches also results in a better development experience.
-* For a cleaner UX, the map will show only **up to 1000 flights**. The amount of markers for the "time window" is defined in the Vuex store.
+  * The Vuex store contains **only** global values for the application, the real time data coming from the websockets is processed & rendered directly in the relative component state. Otherwise the store would act as a computational bottleneck.
+  * Each widget in the dashboard is **independent** on getting the data from the backend and is also exported as dedicated module for lazy loading. Both of these approaches also results in a better development experience.
+  * For a cleaner UX, the map will show only **up to 1000 flights**. The amount of markers for the "time window" is defined in the Vuex store.
 
 ## How to contribute
 Pull Request Submitting Process:
