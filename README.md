@@ -28,7 +28,7 @@ To prevent an overhead of visible informations for the user, the map shows the l
 
 ## Development
 
-### What is being used?
+### What is being used
   * [Typescript](https://www.typescriptlang.org/)
   * [Vue](https://vuejs.org/) (CLI, Router, Vuex)
   * [RxJS](https://rxjs.dev/)
