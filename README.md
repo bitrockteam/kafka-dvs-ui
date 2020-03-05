@@ -15,7 +15,7 @@ You can append the query parameter `?demo=[NUMBER-OF-MINUTES]` to the url to ena
 
 For example, this will refresh the application every 30 minutes:
 
-```
+```http
 http://dvs.reactive-labs.io/?demo=30
 ```
 
@@ -29,12 +29,12 @@ To prevent an overhead of visible informations for the user, the map shows the l
 ## Development
 
 ### What is being used?
-* [Typescript](https://www.typescriptlang.org/)
-* [Vue](https://vuejs.org/) (CLI, Router, Vuex)
-* [RxJS](https://rxjs.dev/)
-* [SASS](https://sass-lang.com/)
-* [Amber Design System](https://amber.bitrock.it/)
-* [Google Maps API](https://cloud.google.com/maps-platform/)
+  * [Typescript](https://www.typescriptlang.org/)
+  * [Vue](https://vuejs.org/) (CLI, Router, Vuex)
+  * [RxJS](https://rxjs.dev/)
+  * [SASS](https://sass-lang.com/)
+  * [Amber Design System](https://amber.bitrock.it/)
+  * [Google Maps API](https://cloud.google.com/maps-platform/)
 
 ### Getting started
 Clone the repo
