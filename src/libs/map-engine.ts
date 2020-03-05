@@ -2,7 +2,6 @@ import WorldControl from '../mapbox-controls/world-control';
 import { Flight, AirportInfo } from '../interfaces/flight';
 import BoundingBox from './bounding-box';
 import {} from 'googlemaps';
-import { mapState } from 'vuex';
 
 const directionDegPrecision: number = 10;
 const zoomFactor: number = 3;
