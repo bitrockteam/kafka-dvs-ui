@@ -6,13 +6,13 @@ email, or any other method with the owners of this repository before making a ch
 Please note we have a code of conduct, please follow it in all your interactions with the project.
 
 ## Pull Request Submitting Process
- 1. branch from `master` using a `feature/[name]` or `fix/[name]` naming
- 2. write code
- 3. bump the version number in the `package.json` file accordingly to the [semver](https://semver.org/) guidelines
- 4. check that linter & tests are fine
- 5. open a PR to `master` assigning as a reviewer someone from [UI Engineering team](https://github.com/orgs/bitrockteam/teams/ui-engineering/members)
- 6. wait for response
- 7. if it's approved, merge and delete the feature branch
+1. branch from `master` using a `feature/[name]` or `fix/[name]` naming
+2. write code
+3. bump the version number in the `package.json` file accordingly to the [semver](https://semver.org/) guidelines
+4. check that linter & tests are fine
+5. open a PR to `master` assigning as a reviewer someone from [UI Engineering team](https://github.com/orgs/bitrockteam/teams/ui-engineering/members)
+6. wait for response
+7. if it's approved, merge and delete the feature branch
 
 ## Code of Conduct
 
@@ -30,19 +30,19 @@ orientation.
 Examples of behavior that contributes to creating a positive environment
 include:
 
-  * Using welcoming and inclusive language
-  * Being respectful of differing viewpoints and experiences
-  * Gracefully accepting constructive criticism
-  * Focusing on what is best for the community
-  * Showing empathy towards other community members
+* Using welcoming and inclusive language
+* Being respectful of differing viewpoints and experiences
+* Gracefully accepting constructive criticism
+* Focusing on what is best for the community
+* Showing empathy towards other community members
 
 Examples of unacceptable behavior by participants include:
 
-  * The use of sexualized language or imagery and unwelcome sexual attention or advances
-  * Trolling, insulting/derogatory comments, and personal or political attacks
-  * Public or private harassment
-  * Publishing others' private information, such as a physical or electronic address, without explicit permission
-  * Other conduct which could reasonably be considered inappropriate in a professional setting
+* The use of sexualized language or imagery and unwelcome sexual attention or advances
+* Trolling, insulting/derogatory comments, and personal or political attacks
+* Public or private harassment
+* Publishing others' private information, such as a physical or electronic address, without explicit permission
+* Other conduct which could reasonably be considered inappropriate in a professional setting
 
 ### Our Responsibilities
 
