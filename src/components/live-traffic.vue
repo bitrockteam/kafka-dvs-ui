@@ -104,7 +104,7 @@ export default class extends DashboardWidget {
     const airlines = new Set(flights.map((f: Flight) => f.airline.nameAirline));
     this.BoxedCountFlight = Object.keys(flights).length;
     this.BoxedCountAirline = airlines.size;
-    if (this.BoxedCountAirline !== 0) {
+    if (flights.length !== 0) {
       const maxSpeedFlight = flights.reduce((max: Flight, f: Flight) => f.speed > max.speed ? f : max);
       this.BoxedMaxSpeed = Math.max(maxSpeedFlight.speed, 0);
       this.BoxedMaxSpeedFlightIcao = maxSpeedFlight.icaoNumber;
