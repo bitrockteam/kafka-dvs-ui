@@ -1,7 +1,7 @@
 // Control(Custom)implemented as ES6 class
 export default class WorldControl {
     private getZoom: () => number;
-    private SetZoom: (n: number) => void;
+    private setZoom: (n: number) => void;
     private Container: any;
 
     private ZoomInButton: HTMLElement;
@@ -9,7 +9,7 @@ export default class WorldControl {
 
     public constructor(getZoom: () => number, setZoom: (n: number) => void) {
         this.getZoom = getZoom;
-        this.SetZoom = setZoom;
+        this.setZoom = setZoom;
 
         this.onZoomIn = this.onZoomIn.bind(this);
         this.onZoomOut = this.onZoomOut.bind(this);
@@ -37,10 +37,10 @@ export default class WorldControl {
     }
 
     private onZoomIn(e: Event) {
-        this.SetZoom(this.getZoom() + 1);
+        this.setZoom(this.getZoom() + 1);
     }
 
     private onZoomOut(e: Event) {
-        this.SetZoom(this.getZoom() - 1);
+        this.setZoom(this.getZoom() - 1);
     }
 }

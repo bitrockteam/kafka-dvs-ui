@@ -1,9 +1,9 @@
 module.exports = {
-  "roots": [
-    "<rootDir>/__tests__"
+  'roots': [
+    '<rootDir>/__tests__'
   ],
-  "transform": {
-    "^.+\\.tsx?$": "ts-jest"
+  'transform': {
+    '^.+\\.tsx?$': 'ts-jest'
   },
   globals: {
     'ts-jest': {
@@ -16,4 +16,4 @@ module.exports = {
     'default',
     'jest-junit'
   ],
-}
+};
