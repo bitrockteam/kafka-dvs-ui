@@ -3,6 +3,7 @@ import { types } from '@/interfaces/serverProtocol';
 import { store } from '@/store';
 import { MutationTree } from 'vuex';
 import TopSelectedItem from '@/libs/classes/top-selected-item';
+import MaxSpeedFlight from '@/libs/classes/max-speed-flight';
 
 const mutations: MutationTree<State> = {
   togglePause(currentState: State) {
@@ -28,6 +29,9 @@ const mutations: MutationTree<State> = {
     } else {
       store.dispatch(types.startTop);
     }
+  },
+  toggleBoxedMaxSpeedFlightPopup(currentState: State, maxSpeedFlight?: MaxSpeedFlight) {
+    currentState.boxedMapSpeedFlight = maxSpeedFlight;
   },
 };
 

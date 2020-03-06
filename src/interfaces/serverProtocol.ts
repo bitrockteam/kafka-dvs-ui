@@ -1,7 +1,3 @@
-interface ServerProtocol {
-  readonly '@type': keyof typeof types;
-}
-
 export const types = {
   startFlightList: 'startFlightList' as const,
   stopFlightList: 'stopFlightList' as const,
@@ -10,6 +6,10 @@ export const types = {
   startTotal: 'startTotal' as const,
   stopTotal: 'stopTotal' as const,
 };
+
+interface ServerProtocol {
+  readonly '@type': keyof typeof types;
+}
 
 export interface CoordinatesBox extends ServerProtocol {
   readonly '@type': typeof types.startFlightList;

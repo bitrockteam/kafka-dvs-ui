@@ -29,7 +29,7 @@
         </div>
         <div class="line-row">
           <div class="value">{{ maxSpeed.toFixed(0) }} km/h</div>
-          <div class="value">{{ BoxedMaxSpeed ? BoxedMaxSpeed.toFixed(0) + 'km/h' : '-' }}</div>
+          <div class="value" style="cursor: pointer;" @click="selectTopSpeed(BoxedMaxSpeed, BoxedMaxSpeedFlightIcao)">{{ BoxedMaxSpeed ? BoxedMaxSpeed.toFixed(0) + 'km/h' : '-' }}</div>
         </div>
       </div>
     </div>
@@ -48,11 +48,20 @@ import LoadingPlaceholderStat from '@/components/loading-placeholder-stat.vue';
 import { store } from '@/store';
 import { Flight } from '../interfaces/flight';
 import { WebSocketSubject } from 'rxjs/webSocket';
+import MaxSpeedFlight from '@/libs/classes/max-speed-flight';
+
 
 @Component({
   name: 'live-traffic',
   components: {
     LoadingPlaceholderStat,
+  },
+  methods: {
+    selectTopSpeed(speed: number, icaoNumber?: string) {
+      if (icaoNumber) {
+        store.commit('toggleBoxedMaxSpeedFlightPopup', new MaxSpeedFlight(icaoNumber, speed));
+      }
+    },
   },
 })
 export default class extends DashboardWidget {
@@ -62,6 +71,7 @@ export default class extends DashboardWidget {
   private CountFlight: number = 0;
 
   private BoxedMaxSpeed: number = NaN;
+  private BoxedMaxSpeedFlightIcao?: string;
   private BoxedCountAirline: number = 0;
   private BoxedCountFlight: number = 0;
 
@@ -94,12 +104,12 @@ export default class extends DashboardWidget {
     const airlines = new Set(flights.map((f: Flight) => f.airline.nameAirline));
     this.BoxedCountFlight = Object.keys(flights).length;
     this.BoxedCountAirline = airlines.size;
-    if (this.BoxedCountAirline !== 0) {
-      this.BoxedMaxSpeed = Math.max.apply(
-        0,
-        flights.map((f: Flight) => f.speed),
-      );
+    if (flights.length !== 0) {
+      const maxSpeedFlight = flights.reduce((max: Flight, f: Flight) => f.speed > max.speed ? f : max);
+      this.BoxedMaxSpeed = Math.max(maxSpeedFlight.speed, 0);
+      this.BoxedMaxSpeedFlightIcao = maxSpeedFlight.icaoNumber;
     } else {
+      this.BoxedMaxSpeedFlightIcao = undefined;
       this.BoxedMaxSpeed = NaN;
     }
     this.loading = false;

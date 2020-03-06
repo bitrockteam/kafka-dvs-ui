@@ -17,6 +17,7 @@ const state: State = {
   maxSpeed: 0,
   socket: undefined,
   topSelectedItem: undefined,
+  boxedMapSpeedFlight: undefined,
 };
 
 export const store = new Vuex.Store({

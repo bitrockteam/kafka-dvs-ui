@@ -4,4 +4,4 @@ module.exports = {
       skipWaiting: true
     }
   }
-}
+};

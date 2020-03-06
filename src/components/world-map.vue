@@ -16,6 +16,7 @@ import MapEngine from '@/libs/map-engine';
 import { CoordinatesBox, types } from '@/interfaces/serverProtocol';
 import { store } from '@/store';
 import TopSelectedItem from '../libs/classes/top-selected-item';
+import MaxSpeedFlight from '../libs/classes/max-speed-flight';
 import { Airport } from '../interfaces/stats';
 import DVSEvent from '../interfaces/dvs.event';
 
@@ -25,6 +26,7 @@ import DVSEvent from '../interfaces/dvs.event';
 export default class extends Vue {
   @State private paused!: boolean;
   @State private topSelectedItem?: TopSelectedItem;
+  @State private boxedMapSpeedFlight?: MaxSpeedFlight;
 
   private map?: MapEngine = undefined;
   private socketURL: string = 'dvs';
@@ -53,6 +55,13 @@ export default class extends Vue {
       }
     };
     this.map?.highlightFlights(highlight);
+  }
+
+  @Watch('boxedMapSpeedFlight')
+  private toggleBoxedMaxSpeedFlight(maxSpeedFlight?: MaxSpeedFlight) {
+    if (maxSpeedFlight) {
+      this.map?.clickFlightMarker(maxSpeedFlight.icao);
+    }
   }
 
   private mounted() {
