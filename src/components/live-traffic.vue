@@ -29,7 +29,7 @@
         </div>
         <div class="line-row">
           <div class="value">{{ maxSpeed.toFixed(0) }} km/h</div>
-          <div class="value" style="cursor: pointer;" @click="selectTopSpeed(BoxedMaxSpeed, BoxedMaxSpeedFlightIcao)">{{ BoxedMaxSpeed ? BoxedMaxSpeed.toFixed(0) + 'km/h' : '-' }}</div>
+          <div class="value" style="cursor: pointer;" @click="selectTopSpeed(BoxedMaxSpeed, BoxedMaxSpeedFlightIcao)">{{ BoxedMaxSpeed ? BoxedMaxSpeed.toFixed(0) + ' km/h' : '-' }}</div>
         </div>
       </div>
     </div>
