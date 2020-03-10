@@ -13,12 +13,13 @@ import { streamWS } from '@/libs/endpoints';
 import { AirportList, AirportListEvent } from '@/interfaces/airport';
 import { AirportInfo, Flight, FlightList, FlightListEvent } from '@/interfaces/flight';
 import MapEngine from '@/libs/map-engine';
-import { CoordinatesBox, types } from '@/interfaces/serverProtocol';
+import { CoordinatesBox, types, Precedence } from '@/interfaces/serverProtocol';
 import { store } from '@/store';
 import TopSelectedItem from '../libs/classes/top-selected-item';
 import MaxSpeedFlight from '../libs/classes/max-speed-flight';
 import { Airport } from '../interfaces/stats';
 import DVSEvent from '../interfaces/dvs.event';
+import { fromTopSelectedItem } from '../libs/precedence.factory';
 
 @Component({
   name: 'world-map',
@@ -116,9 +117,9 @@ export default class extends Vue {
             share(),
           );
         messages.pipe(filter<FlightListEvent>((event: DVSEvent) => event.eventType === 'FlightList'))
-          .subscribe((event: FlightListEvent) => this.manageFlightList(event.eventPayload));
+          .subscribe((event) => this.manageFlightList(event.eventPayload));
         messages.pipe(filter<AirportListEvent>((event: DVSEvent) => event.eventType === 'AirportList'))
-          .subscribe((event: AirportListEvent) => this.manageAirportList(event.eventPayload));
+          .subscribe((event) => this.manageAirportList(event.eventPayload));
       });
       this.isListening = true;
     }
@@ -155,24 +156,20 @@ export default class extends Vue {
   }
 
   private createCommand(): CoordinatesBox {
-    const {
-      leftHighLat,
-      leftHighLon,
-      rightLowLat,
-      rightLowLon,
-    } = this.map!.getBoundingBox();
-
+    const { leftHighLat, leftHighLon, rightLowLat, rightLowLon } = this.map!.getBoundingBox();
     const zoom = this.map!.getZoom();
     const updateRate = this.getUpdateRate(Math.max(0, 10 - zoom));
+    const precedence: Precedence = fromTopSelectedItem(store.getters.topSelectedItem);
 
     return {
       '@type': types.startFlightList,
       'maxFlights': store.getters.maxFlights,
-      'updateRate': updateRate,
-      'leftHighLat': leftHighLat,
-      'leftHighLon': leftHighLon,
-      'rightLowLat': rightLowLat,
-      'rightLowLon': rightLowLon,
+      precedence,
+      updateRate,
+      leftHighLat,
+      leftHighLon,
+      rightLowLat,
+      rightLowLon,
     };
   }
 
