@@ -304,7 +304,7 @@ function drawAirportMarker(markerData: AirportMarkerData): void {
     url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
     anchor: new google.maps.Point(dimension / 2, dimension / 2),
   });
-  markerData?.marker?.setZIndex(markerData?.enabled ? 0 : -1);
+  markerData?.marker?.setZIndex(markerData?.enabled ? 2 : -1);
 }
 
 const createOrUpdateMarker = (title: string, longitude: number, latitude: number, markerData: FlightMarkerData) => {
