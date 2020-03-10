@@ -334,7 +334,7 @@ const drawMarker = (markerData: FlightMarkerData) => {
     url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
     anchor: new google.maps.Point(dimension / 2, dimension / 2),
   });
-  markerData?.marker?.setZIndex(markerData?.enabled ? 1 : -1);
+  markerData?.marker?.setZIndex(markerData?.enabled ? 1 : -2);
 };
 
 const createPopup = (flight: Flight) => {
