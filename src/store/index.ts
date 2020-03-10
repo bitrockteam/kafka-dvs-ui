@@ -12,6 +12,7 @@ const state: State = {
     maxFlights: 1500,
     updateRate: 30,
   },
+  latestBox: undefined,
   maximized: true,
   paused: false,
   maxSpeed: 0,
