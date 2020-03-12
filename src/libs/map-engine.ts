@@ -14,6 +14,7 @@ interface AirportMarkerData {
 }
 
 interface FlightMarkerData {
+  clicked: boolean;
   direction: number;
   enabled: boolean;
   marker?: google.maps.Marker;
@@ -152,6 +153,7 @@ export default class MapEngine {
 
     public highlightFlights(f: (_: Flight) => boolean): void {
       Object.values(this.flights).forEach((flightObject) => drawMarker({
+        clicked: this.icaoNumberToPopup.icaoNumber === flightObject.flight.icaoNumber,
         direction: flightObject.flight.geography.direction,
         enabled: f(flightObject.flight),
         marker: flightObject.marker,
@@ -181,6 +183,7 @@ export default class MapEngine {
             icaoNumber,
         } = flight;
 
+        const clicked = this.icaoNumberToPopup.icaoNumber === flight.icaoNumber;
         const enabled = true;
         const oldFlightInfo = this.flights[icaoNumber];
         const zoom = this.getZoom();
@@ -188,7 +191,7 @@ export default class MapEngine {
           icaoNumber,
           longitude,
           latitude,
-          { direction, enabled, marker: oldFlightInfo?.marker, zoom },
+          { clicked, direction, enabled, marker: oldFlightInfo?.marker, zoom },
         ).marker!;
         google.maps.event.clearListeners(marker, 'click');
         google.maps.event.addListener(marker, 'click', () => this.openPopupForFlight(flight, marker));
@@ -215,6 +218,7 @@ export default class MapEngine {
     public removeOldFlights(icaoNumbers: Set<string>) {
       Object.keys(this.flights).forEach((icaoNumber) => {
         if (!icaoNumbers.has(icaoNumber)) {
+          google.maps.event.clearListeners(this.flights[icaoNumber].marker, 'click');
           this.flights[icaoNumber].marker.setMap(null);
           delete this.flights[icaoNumber];
         }
@@ -224,6 +228,7 @@ export default class MapEngine {
     public removeAirportsNotIn(codes: Set<string>): void {
       Object.keys(this.airports).forEach((key) => {
         if (!codes.has(key)) {
+          google.maps.event.clearListeners(this.airports[key].marker, 'click');
           this.airports[key].marker.setMap(null);
           delete this.airports[key];
         }
@@ -318,23 +323,31 @@ const createOrUpdateMarker = (title: string, longitude: number, latitude: number
     return markerData;
 };
 
-const drawMarker = (markerData: FlightMarkerData) => {
-  const borderColor = markerData.enabled ? '#933400' : '#999999';
-  const innerColor = markerData.enabled ? '#FB8F2D' : '#b8b8b8';
-  const opacity = markerData.enabled ? 1 : 0.4;
+const drawMarker = (markerData: FlightMarkerData): void => {
+  setIcon(markerData);
+  markerData?.marker?.setZIndex(markerData?.enabled ? 1 : -2);
+};
+
+const setIcon = (markerData: FlightMarkerData): void => {
   const dimension = baseMarkerDimension + markerData.zoom * zoomFactor;
+  markerData?.marker?.setIcon({
+    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(drawIcon(markerData)),
+    anchor: new google.maps.Point(dimension / 2, dimension / 2),
+  });
+};
+
+const drawIcon = (markerData: FlightMarkerData): string => {
+  const borderColor = markerData.enabled ? '#933400' : '#999999';
+  const dimension = baseMarkerDimension + markerData.zoom * zoomFactor;
+  const innerColor = markerData.enabled ? (markerData.clicked ? '#933400' : '#FB8F2D') : '#b8b8b8';
+  const opacity = markerData.enabled ? 1 : 0.4;
   const direction = Math.round(markerData.direction / directionDegPrecision) * directionDegPrecision;
-  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+  return `<?xml version="1.0" encoding="UTF-8"?>
   <svg version="1.1" id="airport-15" xmlns="http://www.w3.org/2000/svg" width="${dimension}px" height="${dimension}px" viewBox="-1 -1 18 18">
     <g transform="rotate(${direction}, 7.5, 7.5)">
       <path opacity="${opacity}" stroke="${borderColor}" stroke-width="0.5" fill="${innerColor}" id="path7712-0" d="M15,6.8182L15,8.5l-6.5-1&#xA;&#x9;l-0.3182,4.7727L11,14v1l-3.5-0.6818L4,15v-1l2.8182-1.7273L6.5,7.5L0,8.5V6.8182L6.5,4.5v-3c0,0,0-1.5,1-1.5s1,1.5,1,1.5v2.8182&#xA;&#x9;L15,6.8182z"/>
     </g>
   </svg>`;
-  markerData?.marker?.setIcon({
-    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
-    anchor: new google.maps.Point(dimension / 2, dimension / 2),
-  });
-  markerData?.marker?.setZIndex(markerData?.enabled ? 1 : -2);
 };
 
 const createPopup = (flight: Flight) => {

@@ -43,7 +43,7 @@ const actions: ActionTree<State, any> = {
       socket.next({ '@type': types.stopTotal });
     }
   },
-  toggleMaximize({ dispatch, state }: ActionContext<State, any>) {
+  toggleMaximize({ dispatch, state }: ActionContext<State, any>): void {
     state.maximized = !state.maximized;
     if (state.maximized) {
       dispatch(types.startTop);
