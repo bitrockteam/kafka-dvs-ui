@@ -40,22 +40,7 @@ export default class extends Vue {
 
   @Watch('topSelectedItem')
   private toggleMarker(item?: TopSelectedItem) {
-    const highlight: (_: Flight) => boolean = (flight) => {
-      if (!item) {
-        return true;
-      }
-      switch (item.type) {
-        case 'originAirport':
-          return flight.airportDeparture.nameAirport === item.value;
-        case 'destinationAirport':
-          return flight.airportArrival.nameAirport === item.value;
-        case 'airlines':
-          return flight.airline.nameAirline === item.value;
-        default:
-          return true;
-      }
-    };
-    this.map?.highlightMarker(highlight);
+    this.map?.highlightMarker(item);
   }
 
   @Watch('boxedMapSpeedFlight')
