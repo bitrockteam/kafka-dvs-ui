@@ -2,6 +2,7 @@ import WorldControl from '../mapbox-controls/world-control';
 import { Flight, AirportInfo } from '../interfaces/flight';
 import BoundingBox from './bounding-box';
 import {} from 'googlemaps';
+import TopSelectedItem from './classes/top-selected-item';
 
 const directionDegPrecision: number = 10;
 const zoomFactor: number = 3;
@@ -23,7 +24,7 @@ interface FlightMarkerData {
 export default class MapEngine {
     private map: google.maps.Map;
     private airports: {
-      [airportCode: string]: { marker: google.maps.Marker };
+      [airportCode: string]: { airport: AirportInfo, marker: google.maps.Marker };
     } = {};
     private icaoNumberToPopup: { icaoNumber?: string, popup?: google.maps.InfoWindow } = {};
     private flights: {
@@ -150,12 +151,29 @@ export default class MapEngine {
         };
     }
 
-    public highlightFlights(f: (_: Flight) => boolean): void {
-      Object.values(this.flights).forEach((flightObject) => drawMarker({
+    public highlightMarker(item?: TopSelectedItem): void {
+      const currentZoom = this.getZoom();
+      const currentFlights = Object.values(this.flights);
+      const isHighlightedFlight = highlightFlight(item);
+
+      const airportCodesOfEnabledFlights = currentFlights
+        .filter((flightObject) => isHighlightedFlight(flightObject.flight))
+        .flatMap((flightObject) =>
+          [flightObject.flight.airportArrival.codeAirport, flightObject.flight.airportDeparture.codeAirport],
+        );
+      const isHighlightedAirport = highlightAirport(airportCodesOfEnabledFlights, item);
+
+      currentFlights.forEach((flightObject) => drawMarker({
         direction: flightObject.flight.geography.direction,
-        enabled: f(flightObject.flight),
+        enabled: isHighlightedFlight(flightObject.flight),
         marker: flightObject.marker,
-        zoom: this.getZoom(),
+        zoom: currentZoom,
+      }));
+
+      Object.keys(this.airports).forEach((code) => drawAirportMarker({
+        marker: this.airports[code].marker,
+        enabled: isHighlightedAirport(this.airports[code].airport),
+        zoom: currentZoom,
       }));
     }
 
@@ -209,7 +227,7 @@ export default class MapEngine {
           { enabled: true, marker: oldInfo?.marker, zoom: this.getZoom() },
         ).marker!;
         marker.setMap(this.map);
-        this.airports[codeAirport] = { marker };
+        this.airports[codeAirport] = { airport, marker };
     }
 
     public removeOldFlights(icaoNumbers: Set<string>) {
@@ -404,4 +422,37 @@ const createPopup = (flight: Flight) => {
       </div>
     </div>
     `);
+};
+
+const highlightFlight = (item?: TopSelectedItem): (_: Flight) => boolean => (flight) => {
+  if (!item) {
+    return true;
+  }
+  switch (item.type) {
+    case 'originAirport':
+      return flight.airportDeparture.nameAirport === item.value;
+    case 'destinationAirport':
+      return flight.airportArrival.nameAirport === item.value;
+    case 'airlines':
+      return flight.airline.nameAirline === item.value;
+    default:
+      return true;
+  }
+};
+
+const highlightAirport = (enabledAirports: string[], item?: TopSelectedItem): (_: AirportInfo) =>
+  boolean => (airport) => {
+    if (!item) {
+      return true;
+    }
+    switch (item.type) {
+      case 'originAirport':
+        return airport.nameAirport === item.value;
+      case 'destinationAirport':
+        return airport.nameAirport === item.value;
+      case 'airlines':
+        return enabledAirports.includes(airport.codeAirport);
+      default:
+        return true;
+  }
 };
