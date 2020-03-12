@@ -164,17 +164,11 @@ export default class MapEngine {
         .filter((flightObject) => f(flightObject.flight))
         .flatMap((flightObject) =>
           [flightObject.flight.airportArrival.codeAirport, flightObject.flight.airportDeparture.codeAirport],
-        )
-        .filter((elem, index, self) => (index === self.indexOf(elem)));
-
-      const enabledAirportCodes = Object.keys(this.airports)
-        .filter((code) => airportCodesOfEnabledFlights.includes(code));
-
-      const isAirportEnabled = (code: string) => enabledAirportCodes.includes(code);
+        );
 
       Object.keys(this.airports).forEach((code) => drawAirportMarker({
         marker: this.airports[code].marker,
-        enabled: isAirportEnabled(code),
+        enabled: airportCodesOfEnabledFlights.includes(code),
         zoom: currentZoom,
       }));
     }
