@@ -11,9 +11,16 @@ interface ServerProtocol {
   readonly '@type': keyof typeof types;
 }
 
+export interface Precedence {
+  readonly airline?: string;
+  readonly arrivalAirport?: string;
+  readonly departureAirport?: string;
+}
+
 export interface CoordinatesBox extends ServerProtocol {
   readonly '@type': typeof types.startFlightList;
   readonly maxFlights?: number;
+  readonly precedence: Precedence;
   readonly updateRate?: number;
   readonly leftHighLat: number;
   readonly leftHighLon: number;

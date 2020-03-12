@@ -13,12 +13,13 @@ import { streamWS } from '@/libs/endpoints';
 import { AirportList, AirportListEvent } from '@/interfaces/airport';
 import { AirportInfo, Flight, FlightList, FlightListEvent } from '@/interfaces/flight';
 import MapEngine from '@/libs/map-engine';
-import { CoordinatesBox, types } from '@/interfaces/serverProtocol';
+import { CoordinatesBox, types, Precedence } from '@/interfaces/serverProtocol';
 import { store } from '@/store';
 import TopSelectedItem from '../libs/classes/top-selected-item';
 import MaxSpeedFlight from '../libs/classes/max-speed-flight';
 import { Airport } from '../interfaces/stats';
 import DVSEvent from '../interfaces/dvs.event';
+import { fromTopSelectedItem } from '../libs/precedence.factory';
 
 @Component({
   name: 'world-map',
@@ -38,23 +39,8 @@ export default class extends Vue {
   }
 
   @Watch('topSelectedItem')
-  private toggleFlights(item?: TopSelectedItem) {
-    const highlight: (_: Flight) => boolean = (flight) => {
-      if (!item) {
-        return true;
-      }
-      switch (item.type) {
-        case 'originAirport':
-          return flight.airportDeparture.nameAirport === item.value;
-        case 'destinationAirport':
-          return flight.airportArrival.nameAirport === item.value;
-        case 'airlines':
-          return flight.airline.nameAirline === item.value;
-        default:
-          return true;
-      }
-    };
-    this.map?.highlightFlights(highlight);
+  private toggleMarker(item?: TopSelectedItem) {
+    this.map?.highlightMarker(item);
   }
 
   @Watch('boxedMapSpeedFlight')
@@ -116,9 +102,9 @@ export default class extends Vue {
             share(),
           );
         messages.pipe(filter<FlightListEvent>((event: DVSEvent) => event.eventType === 'FlightList'))
-          .subscribe((event: FlightListEvent) => this.manageFlightList(event.eventPayload));
+          .subscribe((event) => this.manageFlightList(event.eventPayload));
         messages.pipe(filter<AirportListEvent>((event: DVSEvent) => event.eventType === 'AirportList'))
-          .subscribe((event: AirportListEvent) => this.manageAirportList(event.eventPayload));
+          .subscribe((event) => this.manageAirportList(event.eventPayload));
       });
       this.isListening = true;
     }
@@ -129,6 +115,7 @@ export default class extends Vue {
     const newCodes = new Set(elements.map((f: AirportInfo) => f.codeAirport));
     this.map!.removeAirportsNotIn(newCodes);
     elements.forEach((airportUpdate) => this.map!.updateAirport(airportUpdate));
+    this.toggleMarker(this.topSelectedItem);
   }
 
   private manageFlightList(event: FlightList): void {
@@ -140,7 +127,7 @@ export default class extends Vue {
       maxTimestap = Math.max(maxTimestap, flightUpdate.updated);
       this.map!.updateFlight(flightUpdate);
     });
-    this.toggleFlights(this.topSelectedItem);
+    this.toggleMarker(this.topSelectedItem);
     // tslint:disable-next-line
     console.log('Flights on screen: ', this.map!.totalFlights());
     // tslint:disable-next-line
@@ -155,24 +142,20 @@ export default class extends Vue {
   }
 
   private createCommand(): CoordinatesBox {
-    const {
-      leftHighLat,
-      leftHighLon,
-      rightLowLat,
-      rightLowLon,
-    } = this.map!.getBoundingBox();
-
+    const { leftHighLat, leftHighLon, rightLowLat, rightLowLon } = this.map!.getBoundingBox();
     const zoom = this.map!.getZoom();
     const updateRate = this.getUpdateRate(Math.max(0, 10 - zoom));
+    const precedence: Precedence = fromTopSelectedItem(store.getters.topSelectedItem);
 
     return {
       '@type': types.startFlightList,
       'maxFlights': store.getters.maxFlights,
-      'updateRate': updateRate,
-      'leftHighLat': leftHighLat,
-      'leftHighLon': leftHighLon,
-      'rightLowLat': rightLowLat,
-      'rightLowLon': rightLowLon,
+      precedence,
+      updateRate,
+      leftHighLat,
+      leftHighLon,
+      rightLowLat,
+      rightLowLon,
     };
   }
 

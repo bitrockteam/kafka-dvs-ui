@@ -9,7 +9,7 @@
         </div>
         <div class="line-row">
           <div class="value">{{ CountFlight || '-' }}</div>
-          <div class="value">{{ BoxedCountFlight || '-' }}</div>
+          <div class="value">{{ BoxedCountFlight || '0' }}</div>
         </div>
       </div>
       <div class="info">
@@ -19,7 +19,7 @@
         </div>
         <div class="line-row">
           <div class="value">{{ CountAirline || '-' }}</div>
-          <div class="value">{{ BoxedCountAirline || '-' }}</div>
+          <div class="value">{{ BoxedCountAirline || '0' }}</div>
         </div>
       </div>
       <div class="info">

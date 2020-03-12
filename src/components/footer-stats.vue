@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { Getter, Mutation } from 'vuex-class';
+import { Action, Getter } from 'vuex-class';
 import { Component, Vue } from 'vue-property-decorator';
 import IconExpandMore from '@/components/icon-expand-more.vue';
 const Stats = () => import('@/components/stats.vue');
@@ -25,7 +25,7 @@ const Stats = () => import('@/components/stats.vue');
 })
 export default class extends Vue {
   @Getter private maximized!: boolean;
-  @Mutation private toggleMaximize!: () => void;
+  @Action private toggleMaximize!: () => void;
 }
 </script>
 <style lang="scss" src="@/styles/components/footer-stats.scss"/>
