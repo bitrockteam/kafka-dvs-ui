@@ -170,9 +170,11 @@ export default class MapEngine {
       const enabledAirportCodes = Object.keys(this.airports)
         .filter((code) => airportCodesOfEnabledFlights.includes(code));
 
+      const isAirportEnabled = (code: string) => enabledAirportCodes.includes(code);
+
       Object.keys(this.airports).forEach((code) => drawAirportMarker({
         marker: this.airports[code].marker,
-        enabled: enabledAirportCodes.includes(code),
+        enabled: isAirportEnabled(code),
         zoom: currentZoom,
       }));
     }
