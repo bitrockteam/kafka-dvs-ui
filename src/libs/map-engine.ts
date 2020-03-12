@@ -162,7 +162,7 @@ export default class MapEngine {
           [flightObject.flight.airportArrival.codeAirport, flightObject.flight.airportDeparture.codeAirport],
         );
       const isHighlightedAirport = highlightAirport(airportCodesOfEnabledFlights, item);
-        
+
       currentFlights.forEach((flightObject) => drawMarker({
         direction: flightObject.flight.geography.direction,
         enabled: isHighlightedFlight(flightObject.flight),
@@ -440,18 +440,19 @@ const highlightFlight = (item?: TopSelectedItem): (_: Flight) => boolean => (fli
   }
 };
 
-const highlightAirport = (airportCodesOfEnabledFlights: string[], item?: TopSelectedItem): (_: AirportInfo) => boolean => (airport) => {
-  if (!item) {
-    return true;
-  }
-  switch (item.type) {
-    case 'originAirport':
-      return airport.nameAirport === item.value;
-    case 'destinationAirport':
-      return airport.nameAirport === item.value;
-    case 'airlines':
-      return airportCodesOfEnabledFlights.includes(airport.codeAirport);
-    default:
+const highlightAirport = (enabledAirports: string[], item?: TopSelectedItem): (_: AirportInfo) =>
+  boolean => (airport) => {
+    if (!item) {
       return true;
+    }
+    switch (item.type) {
+      case 'originAirport':
+        return airport.nameAirport === item.value;
+      case 'destinationAirport':
+        return airport.nameAirport === item.value;
+      case 'airlines':
+        return enabledAirports.includes(airport.codeAirport);
+      default:
+        return true;
   }
 };
