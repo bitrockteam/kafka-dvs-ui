@@ -152,15 +152,16 @@ export default class MapEngine {
 
     public highlightMarker(f: (_: Flight) => boolean): void {
       const currentZoom = this.getZoom();
+      const currentFlights = Object.values(this.flights);
 
-      Object.values(this.flights).forEach((flightObject) => drawMarker({
+      currentFlights.forEach((flightObject) => drawMarker({
         direction: flightObject.flight.geography.direction,
         enabled: f(flightObject.flight),
         marker: flightObject.marker,
         zoom: currentZoom,
       }));
 
-      const airportCodesOfEnabledFlights = Object.values(this.flights)
+      const airportCodesOfEnabledFlights = currentFlights
         .filter((flightObject) => f(flightObject.flight))
         .flatMap((flightObject) =>
           [flightObject.flight.airportArrival.codeAirport, flightObject.flight.airportDeparture.codeAirport],
@@ -168,7 +169,7 @@ export default class MapEngine {
 
       Object.keys(this.airports).forEach((code) => drawAirportMarker({
         marker: this.airports[code].marker,
-        enabled: airportCodesOfEnabledFlights.includes(code),
+        enabled: airportCodesOfEnabledFlights.includes(code) || currentFlights.length === 0,
         zoom: currentZoom,
       }));
     }
