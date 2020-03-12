@@ -39,7 +39,7 @@ export default class extends Vue {
   }
 
   @Watch('topSelectedItem')
-  private toggleFlights(item?: TopSelectedItem) {
+  private toggleMarker(item?: TopSelectedItem) {
     const highlight: (_: Flight) => boolean = (flight) => {
       if (!item) {
         return true;
@@ -55,7 +55,7 @@ export default class extends Vue {
           return true;
       }
     };
-    this.map?.highlightFlights(highlight);
+    this.map?.highlightMarker(highlight);
   }
 
   @Watch('boxedMapSpeedFlight')
@@ -130,6 +130,7 @@ export default class extends Vue {
     const newCodes = new Set(elements.map((f: AirportInfo) => f.codeAirport));
     this.map!.removeAirportsNotIn(newCodes);
     elements.forEach((airportUpdate) => this.map!.updateAirport(airportUpdate));
+    this.toggleMarker(this.topSelectedItem);
   }
 
   private manageFlightList(event: FlightList): void {
@@ -141,7 +142,7 @@ export default class extends Vue {
       maxTimestap = Math.max(maxTimestap, flightUpdate.updated);
       this.map!.updateFlight(flightUpdate);
     });
-    this.toggleFlights(this.topSelectedItem);
+    this.toggleMarker(this.topSelectedItem);
     // tslint:disable-next-line
     console.log('Flights on screen: ', this.map!.totalFlights());
     // tslint:disable-next-line

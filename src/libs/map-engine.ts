@@ -150,12 +150,30 @@ export default class MapEngine {
         };
     }
 
-    public highlightFlights(f: (_: Flight) => boolean): void {
+    public highlightMarker(f: (_: Flight) => boolean): void {
+      const currentZoom = this.getZoom();
+
       Object.values(this.flights).forEach((flightObject) => drawMarker({
         direction: flightObject.flight.geography.direction,
         enabled: f(flightObject.flight),
         marker: flightObject.marker,
-        zoom: this.getZoom(),
+        zoom: currentZoom,
+      }));
+
+      const airportCodesOfEnabledFlights = Object.values(this.flights)
+        .filter((flightObject) => f(flightObject.flight))
+        .flatMap((flightObject) =>
+          [flightObject.flight.airportArrival.codeAirport, flightObject.flight.airportDeparture.codeAirport],
+        )
+        .filter((elem, index, self) => (index === self.indexOf(elem)));
+
+      const enabledAirportCodes = Object.keys(this.airports)
+        .filter((code) => airportCodesOfEnabledFlights.includes(code));
+
+      Object.keys(this.airports).forEach((code) => drawAirportMarker({
+        marker: this.airports[code].marker,
+        enabled: enabledAirportCodes.includes(code),
+        zoom: currentZoom,
       }));
     }
 
