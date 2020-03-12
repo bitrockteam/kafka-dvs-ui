@@ -26,6 +26,7 @@ export default class MapEngine {
       [airportCode: string]: { marker: google.maps.Marker };
     } = {};
     private icaoNumberToPopup: { icaoNumber?: string, popup?: google.maps.InfoWindow } = {};
+    private airportCodeToPopup: { airportCode?: string, popup?: google.maps.InfoWindow } = {};
     private flights: {
         [icaoNumber: string]: { flight: Flight, marker: google.maps.Marker };
     } = {};
@@ -193,7 +194,7 @@ export default class MapEngine {
         google.maps.event.clearListeners(marker, 'click');
         google.maps.event.addListener(marker, 'click', () => this.openPopupForFlight(flight, marker));
         if (this.icaoNumberToPopup.icaoNumber === icaoNumber && this.icaoNumberToPopup.popup) {
-          this.icaoNumberToPopup.popup.setContent(createPopup(flight));
+          this.icaoNumberToPopup.popup.setContent(createFlightPopup(flight));
         }
         marker.setMap(this.map);
         this.flights[icaoNumber] = { flight, marker };
@@ -208,6 +209,8 @@ export default class MapEngine {
           latitude,
           { enabled: true, marker: oldInfo?.marker, zoom: this.getZoom() },
         ).marker!;
+        google.maps.event.clearListeners(marker, 'click');
+        google.maps.event.addListener(marker, 'click', () => this.openPopupForAirport(airport, marker));
         marker.setMap(this.map);
         this.airports[codeAirport] = { marker };
     }
@@ -235,7 +238,7 @@ export default class MapEngine {
           this.icaoNumberToPopup.popup.close();
         }
         const infoWindow = new google.maps.InfoWindow({
-          content: createPopup(flight),
+          content: createFlightPopup(flight),
           disableAutoPan: false,
         });
         this.icaoNumberToPopup = {
@@ -244,6 +247,21 @@ export default class MapEngine {
         };
         infoWindow.open(this.map, anchor);
     }
+
+    private openPopupForAirport(airport: AirportInfo, anchor: google.maps.MVCObject) {
+      if (this.airportCodeToPopup.popup) {
+        this.airportCodeToPopup.popup.close();
+      }
+      const infoWindow = new google.maps.InfoWindow({
+        content: createAirportPopup(airport),
+        disableAutoPan: false,
+      });
+      this.airportCodeToPopup = {
+        airportCode: airport.codeAirport,
+        popup: infoWindow,
+      };
+      infoWindow.open(this.map, anchor);
+  }
 
     private zoomOnFocusedMarker(n: number) {
         const centerMarkerZoomLevel = 12;
@@ -337,7 +355,7 @@ const drawMarker = (markerData: FlightMarkerData) => {
   markerData?.marker?.setZIndex(markerData?.enabled ? 1 : -2);
 };
 
-const createPopup = (flight: Flight) => {
+const createFlightPopup = (flight: Flight) => {
     const {
         geography: { latitude, longitude, altitude },
         icaoNumber,
@@ -404,4 +422,41 @@ const createPopup = (flight: Flight) => {
       </div>
     </div>
     `);
+};
+
+const createAirportPopup = (airport: AirportInfo) => {
+  const {
+      cityName,
+      codeAirport,
+      latitude,
+      longitude,
+      nameAirport,
+      nameCountry,
+      gmt,
+      timezone,
+  } = airport;
+  return (`
+  <div class='custom-popup'>
+    <div class='flight-ids-info'>
+      <div class='ids'><b>${nameAirport}</b></div>
+      <div>${cityName} - ${nameCountry}</div>
+      <span>${timezone} GMT ( +${gmt}:00 )</span>
+    </div>
+    <div class='flight-detail'>
+       <div class='detail-box'>
+         <h6>IATA code</h6>
+         <div>${codeAirport}</div>
+       </div>
+       <div class='detail-box'>
+        <h6>Latitude</h6>
+         <div>${latitude.toFixed(4)}</div>
+       </div>
+       <div class='detail-box'>
+        <h6>Longitude</h6>
+         <div>${longitude.toFixed(4)}</div>
+       </div>
+     </div>
+    </div>
+  </div>
+  `);
 };
