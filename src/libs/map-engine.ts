@@ -3,6 +3,8 @@ import { Flight, AirportInfo } from '../interfaces/flight';
 import BoundingBox from './bounding-box';
 import {} from 'googlemaps';
 import TopSelectedItem from './classes/top-selected-item';
+import MarkerClusterer from '@google/markerclustererplus';
+
 
 const directionDegPrecision: number = 10;
 const zoomFactor: number = 3;
@@ -134,6 +136,8 @@ export default class MapEngine {
         this.map.setCenter(center);
     }
 
+
+
     public clickFlightMarker(icao: string) {
       const {flight, marker} = this.flights[icao];
       this.openPopupForFlight(flight, marker);
@@ -168,7 +172,9 @@ export default class MapEngine {
         enabled: isHighlightedFlight(flightObject.flight),
         marker: flightObject.marker,
         zoom: currentZoom,
-      }));
+        }));
+      const markers = getAllMarkers(currentFlights);
+      initializeMarkerClusters(this.map, markers);
 
       Object.keys(this.airports).forEach((code) => drawAirportMarker({
         marker: this.airports[code].marker,
@@ -455,4 +461,20 @@ const highlightAirport = (enabledAirports: string[], item?: TopSelectedItem): (_
       default:
         return true;
   }
+};
+
+const initializeMarkerClusters = (map: google.maps.Map, markers: google.maps.Marker[]) => {
+  const markerCluster = new MarkerClusterer(map, markers,
+    {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+  minimumClusterSize: 50, averageCenter: true, gridSize: 200});
+  return markerCluster;
+};
+
+const getAllMarkers = (currentFlights: Array<{
+    flight: Flight;
+    marker: google.maps.Marker;
+}>) => {
+  return currentFlights.map((flight) => {
+    return flight.marker;
+  });
 };

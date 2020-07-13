@@ -1,10 +1,10 @@
 <template>
-  <div id='map' ref='map' class='map-canvas'>
-    <slot></slot>
-  </div>
+	<div id="map" ref="map" class="map-canvas">
+		<slot></slot>
+	</div>
 </template>
 
-<script lang='ts'>
+<script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
@@ -20,6 +20,7 @@ import MaxSpeedFlight from '../libs/classes/max-speed-flight';
 import { Airport } from '../interfaces/stats';
 import DVSEvent from '../interfaces/dvs.event';
 import { fromTopSelectedItem } from '../libs/precedence.factory';
+
 
 @Component({
   name: 'world-map',
@@ -167,4 +168,4 @@ export default class extends Vue {
 }
 </script>
 
-<style lang='scss' src='@/styles/components/world-map.scss'></style>
+<style lang="scss" src="@/styles/components/world-map.scss"></style>
