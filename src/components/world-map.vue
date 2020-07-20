@@ -1,15 +1,16 @@
 <template>
-	<div id="map" ref="map" class="map-canvas">
-		<slot></slot>
-	</div>
+  <div id="map" ref="map" class="map-canvas">
+    <slot></slot>
+  </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import { State } from 'vuex-class';
-import {interval, ObservableInput} from 'rxjs';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { map,
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { State } from "vuex-class";
+import { interval, ObservableInput } from "rxjs";
+import { webSocket, WebSocketSubject } from "rxjs/webSocket";
+import {
+  map,
   filter,
   tap,
   share,
@@ -17,23 +18,28 @@ import { map,
   throttle,
   takeLast,
   debounceTime,
-  distinctUntilChanged } from 'rxjs/operators';
+  distinctUntilChanged
+} from "rxjs/operators";
 
-import { streamWS } from '@/libs/endpoints';
-import { AirportList, AirportListEvent } from '@/interfaces/airport';
-import { AirportInfo, Flight, FlightList, FlightListEvent } from '@/interfaces/flight';
-import MapEngine from '@/libs/map-engine';
-import { CoordinatesBox, types, Precedence } from '@/interfaces/serverProtocol';
-import { store } from '@/store';
-import TopSelectedItem from '../libs/classes/top-selected-item';
-import MaxSpeedFlight from '../libs/classes/max-speed-flight';
-import { Airport } from '../interfaces/stats';
-import DVSEvent from '../interfaces/dvs.event';
-import { fromTopSelectedItem } from '../libs/precedence.factory';
-
+import { streamWS } from "@/libs/endpoints";
+import { AirportList, AirportListEvent } from "@/interfaces/airport";
+import {
+  AirportInfo,
+  Flight,
+  FlightList,
+  FlightListEvent
+} from "@/interfaces/flight";
+import MapEngine from "@/libs/map-engine";
+import { CoordinatesBox, types, Precedence } from "@/interfaces/serverProtocol";
+import { store } from "@/store";
+import TopSelectedItem from "../libs/classes/top-selected-item";
+import MaxSpeedFlight from "../libs/classes/max-speed-flight";
+import { Airport } from "../interfaces/stats";
+import DVSEvent from "../interfaces/dvs.event";
+import { fromTopSelectedItem } from "../libs/precedence.factory";
 
 @Component({
-  name: 'world-map',
+  name: "world-map"
 })
 export default class extends Vue {
   @State private paused!: boolean;
@@ -41,20 +47,20 @@ export default class extends Vue {
   @State private boxedMapSpeedFlight?: MaxSpeedFlight;
 
   private map?: MapEngine = undefined;
-  private socketURL: string = 'dvs';
+  private socketURL: string = "dvs";
   private isListening: boolean = false;
 
-  @Watch('paused')
+  @Watch("paused")
   private togglePause(val: boolean) {
     val ? this.unsubscribe() : this.listen(streamWS(this.socketURL));
   }
 
-  @Watch('topSelectedItem')
+  @Watch("topSelectedItem")
   private toggleMarker(item?: TopSelectedItem) {
     this.map?.highlightMarker(item);
   }
 
-  @Watch('boxedMapSpeedFlight')
+  @Watch("boxedMapSpeedFlight")
   private toggleBoxedMaxSpeedFlight(maxSpeedFlight?: MaxSpeedFlight) {
     if (maxSpeedFlight) {
       this.map?.clickFlightMarker(maxSpeedFlight.icao);
@@ -67,14 +73,17 @@ export default class extends Vue {
       this.listen(streamWS(this.socketURL));
     }, 500);
 
-    new Promise<{lat: number, lng: number}>((resolve, reject) => {
+    new Promise<{ lat: number; lng: number }>((resolve, reject) => {
       return navigator.geolocation.getCurrentPosition(
-          (position) =>  resolve({ lat: position.coords.latitude, lng: position.coords.longitude }),
-          (_) => resolve,
-          { maximumAge: 600000 },
+        position =>
+          resolve({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }),
+        _ => resolve,
+        { maximumAge: 600000 }
       );
-    },
-    ).then((center) => {
+    }).then(center => {
       clearTimeout(firstMapLoad);
       this.createMapInstance(center);
       this.listen(streamWS(this.socketURL));
@@ -91,43 +100,53 @@ export default class extends Vue {
     this.unsubscribe();
   }
 
-  private createMapInstance(center?: {lat: number, lng: number}) {
-      if (!this.map) {
-        this.map = new MapEngine('map', center);
-        this.map.onMove(this.sendBoundingBox);
-      } else {
-        this.map.setCenter(center!);
-      }
+  private createMapInstance(center?: { lat: number; lng: number }) {
+    if (!this.map) {
+      this.map = new MapEngine("map", center);
+      this.map.onMove(this.sendBoundingBox);
+    } else {
+      this.map.setCenter(center!);
+    }
   }
 
   private listen(url: string) {
     if (!this.isListening) {
-      store.dispatch('attachWebSocket', { url }).then((socket: WebSocketSubject<unknown>) => {
-        this.sendBoundingBox();
-        const messages = socket
-          .pipe(
-            tap((event: any) => void 0, (err) => {
-              this.isListening = false;
-              this.listen(url);
-            }),
-            share(),
+      store
+        .dispatch("attachWebSocket", { url })
+        .then((socket: WebSocketSubject<unknown>) => {
+          this.sendBoundingBox();
+          const messages = socket.pipe(
+            tap(
+              (event: any) => void 0,
+              err => {
+                this.isListening = false;
+                this.listen(url);
+              }
+            ),
+            share()
           );
-        messages.pipe(
-          filter<FlightListEvent>(
-          (event: DVSEvent) => event.eventType === 'FlightList'),
-          debounceTime(500),
-          distinctUntilChanged(),
-          )
-          .subscribe((event) => {
-            return this.manageFlightList(event.eventPayload); });
+          messages
+            .pipe(
+              filter<FlightListEvent>(
+                (event: DVSEvent) => event.eventType === "FlightList"
+              ),
+              debounceTime(500),
+              distinctUntilChanged()
+            )
+            .subscribe(event => {
+              return this.manageFlightList(event.eventPayload);
+            });
 
-        messages.pipe(
-
-          filter<AirportListEvent>((event: DVSEvent) => event.eventType === 'AirportList'),
-          debounceTime(3000),
-          distinctUntilChanged())
-          .subscribe((event) => this.manageAirportList(event.eventPayload));
-      });
+          messages
+            .pipe(
+              filter<AirportListEvent>(
+                (event: DVSEvent) => event.eventType === "AirportList"
+              ),
+              debounceTime(3000),
+              distinctUntilChanged()
+            )
+            .subscribe(event => this.manageAirportList(event.eventPayload));
+        });
       this.isListening = true;
     }
   }
@@ -135,25 +154,37 @@ export default class extends Vue {
   private manageAirportList(event: AirportList): void {
     const { elements } = event;
     const newCodes = new Set(elements.map((f: AirportInfo) => f.codeAirport));
-    this.map!.removeAirportsNotIn(newCodes);
-    elements.forEach((airportUpdate) => this.map!.updateAirport(airportUpdate));
-    this.toggleMarker(this.topSelectedItem);
+
+    window.requestAnimationFrame(() => {
+      this.map!.removeAirportsNotIn(newCodes);
+
+      (async () => {
+        await Promise.all(
+          elements.map(airportUpdate => this.map!.updateAirport(airportUpdate))
+        );
+      })();
+
+      this.toggleMarker(this.topSelectedItem);
+    });
   }
 
   private manageFlightList(event: FlightList): void {
     const { elements } = event;
-    let maxTimestap = 0;
     const newIcaoNumbers = new Set(elements.map((f: Flight) => f.icaoNumber));
-    this.map!.removeOldFlights(newIcaoNumbers);
-    elements.forEach((flightUpdate: Flight) => {
-      maxTimestap = Math.max(maxTimestap, flightUpdate.updated);
-      this.map!.updateFlight(flightUpdate);
+
+    window.requestAnimationFrame(() => {
+      this.map!.removeOldFlights(newIcaoNumbers);
+
+      (async () => {
+        await Promise.all(
+          elements.map(flightUpdate => this.map!.updateFlight(flightUpdate))
+        );
+      })();
+      this.toggleMarker(this.topSelectedItem);
     });
-    this.toggleMarker(this.topSelectedItem);
+
     // tslint:disable-next-line
-    console.log('Flights on screen: ', this.map!.totalFlights());
-    // tslint:disable-next-line
-    console.log('Max Timestamp: ', new Date(maxTimestap));
+    console.log("Flights on screen: ", this.map!.totalFlights());
   }
 
   private getUpdateRate(n: number): number {
@@ -164,20 +195,27 @@ export default class extends Vue {
   }
 
   private createCommand(): CoordinatesBox {
-    const { leftHighLat, leftHighLon, rightLowLat, rightLowLon } = this.map!.getBoundingBox();
+    const {
+      leftHighLat,
+      leftHighLon,
+      rightLowLat,
+      rightLowLon
+    } = this.map!.getBoundingBox();
     const zoom = this.map!.getZoom();
     const updateRate = this.getUpdateRate(Math.max(0, 10 - zoom));
-    const precedence: Precedence = fromTopSelectedItem(store.getters.topSelectedItem);
+    const precedence: Precedence = fromTopSelectedItem(
+      store.getters.topSelectedItem
+    );
 
     return {
-      '@type': types.startFlightList,
-      'maxFlights': store.getters.maxFlights,
+      "@type": types.startFlightList,
+      maxFlights: store.getters.maxFlights,
       precedence,
       updateRate,
       leftHighLat,
       leftHighLon,
       rightLowLat,
-      rightLowLon,
+      rightLowLon
     };
   }
 
@@ -188,12 +226,12 @@ export default class extends Vue {
   }
 
   private chunk<T>(array: T[], size: number) {
-  const chunkedArray = [];
-  for (let i = 0; i < array.length; i += size) {
-    chunkedArray.push(array.slice(i, i + size));
+    const chunkedArray = [];
+    for (let i = 0; i < array.length; i += size) {
+      chunkedArray.push(array.slice(i, i + size));
+    }
+    return chunkedArray;
   }
-  return chunkedArray;
-}
 }
 </script>
 
