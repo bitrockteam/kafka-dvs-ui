@@ -1,5 +1,5 @@
 <template>
-  <div id='map' ref='map' class='map-canvas'>
+  <div id="map" ref="map" class="map-canvas">
     <slot></slot>
   </div>
 </template>
@@ -113,25 +113,41 @@ export default class extends Vue {
   private manageAirportList(event: AirportList): void {
     const { elements } = event;
     const newCodes = new Set(elements.map((f: AirportInfo) => f.codeAirport));
-    this.map!.removeAirportsNotIn(newCodes);
-    elements.forEach((airportUpdate) => this.map!.updateAirport(airportUpdate));
-    this.toggleMarker(this.topSelectedItem);
+
+    window.requestAnimationFrame(() => {
+      this.map!.removeAirportsNotIn(newCodes);
+
+      (async () => {
+        await Promise.all(
+          elements.map(
+            (airportUpdate) => this.map!.updateAirport(airportUpdate),
+          ),
+        );
+      })();
+
+      this.toggleMarker(this.topSelectedItem);
+    });
   }
 
   private manageFlightList(event: FlightList): void {
     const { elements } = event;
-    let maxTimestap = 0;
     const newIcaoNumbers = new Set(elements.map((f: Flight) => f.icaoNumber));
-    this.map!.removeOldFlights(newIcaoNumbers);
-    elements.forEach((flightUpdate: Flight) => {
-      maxTimestap = Math.max(maxTimestap, flightUpdate.updated);
-      this.map!.updateFlight(flightUpdate);
+
+    window.requestAnimationFrame(() => {
+      this.map!.removeOldFlights(newIcaoNumbers);
+
+      (async () => {
+        await Promise.all(
+          elements.map(
+            (flightUpdate) => this.map!.updateFlight(flightUpdate),
+          ),
+        );
+      })();
+      this.toggleMarker(this.topSelectedItem);
     });
-    this.toggleMarker(this.topSelectedItem);
+
     // tslint:disable-next-line
     console.log('Flights on screen: ', this.map!.totalFlights());
-    // tslint:disable-next-line
-    console.log('Max Timestamp: ', new Date(maxTimestap));
   }
 
   private getUpdateRate(n: number): number {
