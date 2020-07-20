@@ -34,7 +34,7 @@ export default class MapEngine {
     } = {};
     private defaultBounds = new google.maps.LatLngBounds({ lat: -60, lng: -179 }, { lat: 80, lng: 179 });
     private defaultCenter = { lat: 45, lng: 10 };
-    private clusterMarkers: MarkerClusterer | null = null
+    private clusterMarkers: MarkerClusterer | null = null;
 
     constructor(containerId: string, center?: { lat: number, lng: number }) {
         const elem = document.getElementById(containerId)!;
@@ -242,8 +242,8 @@ export default class MapEngine {
       Object.keys(this.flights).forEach((icaoNumber) => {
         if (!icaoNumbers.has(icaoNumber)) {
           this.flights[icaoNumber].marker.setMap(null);
-          let {[icaoNumber]: remove,...otherFlights} = this.flights
-          this.flights = {...otherFlights}
+          const {[icaoNumber]: remove, ...otherFlights} = this.flights;
+          this.flights = {...otherFlights};
           // const markers =  getAllMarkers(Object.values(otherFlights))
           // this.clusterMarkers!.removeMarkers(markers)
         }

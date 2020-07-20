@@ -3,5 +3,8 @@ module.exports = {
     workboxOptions: {
       skipWaiting: true
     }
-  }
+  },
+  configureWebpack: {
+    devtool: 'source-map'
+  },
 };

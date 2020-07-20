@@ -8,7 +8,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { map, filter, tap, share } from 'rxjs/operators';
+import { map, filter, tap, share, take } from 'rxjs/operators';
 import { streamWS } from '@/libs/endpoints';
 import { AirportList, AirportListEvent } from '@/interfaces/airport';
 import { AirportInfo, Flight, FlightList, FlightListEvent } from '@/interfaces/flight';
@@ -102,7 +102,7 @@ export default class extends Vue {
             }),
             share(),
           );
-        messages.pipe(filter<FlightListEvent>((event: DVSEvent) => event.eventType === 'FlightList'))
+        messages.pipe(take(100),filter<FlightListEvent>((event: DVSEvent) => event.eventType === 'FlightList'))
           .subscribe((event) => this.manageFlightList(event.eventPayload));
         messages.pipe(filter<AirportListEvent>((event: DVSEvent) => event.eventType === 'AirportList'))
           .subscribe((event) => this.manageAirportList(event.eventPayload));
