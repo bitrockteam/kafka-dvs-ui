@@ -7,9 +7,17 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { State } from 'vuex-class';
-import {interval, ObservableInput} from 'rxjs'
+import {interval, ObservableInput} from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { map, filter, tap, share, take, throttle, takeLast, concatMap, exhaust, debounceTime,distinctUntilChanged } from 'rxjs/operators';
+import { map,
+  filter,
+  tap,
+  share,
+  take,
+  throttle,
+  takeLast,
+  debounceTime,
+  distinctUntilChanged } from 'rxjs/operators';
 
 import { streamWS } from '@/libs/endpoints';
 import { AirportList, AirportListEvent } from '@/interfaces/airport';
@@ -107,17 +115,17 @@ export default class extends Vue {
         messages.pipe(
           filter<FlightListEvent>(
           (event: DVSEvent) => event.eventType === 'FlightList'),
-          debounceTime(1500),
+          debounceTime(500),
           distinctUntilChanged(),
           )
           .subscribe((event) => {
-            return this.manageFlightList(event.eventPayload)});
+            return this.manageFlightList(event.eventPayload); });
 
         messages.pipe(
 
           filter<AirportListEvent>((event: DVSEvent) => event.eventType === 'AirportList'),
           debounceTime(3000),
-          distinctUntilChanged(),)
+          distinctUntilChanged())
           .subscribe((event) => this.manageAirportList(event.eventPayload));
       });
       this.isListening = true;
@@ -126,7 +134,6 @@ export default class extends Vue {
 
   private manageAirportList(event: AirportList): void {
     const { elements } = event;
-    console.log(elements.length)
     const newCodes = new Set(elements.map((f: AirportInfo) => f.codeAirport));
     this.map!.removeAirportsNotIn(newCodes);
     elements.forEach((airportUpdate) => this.map!.updateAirport(airportUpdate));
@@ -134,7 +141,7 @@ export default class extends Vue {
   }
 
   private manageFlightList(event: FlightList): void {
-    let { elements } = event;
+    const { elements } = event;
     let maxTimestap = 0;
     const newIcaoNumbers = new Set(elements.map((f: Flight) => f.icaoNumber));
     this.map!.removeOldFlights(newIcaoNumbers);
@@ -181,11 +188,11 @@ export default class extends Vue {
   }
 
   private chunk<T>(array: T[], size: number) {
-  const chunkedArray = []
-  for (var i = 0; i < array.length; i += size) {
-   chunkedArray.push(array.slice(i, i + size))
+  const chunkedArray = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunkedArray.push(array.slice(i, i + size));
   }
-  return chunkedArray
+  return chunkedArray;
 }
 }
 </script>
