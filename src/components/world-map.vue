@@ -160,7 +160,13 @@ export default class extends Vue {
 
       (async () => {
         await Promise.all(
+<<<<<<< HEAD
           elements.map(airportUpdate => this.map!.updateAirport(airportUpdate))
+=======
+          elements.map(
+            (airportUpdate) => this.map!.updateAirport(airportUpdate),
+          ),
+>>>>>>> c577dd67bd897cf284e086583e7c012afa5e42ff
         );
       })();
 
@@ -177,14 +183,24 @@ export default class extends Vue {
 
       (async () => {
         await Promise.all(
+<<<<<<< HEAD
           elements.map(flightUpdate => this.map!.updateFlight(flightUpdate))
+=======
+          elements.map(
+            (flightUpdate) => this.map!.updateFlight(flightUpdate),
+          ),
+>>>>>>> c577dd67bd897cf284e086583e7c012afa5e42ff
         );
       })();
       this.toggleMarker(this.topSelectedItem);
     });
 
     // tslint:disable-next-line
+<<<<<<< HEAD
     console.log("Flights on screen: ", this.map!.totalFlights());
+=======
+    console.log('Flights on screen: ', this.map!.totalFlights());
+>>>>>>> c577dd67bd897cf284e086583e7c012afa5e42ff
   }
 
   private getUpdateRate(n: number): number {

@@ -5,7 +5,6 @@ import { } from 'googlemaps';
 import TopSelectedItem from './classes/top-selected-item';
 import MarkerClusterer from '@google/markerclustererplus';
 
-
 const directionDegPrecision: number = 30;
 const zoomFactor: number = 3;
 const baseMarkerDimension: number = 4;
