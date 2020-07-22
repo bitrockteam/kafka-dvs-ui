@@ -1,14 +1,24 @@
 <template>
-  <div id='map' ref='map' class='map-canvas'>
-    <slot></slot>
-  </div>
+	<div id="map" ref="map" class="map-canvas">
+		<slot></slot>
+	</div>
 </template>
 
-<script lang='ts'>
+<script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { State } from 'vuex-class';
+import {interval, ObservableInput} from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { map, filter, tap, share } from 'rxjs/operators';
+import { map,
+  filter,
+  tap,
+  share,
+  take,
+  throttle,
+  takeLast,
+  debounceTime,
+  distinctUntilChanged } from 'rxjs/operators';
+
 import { streamWS } from '@/libs/endpoints';
 import { AirportList, AirportListEvent } from '@/interfaces/airport';
 import { AirportInfo, Flight, FlightList, FlightListEvent } from '@/interfaces/flight';
@@ -20,6 +30,7 @@ import MaxSpeedFlight from '../libs/classes/max-speed-flight';
 import { Airport } from '../interfaces/stats';
 import DVSEvent from '../interfaces/dvs.event';
 import { fromTopSelectedItem } from '../libs/precedence.factory';
+
 
 @Component({
   name: 'world-map',
@@ -101,9 +112,20 @@ export default class extends Vue {
             }),
             share(),
           );
-        messages.pipe(filter<FlightListEvent>((event: DVSEvent) => event.eventType === 'FlightList'))
-          .subscribe((event) => this.manageFlightList(event.eventPayload));
-        messages.pipe(filter<AirportListEvent>((event: DVSEvent) => event.eventType === 'AirportList'))
+        messages.pipe(
+          filter<FlightListEvent>(
+          (event: DVSEvent) => event.eventType === 'FlightList'),
+          debounceTime(500),
+          distinctUntilChanged(),
+          )
+          .subscribe((event) => {
+            return this.manageFlightList(event.eventPayload); });
+
+        messages.pipe(
+
+          filter<AirportListEvent>((event: DVSEvent) => event.eventType === 'AirportList'),
+          debounceTime(3000),
+          distinctUntilChanged())
           .subscribe((event) => this.manageAirportList(event.eventPayload));
       });
       this.isListening = true;
@@ -164,7 +186,15 @@ export default class extends Vue {
       store.dispatch(types.startFlightList, this.createCommand());
     }
   }
+
+  private chunk<T>(array: T[], size: number) {
+  const chunkedArray = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunkedArray.push(array.slice(i, i + size));
+  }
+  return chunkedArray;
+}
 }
 </script>
 
-<style lang='scss' src='@/styles/components/world-map.scss'></style>
+<style lang="scss" src="@/styles/components/world-map.scss"></style>

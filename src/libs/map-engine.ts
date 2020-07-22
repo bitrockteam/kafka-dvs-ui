@@ -3,6 +3,8 @@ import { Flight, AirportInfo } from '../interfaces/flight';
 import BoundingBox from './bounding-box';
 import {} from 'googlemaps';
 import TopSelectedItem from './classes/top-selected-item';
+import MarkerClusterer from '@google/markerclustererplus';
+
 
 const directionDegPrecision: number = 10;
 const zoomFactor: number = 3;
@@ -32,6 +34,7 @@ export default class MapEngine {
     } = {};
     private defaultBounds = new google.maps.LatLngBounds({ lat: -60, lng: -179 }, { lat: 80, lng: 179 });
     private defaultCenter = { lat: 45, lng: 10 };
+    private clusterMarkers: MarkerClusterer | null = null;
 
     constructor(containerId: string, center?: { lat: number, lng: number }) {
         const elem = document.getElementById(containerId)!;
@@ -134,6 +137,8 @@ export default class MapEngine {
         this.map.setCenter(center);
     }
 
+
+
     public clickFlightMarker(icao: string) {
       const {flight, marker} = this.flights[icao];
       this.openPopupForFlight(flight, marker);
@@ -163,12 +168,15 @@ export default class MapEngine {
         );
       const isHighlightedAirport = highlightAirport(airportCodesOfEnabledFlights, item);
 
+      // const markers = getAllMarkers(currentFlights);
+      // this.clusterMarkers = initializeMarkerClusters(this.map, markers);
+
       currentFlights.forEach((flightObject) => drawMarker({
         direction: flightObject.flight.geography.direction,
         enabled: isHighlightedFlight(flightObject.flight),
         marker: flightObject.marker,
         zoom: currentZoom,
-      }));
+        }));
 
       Object.keys(this.airports).forEach((code) => drawAirportMarker({
         marker: this.airports[code].marker,
@@ -234,7 +242,10 @@ export default class MapEngine {
       Object.keys(this.flights).forEach((icaoNumber) => {
         if (!icaoNumbers.has(icaoNumber)) {
           this.flights[icaoNumber].marker.setMap(null);
-          delete this.flights[icaoNumber];
+          const {[icaoNumber]: remove, ...otherFlights} = this.flights;
+          this.flights = {...otherFlights};
+          // const markers =  getAllMarkers(Object.values(otherFlights))
+          // this.clusterMarkers!.removeMarkers(markers)
         }
       });
     }
@@ -455,4 +466,21 @@ const highlightAirport = (enabledAirports: string[], item?: TopSelectedItem): (_
       default:
         return true;
   }
+};
+
+const initializeMarkerClusters = (map: google.maps.Map, markers: google.maps.Marker[]): MarkerClusterer => {
+  const markerCluster = new MarkerClusterer(map, markers,
+    {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+  minimumClusterSize: 50, averageCenter: true, gridSize: 200});
+  return markerCluster;
+};
+
+
+const getAllMarkers = (currentFlights: Array<{
+    flight: Flight;
+    marker: google.maps.Marker;
+}>) => {
+  return currentFlights.map((flight) => {
+    return flight.marker;
+  });
 };

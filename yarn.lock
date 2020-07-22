@@ -180,6 +180,11 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
+"@google/markerclustererplus@5.0.4":
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/@google/markerclustererplus/-/markerclustererplus-5.0.4.tgz#234e5ced9d7fc2a9bb21771d592c45ae4805f757"
+  integrity sha512-D3RnpzzLVBVggv84t+kkQXL5+2bSyhlGxDckAtbDpVXsLyfawKUyropkAQ9oYMXZh7h4+2Rkdkxaq8kDME6Jqg==
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
